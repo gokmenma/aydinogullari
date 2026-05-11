@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testApi()">Test API</button>
+    <pre id="result"></pre>
+
+    <script>
+        function testApi() {
+            const data = {
+                draw: 1,
+                start: 0,
+                length: 10,
+                search: { value: '' }
+            };
+
+            fetch('index.php?ajax=1&action=customers-list', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'draw=1&start=0&length=10&search[value]='
+            })
+            .then(response => response.text())
+            .then(text => {
+                document.getElementById('result').innerText = text;
+            })
+            .catch(error => {
+                document.getElementById('result').innerText = 'Error: ' + error;
+            });
+        }
+    </script>
+</body>
+</html>

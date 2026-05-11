@@ -1,0 +1,1 @@
+stok giriş çıkış

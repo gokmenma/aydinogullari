@@ -1,0 +1,1554 @@
+<?php
+
+use App\Helper\Helper;
+
+// ─── Mod Belirleme: Yeni mi, Düzenleme mi? ───
+$isEdit = isset($_GET['id']) && is_numeric($_GET['id']);
+$oid = @$_GET["oid"]; // Tekliften gelen servis oluşturma
+$isOffer = $oid ? "true" : "false";
+
+if ($isEdit) {
+    permcontrol('serviceEdit');
+} else {
+    permcontrol("serviceAdd");
+}
+
+// ─── Düzenleme Modu: Mevcut Servis Verisi ───
+$cc = null;
+$sid = 0;
+if ($isEdit) {
+    $sid = $_GET['id'];
+    $cerq = $ac->prepare('SELECT * FROM projects WHERE id = ?');
+    $cerq->execute(array($sid));
+    $cc = $cerq->fetch(PDO::FETCH_ASSOC);
+
+    if (!$cc) {
+        header('Location: index.php?p=service/list&err=01735');
+        exit;
+    }
+
+    // Oluşturan kişi
+    $secilen_pcid = $cc['pcreativer'];
+    $qctUser = $ac->prepare("SELECT * FROM users WHERE id=?");
+    $qctUser->execute(array($secilen_pcid));
+    $cscs = $qctUser->fetch(PDO::FETCH_ASSOC);
+
+    // Teklif bilgisi
+    $ofinf = $ac->prepare('SELECT * FROM offers WHERE id = ?');
+    $ofinf->execute(array($cc['poid']));
+    $ofinfo = $ofinf->fetch(PDO::FETCH_ASSOC);
+}
+
+// ─── Yeni Mod: Servis Numarası Oluştur ───
+$service_number = '';
+$getNumber = 0;
+if (!$isEdit) {
+    $getNumber = setNumber("service");
+    $service_number = "SRV" . str_pad($getNumber, 5, "0", STR_PAD_LEFT);
+} else {
+    $service_number = $cc['service_number'];
+}
+
+// ─── Tekliften Gelen Bilgiler (Yeni Mod) ───
+$comp_name = "";
+$comp_city = "";
+$comp_region = "";
+$comp_ilce = "";
+$comp_id = "";
+$offer = null;
+$description = "";
+
+if ($oid && !$isEdit) {
+    $qct = $ac->prepare("SELECT * FROM offers WHERE id= ?");
+    $qct->execute(array($oid));
+    $offer = $qct->fetch(PDO::FETCH_ASSOC);
+
+    $description = $offer["offerNumber"] . " numaralı teklife ait servis.";
+
+    $cust_id = $offer["cid"];
+    $sql = $ac->prepare("SELECT * FROM customers WHERE id = ?");
+    $sql->execute(array($cust_id));
+    $cust = $sql->fetch(PDO::FETCH_ASSOC);
+
+    $comp_name = $cust["company"];
+    $comp_city = $cust["city"];
+    $comp_ilce = $cust["ilce"];
+    $comp_id = $cust["id"];
+    $comp_region = $cust["region"];
+}
+
+// ─── POST İŞLEMİ ───
+if ($_POST) {
+    if (!$_POST["company"] || !$_POST["ServisKonusu"] || !$_POST["TahsilatTuru"] || !$_POST["region"]) {
+        if ($isEdit) {
+            header('Location: index.php?p=service/manage&st=empties&id=' . $sid);
+        } else {
+            header("Location: index.php?p=service/manage&st=empties");
+        }
+        exit;
+    }
+
+    if ($isEdit) {
+        // ─── GÜNCELLEME ───
+        if (@$_POST['pstatu'] == 18) {
+            $kadi = $cscs['username'];
+            $datetime = $cc['pregdate'];
+            $date = date('d.m.Y H:i:s', strtotime($datetime));
+            $servissonucu = @$_POST['servicesnote'];
+            $pnote = 'Servis ' . $kadi . ' adlı kullanıcı tarafından ' . $date . ' tarihinde iptal edilmiştir. ' . $servissonucu;
+        } else {
+            $pnote = addslashes(@$_POST['servicesnote']);
+        }
+
+        $company = $_POST['company'];
+        $offerno = $_POST['offerno'];
+        $servicestype = $_POST['ServisKonusu'];
+        $collectiontype = $_POST['TahsilatTuru'];
+        $address = $_POST['address'];
+        $region = $_POST['region'];
+        $updater = sesset('id');
+        $update_at = date('Y-m-d H:i:s');
+        $pdesc = $_POST['pdesc'];
+        $pstartdate = isset($_POST["pstartdate"]) ? date_tr($_POST['pstartdate']) : $cc['pstart_date'];
+        $psecond_date = isset($_POST["pseconddate"]) ? date_tr($_POST['pseconddate']) : $cc['psecond_date'];
+        $price = $_POST['price'];
+        $price_desc = $_POST['price_desc'];
+        $pstatu = $_POST['pstatu'];
+        $contract_statu = $_POST['contract_statu'];
+        $pps = '';
+        foreach ($_POST['permings'] as $psx) {
+            $pps .= $psx . '|';
+        }
+
+        $upxsx = $ac->prepare("UPDATE projects SET
+                pcid = ?,
+                poid = ?,
+                servicestype = ?,
+                collectiontype = ?,
+                address = ?,
+                region =  ?,
+                update_at = ?,
+                updater = ?,
+                pdesc = ?,
+                pstart_date = ?,
+                psecond_date = ?,
+                pauthors = ?,
+                price = ?,price_desc = ?,
+                pnotes = ?,
+                pstatu = ? ,
+                contract_statu = ?
+                 WHERE id = ?");
+
+        $upxsx->execute(array(
+            $company,
+            $offerno,
+            $servicestype,
+            $collectiontype,
+            $address,
+            $region,
+            $update_at,
+            $updater,
+            $pdesc,
+            $pstartdate,
+            $psecond_date,
+            $pps,
+            $price,
+            $price_desc,
+            $pnote,
+            $pstatu,
+            $contract_statu,
+            $sid
+        ));
+
+        if ($upxsx) {
+            header("Location: index.php?p=service/manage&id=$sid&st=updatesuccess");
+        } else {
+            header('Location: index.php?p=service/manage&id=$sid&st=newerror');
+        }
+        exit;
+
+    } else {
+        // ─── YENİ EKLEME ───
+        // Dosya yükleme
+        $soneklenen_dosyaid = null;
+        if (@$_FILES["dosya"]["name"]) {
+            $dizin = "files/";
+            $kaynak = $_FILES["dosya"]["tmp_name"];
+            $rast1 = rand(1, 100);
+            $hedef = $dizin . $rast1 . "_" . basename($_FILES["dosya"]["name"]);
+            $upx = move_uploaded_file($kaynak, $hedef);
+            if (@$upx) {
+                $ins = $ac->prepare("INSERT INTO files SET pid = ?, oid = ?, filename = ?, size = ?, creativer = ?");
+                $ins->execute(array(@$_POST["company"], @$_POST["offerno"], $rast1 . "_" . basename($_FILES["dosya"]["name"]), $_FILES["dosya"]["size"], sesset("id")));
+                $soneklenen_dosyaid = $ac->lastInsertId();
+            }
+        }
+
+        $company = $_POST["company"];
+        $offerno = $_POST["offerno"];
+        $region = $_POST["region"];
+        $servicestype = $_POST["ServisKonusu"];
+        $collectiontype = $_POST["TahsilatTuru"];
+        $address = $_POST["address"];
+        $creativerx = sesset("id");
+        $pdesc = $_POST["pdesc"];
+        $pstartdate = date_tr($_POST["pstartdate"]);
+        $price = $_POST["price"];
+        $price_desc = $_POST["price_desc"];
+        $teklifID = $soneklenen_dosyaid;
+        $pnote = addslashes(@$_POST["servicesnote"]);
+        $pstatu = $_POST["pstatu"];
+        $contract_statu = $_POST["contract_statu"];
+        $pps = "";
+
+        foreach ($_POST["permings"] as $psx) {
+            $pps .= $psx . "|";
+        }
+
+        $regxs = $ac->prepare("INSERT INTO projects SET
+                pcid = ?, poid = ?, servicestype = ?, service_number = ?,
+                collectiontype = ?, address = ?, region = ?, pcreativer = ?,
+                pdesc = ?, pstart_date = ?, pauthors = ?, price = ?,
+                price_desc = ?, teklifID = ?, pnotes = ?, pstatu = ?, contract_statu = ?");
+
+        $regxs->execute(array(
+            $company,
+            $offerno,
+            $servicestype,
+            $service_number,
+            $collectiontype,
+            $address,
+            $region,
+            $creativerx,
+            $pdesc,
+            $pstartdate,
+            $pps,
+            $price,
+            $price_desc,
+            $teklifID,
+            $pnote,
+            $pstatu,
+            $contract_statu
+        ));
+
+        if ($regxs) {
+            $getNumber += 1;
+            $upquery = $ac->prepare("UPDATE define_numbers SET service = ?");
+            $upquery->execute(array($getNumber));
+            header("Location:index.php?p=service/manage&st=newsuccess");
+        } else {
+            header("Location: index.php?p=service/manage&st=newerror");
+        }
+        exit;
+    }
+}
+
+// ─── Uyarı Mesajları ───
+if (@$_GET["st"] == "newsuccess") {
+    echo Helper::alert('success', 'Servis başarıyla oluşturuldu!', 'Başarılı!');
+} elseif (@$_GET["st"] == "updatesuccess") {
+    echo Helper::alert('success', 'Servis başarıyla güncellendi!', 'Başarılı!');
+} elseif (@$_GET["st"] == "empties") {
+    echo Helper::alert('danger', '(*) ile işaretli alanları boş bırakmadan tekrar deneyin.', 'Hata!');
+} elseif (@$_GET["st"] == "newerror") {
+    echo Helper::alert('danger', 'İşlem sırasında bir hata oluştu. Lütfen tekrar deneyin.', 'Hata!');
+} elseif (@$_GET["st"] == "iptal") {
+    echo Helper::alert('warning', 'Servis İPTAL edildiği için Servis Sonucu alanına kim tarafından neden iptal edildiği bilgisini giriniz.', 'Dikkat!');
+}
+
+$pageTitle = $isEdit ? 'Servis Düzenle' : 'Yeni Servis Oluştur';
+$pageIcon = $isEdit ? 'fa-pencil-square-o' : 'fa-plus-circle';
+?>
+
+<style>
+    /* ═══════════════════════════════════════════════════════════════
+   SERVIS MANAGE - MODERN STEPPED WIZARD UI
+   ═══════════════════════════════════════════════════════════════ */
+
+    /* Ana container */
+    .service-manage-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Başlık kartı */
+    .service-header-card {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d5986 50%, #3b7dd8 100%);
+        border-radius: 16px;
+        padding: 24px 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(30, 58, 95, 0.25);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .service-header-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .service-header-card .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        z-index: 1;
+    }
+
+    .service-header-card .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .service-header-card .header-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: #fff;
+        backdrop-filter: blur(10px);
+    }
+
+    .service-header-card .header-title h4 {
+        color: #fff;
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .service-header-card .header-title .service-number-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 4px 14px;
+        border-radius: 20px;
+        color: #e0ecff;
+        font-size: 13px;
+        margin-top: 6px;
+        backdrop-filter: blur(10px);
+    }
+
+    .service-header-card .header-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .service-header-card .btn-header {
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 14px;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+
+    .btn-header-save {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-header-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+        color: #fff;
+    }
+
+    .btn-header-list {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        backdrop-filter: blur(10px);
+    }
+
+    .btn-header-list:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+
+    /* ─── Step Wizard İlerleme ─── */
+    .wizard-steps {
+        display: flex;
+        justify-content: center;
+        gap: 0;
+        margin-bottom: 24px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px 30px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        position: relative;
+    }
+
+    .wizard-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 10px 20px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .wizard-step:hover {
+        background: #f0f7ff;
+    }
+
+    .wizard-step.active {
+        background: #eef5ff;
+    }
+
+    .wizard-step .step-number {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+        background: #e5e7eb;
+        color: #6b7280;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .wizard-step.active .step-number {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+    }
+
+    .wizard-step.completed .step-number {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    }
+
+    .wizard-step .step-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #9ca3af;
+        transition: color 0.3s ease;
+    }
+
+    .wizard-step.active .step-label {
+        color: #1e40af;
+        font-weight: 600;
+    }
+
+    .wizard-step.completed .step-label {
+        color: #16a34a;
+    }
+
+    .wizard-connector {
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+    }
+
+    .wizard-connector .connector-line {
+        width: 40px;
+        height: 3px;
+        background: #e5e7eb;
+        border-radius: 2px;
+        transition: background 0.3s ease;
+    }
+
+    .wizard-connector.completed .connector-line {
+        background: linear-gradient(90deg, #22c55e, #3b82f6);
+    }
+
+    /* ─── Step İçerik Panelleri ─── */
+    .step-panel {
+        display: block;
+        animation: fadeSlideIn 0.4s ease;
+    }
+
+    @keyframes fadeSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Form Kartları */
+    .form-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        margin-bottom: 20px;
+        border: 1px solid #f0f0f0;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .form-card:hover {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .form-card-header .card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    .card-icon-blue {
+        background: #eff6ff;
+        color: #3b82f6;
+    }
+
+    .card-icon-green {
+        background: #f0fdf4;
+        color: #22c55e;
+    }
+
+    .card-icon-purple {
+        background: #faf5ff;
+        color: #a855f7;
+    }
+
+    .card-icon-orange {
+        background: #fff7ed;
+        color: #f97316;
+    }
+
+    .card-icon-red {
+        background: #fef2f2;
+        color: #ef4444;
+    }
+
+    .form-card-header h5 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+        color: #1e3a5f;
+    }
+
+    .form-card-header p {
+        margin: 4px 0 0;
+        font-size: 13.5px;
+        color: #64748b;
+    }
+
+    /* Form grupları - Modern Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px 30px;
+    }
+
+    .form-grid .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-field label {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        margin-bottom: 2px;
+    }
+
+    .form-field label .required-dot {
+        width: 7px;
+        height: 7px;
+        background: #ef4444;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+
+    .form-field .form-control,
+    .form-field .bootstrap-select .btn {
+        border-radius: 10px !important;
+        border: 1.5px solid #e5e7eb !important;
+        padding: 10px 14px;
+        font-size: 14px;
+        transition: all 0.25s ease;
+        background: #fafafa;
+    }
+
+    .form-field .form-control:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
+        background: #fff;
+    }
+
+    .form-field .input-group {
+        display: flex !important;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .form-field .input-group .bootstrap-select {
+        flex: 1 !important;
+        width: auto !important;
+    }
+
+    .form-field .input-group .bootstrap-select .btn {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+
+    .form-field .input-group .btn-add-new,
+    .form-field .input-group .btn-view-offer {
+        border-radius: 0 10px 10px 0 !important;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: #fff;
+        border: none;
+        padding: 0 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        font-size: 16px;
+        height: auto;
+    }
+
+    .btn-view-offer {
+        background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+        margin-left: -1px;
+        /* Overlap borders if needed */
+    }
+
+    /* If there are two buttons, adjust the first one's border */
+    .form-field .input-group .btn-add-new:not(:last-child) {
+        border-radius: 0 !important;
+    }
+
+    .form-field .input-group .btn-add-new:hover,
+    .form-field .input-group .btn-view-offer:hover {
+        filter: brightness(1.1);
+        color: #fff;
+    }
+
+    .form-field textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* Readonly görünüm */
+    .readonly-value {
+        background: #f3f4f6;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 14px;
+        color: #374151;
+        border: 1.5px solid #e5e7eb;
+        font-weight: 500;
+    }
+
+    /* ─── İlerleme Çubuğu (Düzenleme Modu) ─── */
+    .progress-modern {
+        height: 10px;
+        border-radius: 10px;
+        background: #f3f4f6;
+        overflow: hidden;
+    }
+
+    .progress-modern .progress-bar {
+        border-radius: 10px;
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ─── Alt Butonlar ─── */
+    .step-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+    }
+
+    .step-navigation .btn-step {
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-step-prev {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    .btn-step-prev:hover {
+        background: #e5e7eb;
+        color: #1f2937;
+    }
+
+    .btn-step-next {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-step-next:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
+        color: #fff;
+    }
+
+    /* ─── Bilgi Kartı (Audit Trail) ─── */
+    .audit-trail-card {
+        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+    }
+
+    .audit-trail-card .audit-row {
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .audit-trail-card .audit-row:last-child {
+        border-bottom: none;
+    }
+
+    .audit-trail-card .audit-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        color: #64748b;
+        font-size: 14px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .audit-trail-card .audit-label {
+        font-size: 13px;
+        color: #64748b;
+        min-width: 140px;
+    }
+
+    .audit-trail-card .audit-value {
+        font-size: 14px;
+        color: #1e293b;
+        font-weight: 500;
+    }
+
+    /* ─── Dikkat Uyarısı ─── */
+    .cancel-warning {
+        background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        border: 1px solid #fca5a5;
+        border-radius: 12px;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: pulseWarning 2s infinite;
+    }
+
+    @keyframes pulseWarning {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    .cancel-warning .warning-icon {
+        color: #dc2626;
+        font-size: 20px;
+    }
+
+    .cancel-warning .warning-text {
+        color: #991b1b;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .wizard-steps {
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 16px;
+        }
+
+        .wizard-connector {
+            display: none;
+        }
+
+        .service-header-card .header-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .service-header-card .header-actions {
+            width: 100%;
+        }
+
+        .service-header-card .header-actions .btn-header {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .step-navigation {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step-navigation .btn-step {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* wait-span güncelleme */
+    .wait-span-modern {
+        background: #fef3c7;
+        border: 1px solid #fbbf24;
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin-top: 8px;
+        font-size: 13px;
+        color: #92400e;
+        display: none;
+    }
+
+    /* Selectpicker uyumu */
+    .form-field .bootstrap-select {
+        width: 100% !important;
+    }
+
+    .form-field .bootstrap-select .dropdown-toggle {
+        border-radius: 10px !important;
+        border: 1.5px solid #e5e7eb !important;
+        padding: 10px 14px !important;
+        height: auto !important;
+        background: #fafafa !important;
+    }
+
+    .form-field .chooseitem {
+        margin-left: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       DARK MODE OVERRIDES
+       ═══════════════════════════════════════════════════════════════ */
+    .dark-mode .wizard-steps,
+    .dark-mode .form-card {
+        background: #2a2a2a;
+        border-color: #3f3f3f;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .dark-mode .form-card-header {
+        border-bottom-color: #3f3f3f;
+    }
+
+    .dark-mode .form-card-header h5 {
+        color: #e5e7eb;
+    }
+
+    .dark-mode .form-card-header p {
+        color: #9ca3af;
+    }
+
+    .dark-mode .form-field label {
+        color: #d1d5db;
+    }
+
+    .dark-mode .form-field .form-control,
+    .dark-mode .form-field .bootstrap-select .btn {
+        background: #1f1f1f !important;
+        border-color: #4b5563 !important;
+        color: #f3f4f6 !important;
+    }
+
+    .dark-mode .form-field .form-control:focus {
+        border-color: #3b82f6 !important;
+        background: #1a1a1a !important;
+    }
+
+    .dark-mode .readonly-value {
+        background: #1f1f1f;
+        border-color: #374151;
+        color: #9ca3af;
+    }
+
+    .dark-mode .audit-trail-card {
+        background: linear-gradient(135deg, #1f2937, #111827);
+        border-color: #374151;
+    }
+
+    .dark-mode .audit-row {
+        border-bottom-color: #374151;
+    }
+
+    .dark-mode .audit-icon {
+        background: #374151;
+        color: #9ca3af;
+    }
+
+    .dark-mode .audit-label {
+        color: #9ca3af;
+    }
+
+    .dark-mode .audit-value {
+        color: #f3f4f6;
+    }
+
+    .dark-mode .cancel-warning {
+        background: linear-gradient(135deg, #450a0a, #7f1d1d);
+        border-color: #991b1b;
+    }
+
+    .dark-mode .cancel-warning .warning-text {
+        color: #fecaca;
+    }
+
+    .dark-mode .wait-span-modern {
+        background: #451a03;
+        border-color: #92400e;
+        color: #fbbf24;
+    }
+
+    .dark-mode .wizard-step:hover {
+        background: #2563eb20;
+    }
+
+    .dark-mode .wizard-step.active {
+        background: #2563eb30;
+    }
+
+    .dark-mode .wizard-step .step-number {
+        background: #374151;
+        color: #9ca3af;
+    }
+
+    .dark-mode .wizard-step .step-label {
+        color: #6b7280;
+    }
+
+    .dark-mode .wizard-step.active .step-label {
+        color: #60a5fa;
+    }
+
+    /* Bootstrap select dropdown menu in dark mode */
+    .dark-mode .bootstrap-select .dropdown-menu {
+        background-color: #1f1f1f;
+        border: 1px solid #4b5563;
+    }
+
+    .dark-mode .bootstrap-select .dropdown-menu li a {
+        color: #f3f4f6;
+    }
+
+    .dark-mode .bootstrap-select .dropdown-menu li a:hover {
+        background-color: #3b82f6;
+        color: #fff;
+    }
+
+    .dark-mode .bootstrap-select .dropdown-header {
+        color: #9ca3af;
+    }
+
+    .dark-mode .bootstrap-select .bs-searchbox .form-control {
+        background: #111827 !important;
+        border-color: #4b5563 !important;
+        color: #fff !important;
+    }
+</style>
+
+<div class="service-manage-wrapper pd-ltr-20 xs-pd-20-10">
+
+    <!-- ═══════ HEADER ═══════ -->
+    <div class="service-header-card">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-icon">
+                    <i class="fa <?php echo $pageIcon; ?>"></i>
+                </div>
+                <div class="header-title">
+                    <h4><?php echo $pageTitle; ?></h4>
+                    <div class="service-number-badge">
+                        <i class="fa fa-hashtag"></i>
+                        <?php echo $service_number; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="index.php?p=service/list" class="btn-header btn-header-list">
+                    <i class="fa fa-list"></i> Listeye Dön
+                </a>
+                <button type="button" id="submitButton" onclick="submitServiceForm()"
+                    class="btn-header btn-header-save">
+                    <i class="fa fa-check-circle"></i> <?php echo $isEdit ? 'Güncelle' : 'Kaydet'; ?>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <form name="serviceForm" id="serviceForm" enctype="multipart/form-data" method="POST">
+
+        <!-- ═══════ STEP 1: Temel Bilgiler ═══════ -->
+        <div class="step-panel active" id="step-1">
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="card-icon card-icon-blue"><i class="fa fa-building"></i></div>
+                    <div>
+                        <h5>Firma & Servis Bilgileri</h5>
+                        <p>Firma, servis konusu ve tahsilat bilgilerini girin</p>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <!-- Firma -->
+                    <div class="form-field">
+                        <label><span class="required-dot"></span> Firma</label>
+                        <div class="input-group">
+                            <?php echo customers("company", $isEdit ? $cc['pcid'] : $comp_id) ?>
+                            <a href="index.php?p=customers/manage" target="_blank" class="btn-add-new"
+                                data-tooltip="Yeni Firma Ekle">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Servis Konusu -->
+                    <div class="form-field">
+                        <label><span class="required-dot"></span> Servis Konusu</label>
+                        <div class="input-group">
+                            <select required name="ServisKonusu" data-live-search="true" data-size="12"
+                                id="ServisKonusu" class="selectpicker form-control" data-style="border bg-white"
+                                data-max-options="3" title="Servis Konusu Seçiniz!">
+                                <?php
+                                $sk = $ac->prepare("SELECT * FROM units WHERE statu='2' ");
+                                $sk->execute();
+                                while ($mm1 = $sk->fetch(PDO::FETCH_ASSOC)) {
+                                    ?>
+                                    <option <?php echo ($isEdit && $mm1['id'] == $cc['servicestype']) ? 'selected' : ''; ?>
+                                        value="<?php echo $mm1["id"]; ?>">
+                                        <?php echo $mm1["title"]; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                            <a href="index.php?p=servicestype" target="_blank" class="btn-add-new"
+                                data-tooltip="Servis Konusu Ekle">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </div>
+                        <span class="wait-span-modern" id="waitSpan">
+                            Sözleşme durumu <strong>Sözleşme Bekliyor</strong> olarak seçildi
+                        </span>
+                    </div>
+
+                    <!-- Tahsilat Türü -->
+                    <div class="form-field">
+                        <label><span class="required-dot"></span> Tahsilat Türü</label>
+                        <div class="input-group">
+                            <select required name="TahsilatTuru" id="TahsilatTuru" class="selectpicker form-control"
+                                data-container="body" data-style="border bg-white" title="Tahsilat Türü Seçiniz!">
+                                <?php
+                                $tt = $ac->prepare("SELECT * FROM units WHERE statu='3' ");
+                                $tt->execute();
+                                while ($mm2 = $tt->fetch(PDO::FETCH_ASSOC)) {
+                                    ?>
+                                    <option <?php echo ($isEdit && $mm2['id'] == $cc['collectiontype']) ? 'selected' : ''; ?>
+                                        value="<?php echo $mm2["id"]; ?>">
+                                        <?php echo $mm2["title"]; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                            <a href="index.php?p=paytype" target="_blank" class="btn-add-new"
+                                data-tooltip="Tahsilat Türü Ekle">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Adres Bölge -->
+                    <div class="form-field">
+                        <label><span class="required-dot"></span> Adres Bölge</label>
+                        <?php echo Helper::selectRegion("region", $isEdit ? ($cc['region'] ?? '') : ($comp_region ?? '')); ?>
+                    </div>
+
+                    <!-- Adres İl/İlçe -->
+                    <div class="form-field">
+                        <label>Adres İl/İlçe</label>
+                        <input type="text" id="address" readonly name="address"
+                            value="<?php echo $isEdit ? $cc['address'] : ($comp_city . " / " . $comp_ilce); ?>"
+                            class="form-control">
+                    </div>
+
+                    <!-- Başlama Tarihi -->
+                    <div class="form-field">
+                        <label>Başlama Tarihi</label>
+                        <?php if ($isEdit && !in_array($_SESSION['lid'], array(4, 6, 12, 11, 28))) { ?>
+                            <div class="readonly-value"><?php echo $cc['pstart_date']; ?></div>
+                        <?php } else { ?>
+                            <input name="pstartdate" class="form-control date-picker" autocomplete="off"
+                                placeholder="Tarih Seçin" type="text"
+                                value="<?php echo $isEdit ? $cc['pstart_date'] : ''; ?>">
+                        <?php } ?>
+                    </div>
+
+                    <?php if ($isEdit) { ?>
+                        <!-- 2. Planlama Tarihi (Sadece Düzenleme) -->
+                        <div class="form-field">
+                            <label>2. Planlama Tarihi</label>
+                            <?php if (permtrue("second_plan_edit")) { ?>
+                                <input name="pseconddate" autocomplete="off" class="form-control date-picker"
+                                    placeholder="2. Planlama Tarihi Seçin" type="text"
+                                    value="<?php echo $cc['psecond_date']; ?>">
+                            <?php } else { ?>
+                                <div class="readonly-value"><?php echo $cc['psecond_date'] ?: '-'; ?></div>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- ═══════ STEP 2: Detaylar & Yetkililer ═══════ -->
+        <div class="step-panel" id="step-2">
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="card-icon card-icon-green"><i class="fa fa-users"></i></div>
+                    <div>
+                        <h5>Yetkililer & Fiyat Bilgileri</h5>
+                        <p>Servis yetkililerini atayın ve fiyat bilgilerini girin</p>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <!-- Servis Yetkilileri -->
+                    <div class="form-field">
+                        <label>Servis Yetkilileri</label>
+                        <?php if ($isEdit) { ?>
+                            <select name="permings[]" class="selectpicker form-control" data-container="body"
+                                data-style="border bg-white" multiple data-max-options="3">
+                                <?php
+                                $selectedValues = explode('|', $cc['pauthors']);
+                                $permx = $ac->prepare('SELECT * FROM users ');
+                                $permx->execute();
+                                while ($px = $permx->fetch(PDO::FETCH_ASSOC)) {
+                                    ?>
+                                    <option <?php
+                                    $caks = explode('|', $cc['pauthors']);
+                                    foreach ($caks as $kiks) {
+                                        if ($kiks == $px['id'])
+                                            echo 'selected ';
+                                    }
+                                    ?> value="<?php echo $px['id']; ?>">
+                                        <?php echo $px['username']; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                        <?php } else { ?>
+                            <select name="permings[]" class="selectpicker form-control" data-style="border bg-white"
+                                multiple data-max-options="3">
+                                <?php
+                                $permq = $ac->prepare("SELECT * FROM userroles ");
+                                $permq->execute();
+                                while ($pp = $permq->fetch(PDO::FETCH_ASSOC)) {
+                                    ?>
+                                    <optgroup label="<?php echo $pp["roleName"]; ?>">
+                                        <?php
+                                        $permx = $ac->prepare("SELECT * FROM users WHERE permission = ? ");
+                                        $permx->execute(array($pp["id"]));
+                                        while ($px = $permx->fetch(PDO::FETCH_ASSOC)) { ?>
+                                            <option value="<?php echo $px["id"]; ?>">
+                                                <?php echo $px["username"]; ?>
+                                            </option>
+                                        <?php } ?>
+                                    </optgroup>
+                                <?php } ?>
+                            </select>
+                        <?php } ?>
+                    </div>
+
+                    <!-- Fiyat Bilgisi -->
+                    <?php if (in_array($_SESSION['lid'], array(1, 2, 3, 4, 6, 10, 11, 12, 14))) { ?>
+                        <div class="form-field">
+                            <label>Fiyat Bilgisi</label>
+                            <input name="price" class="form-control" type="text"
+                                value="<?php echo $isEdit ? $cc['price'] : ($offer["total_price"] ?? ''); ?>">
+                        </div>
+
+                        <div class="form-field full-width">
+                            <label>Fiyat Açıklaması</label>
+                            <textarea name="price_desc" class="form-control"
+                                rows="3"><?php echo $isEdit ? $cc['price_desc'] : ''; ?></textarea>
+                        </div>
+                    <?php } ?>
+
+                    <!-- Teklif Numarası -->
+                    <div class="form-field">
+                        <label>Teklif Numarası</label>
+                        <div class="input-group">
+                            <?php if ($isEdit) { ?>
+                                <select id="offerno" name="offerno" class="selectpicker form-control"
+                                    data-style="border bg-white">
+                                    <option selected value="<?php echo $ofinfo['id'] ?? '' ?>">
+                                        <?php echo $ofinfo['offerNumber'] ?? 'Teklif Yok' ?>
+                                    </option>
+                                </select>
+                            <?php } elseif ($isOffer == "false") { ?>
+                                <select id="offerno" name="offerno" class="selectpicker form-control"
+                                    data-style="border bg-white">
+                                    <option selected value="<?php echo $oid ?>">
+                                        <?php echo $offer["offerNumber"] ?? '' ?>
+                                    </option>
+                                </select>
+                            <?php } else { ?>
+                                <input name="offerno" id="offerno_input" class="form-control" type="text" readonly
+                                    value="<?php echo $offer["offerNumber"] ?? '' ?>">
+                                <input type="hidden" id="offerno" value="<?php echo $offer['id'] ?? '' ?>">
+                            <?php } ?>
+
+                            <!-- PDF Görüntüleme Butonu -->
+                            <a href="javascript:void(0)" id="viewOfferBtn" class="btn-view-offer" style="display: none;"
+                                target="_blank" data-tooltip="Teklifi Görüntüle (PDF)">
+                                <i class="fa fa-file-pdf-o"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Teklif Dosyası -->
+                    <div class="form-field">
+                        <label>Teklif Dosyası</label>
+                        <?php if ($isEdit) {
+                            $cq = $ac->prepare('SELECT * FROM files WHERE pid = ? ORDER by id DESC');
+                            $cq->execute(array($sid));
+                            $as = $cq->fetch(PDO::FETCH_ASSOC);
+                            if ($as != NULL) { ?>
+                                <a href="servicefiles/<?php echo $as['filename']; ?>" class="btn btn-sm btn-outline-success"
+                                    style="border-radius:10px; padding: 10px 14px;">
+                                    <i class="fa fa-download"></i> Dosyayı İndir
+                                </a>
+                            <?php } else { ?>
+                                <div class="readonly-value"><i class="fa fa-info-circle text-muted"></i> Teklif dosyası yok
+                                </div>
+                            <?php }
+                        } else { ?>
+                            <input name="dosya" type="file" class="form-control form-control-sm" style="padding: 8px;">
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- ═══════ STEP 3: Durum & Notlar ═══════ -->
+        <div class="step-panel" id="step-3">
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="card-icon card-icon-purple"><i class="fa fa-clipboard"></i></div>
+                    <div>
+                        <h5>Açıklama & Durum</h5>
+                        <p>Servis açıklamasını, durumunu ve notlarını belirleyin</p>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <!-- Açıklama -->
+                    <div class="form-field">
+                        <label>Açıklama</label>
+                        <textarea id="pdesc" name="pdesc" rows="5" class="form-control"
+                            placeholder="Servis hakkında açıklama yazın..."><?php echo $isEdit ? trim($cc['pdesc']) : ($description ?? ''); ?></textarea>
+                    </div>
+
+                    <!-- Servis Sonucu / Notlar -->
+                    <div class="form-field">
+                        <label>Servis Sonucu</label>
+                        <textarea oninput="kontrolEt()" id="servicesnote" name="servicesnote" rows="5"
+                            class="form-control"
+                            placeholder="Servis sonucu hakkında bir açıklama ekleyiniz."><?php echo $isEdit ? trim($cc['pnotes']) : ''; ?></textarea>
+                    </div>
+
+                    <!-- Servis Durumu -->
+                    <div class="form-field">
+                        <label>Servis Durumu</label>
+                        <?php servisDurum("pstatu", $isEdit ? $cc['pstatu'] : "") ?>
+                    </div>
+
+                    <!-- Sözleşme Durumu -->
+                    <div class="form-field">
+                        <label>Sözleşme Durumu</label>
+                        <?php sozlesmeDurumu("contract_statu", $isEdit ? $cc["contract_statu"] : 4) ?>
+                    </div>
+
+                    <!-- İptal Uyarısı -->
+                    <div class="form-field full-width" id="cancelWarningArea" style="display:none;">
+                        <div class="cancel-warning">
+                            <i class="fa fa-exclamation-triangle warning-icon"></i>
+                            <span class="warning-text"><b>İptal Edildi</b> seçildiği için <b>Servis Sonucu</b> alanını
+                                mutlaka doldurunuz!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ($isEdit) { ?>
+                <!-- ─── İlerleme Durumu ─── -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="card-icon card-icon-orange"><i class="fa fa-tasks"></i></div>
+                        <div>
+                            <h5>İlerleme Durumu</h5>
+                            <p>Servisin genel ilerleme durumu</p>
+                        </div>
+                    </div>
+                    <div class="progress-modern">
+                        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+                            aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+
+                <!-- ─── Denetim İzi ─── -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="card-icon card-icon-red"><i class="fa fa-history"></i></div>
+                        <div>
+                            <h5>Kayıt Bilgileri</h5>
+                            <p>Servisin oluşturma ve güncelleme geçmişi</p>
+                        </div>
+                    </div>
+                    <div class="audit-trail-card">
+                        <div class="audit-row">
+                            <div class="audit-icon"><i class="fa fa-user-plus"></i></div>
+                            <span class="audit-label">Oluşturan</span>
+                            <span class="audit-value"><?php echo getUserName($cc['pcreativer']); ?></span>
+                        </div>
+                        <div class="audit-row">
+                            <div class="audit-icon"><i class="fa fa-calendar-plus-o"></i></div>
+                            <span class="audit-label">Oluşturma Tarihi</span>
+                            <span class="audit-value"><?php echo date_tr($cc['pregdate']); ?></span>
+                        </div>
+                        <div class="audit-row">
+                            <div class="audit-icon"><i class="fa fa-user-circle"></i></div>
+                            <span class="audit-label">Son Güncelleyen</span>
+                            <span class="audit-value"><?php echo getUserName($cc['updater']); ?></span>
+                        </div>
+                        <div class="audit-row">
+                            <div class="audit-icon"><i class="fa fa-clock-o"></i></div>
+                            <span class="audit-label">Son Güncelleme</span>
+                            <span class="audit-value"><?php echo date_tr($cc['update_at']); ?></span>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+
+            <div class="step-navigation" style="justify-content: flex-end;">
+                <button type="button" class="btn-step btn-step-next btn-header-save" onclick="submitServiceForm()"
+                    style="box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);">
+                    <i class="fa fa-check-circle"></i> <?php echo $isEdit ? 'Güncelle' : 'Kaydet'; ?>
+                </button>
+            </div>
+        </div>
+
+        <input type="hidden" name="posted" value="true">
+    </form>
+    <input type="hidden" value="<?php echo $isOffer ?>" id="isOffer">
+</div>
+
+<!-- Şirket seçildiğinde il,ilçe seçimi ve o şirkete ait varsa teklif no seçimi -->
+<script src="include/js/service.js"></script>
+
+<script>
+
+
+    // ═══════ FORM GÖNDERİM ═══════
+    function submitServiceForm() {
+        var form = document.getElementById('serviceForm');
+
+        // Basit validasyon
+        var company = document.getElementById('company');
+        var region = document.getElementById('region');
+
+        if (company && !company.value) {
+            showToast('Lütfen firma seçin!', 'error');
+            return;
+        }
+
+        if (region && !region.value) {
+            showToast('Lütfen bölge seçin!', 'error');
+            return;
+        }
+
+        form.submit();
+    }
+
+    // ═══════ TOAST BİLDİRİM ═══════
+    function showToast(message, type) {
+        var toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;padding:14px 24px;border-radius:12px;color:#fff;font-size:14px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.2);animation:fadeSlideIn 0.4s ease;display:flex;align-items:center;gap:10px;';
+
+        if (type === 'error') {
+            toast.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+            toast.innerHTML = '<i class="fa fa-exclamation-circle"></i> ' + message;
+        } else {
+            toast.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+            toast.innerHTML = '<i class="fa fa-check-circle"></i> ' + message;
+        }
+
+        document.body.appendChild(toast);
+        setTimeout(function () {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s ease';
+            setTimeout(function () { toast.remove(); }, 300);
+        }, 3000);
+    }
+
+    // ═══════ SELECTPICKER INIT ═══════
+    $(document).ready(function () {
+        $(".selectpicker").selectpicker({
+            liveSearchPlaceholder: "Ara..",
+            noneResultsText: 'Eşleşen kayıt yok {0}',
+            noneSelectedText: "Seçim Yapılmadı",
+            size: 5,
+        });
+
+        // Teklif seçildiğinde butonu güncelle
+        $("#offerno").on("change", function () {
+            updateViewOfferButton($(this).val());
+        });
+
+        // Başlangıçta (sayfa yüklendiğinde) düzenleme modundaysa veya teklif seçiliyse butonu göster
+        updateViewOfferButton($("#offerno").val());
+
+        <?php if ($isEdit) { ?>
+            kontrolEt();
+        <?php } ?>
+    });
+
+    function updateViewOfferButton(offerId) {
+        var btn = $("#viewOfferBtn");
+        if (offerId && offerId != "" && offerId != "0") {
+            btn.attr("href", "index.php?p=offer-view&id=" + offerId);
+            btn.fadeIn(300).css("display", "flex");
+        } else {
+            btn.fadeOut(200);
+        }
+    }
+
+    // ═══════ SERVİS KONUSU DEĞİŞİKLİĞİ ═══════
+    $("#ServisKonusu").change(function () {
+        var servisKonusu = $(this).find('option:selected').text().trim();
+        switch (servisKonusu) {
+            case 'YSC KONTROL/RAPORLAMA':
+            case 'SİSTEM KONTROL/RAPORLAMA':
+                $("#contract_statu").val(1);
+                $("#waitSpan").show();
+                break;
+            default:
+                $("#contract_statu").val(4);
+                $("#waitSpan").hide();
+                break;
+        }
+        $("#contract_statu").selectpicker('refresh');
+    });
+
+    // ═══════ DURUM KONTROLÜ (Düzenleme) ═══════
+    $("#pstatu").on("change", function () {
+        kontrolEt();
+    });
+
+    function kontrolEt() {
+        var servicesNote = $("#servicesnote");
+        var submitButton = $("#submitButton");
+        var selectedStatus = $("#pstatu option:selected").text();
+        var yuzde = 0, renk = "";
+
+        if (selectedStatus === "Bekliyor") {
+            yuzde = 33;
+            renk = "bg-warning";
+        } else if (selectedStatus === "Çalışıyor") {
+            yuzde = 66;
+            renk = "bg-primary";
+        } else if (selectedStatus === "Tamamlandı") {
+            yuzde = 100;
+            renk = "bg-success";
+        } else if (selectedStatus === "İptal Edildi") {
+            yuzde = 100;
+            renk = "bg-danger";
+            $("#cancelWarningArea").show();
+            if (servicesNote.val() !== '') {
+                submitButton.prop("disabled", true);
+            } else {
+                submitButton.prop("disabled", false);
+            }
+        }
+
+        if (selectedStatus !== "İptal Edildi") {
+            $("#cancelWarningArea").hide();
+            submitButton.prop("disabled", false);
+        }
+
+        $('#progress-bar').css('width', yuzde + '%')
+            .attr('aria-valuenow', yuzde)
+            .removeClass()
+            .addClass('progress-bar ' + renk);
+    }
+</script>

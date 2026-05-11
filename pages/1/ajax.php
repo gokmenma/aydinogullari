@@ -1,0 +1,268 @@
+<?php
+require_once '../../configs/config.php';
+require_once '../../configs/functions.php';
+
+$id = $_POST["id"];
+$type = $_GET["type"];
+
+//RAPOR DETAYI SORGULAMA İÇİN
+if ($type == "report-detail") {
+    $sql = $ac->prepare("SELECT rp.id, u.username as username,rp.create_time 
+                         FROM reports rp 
+                         LEFT JOIN users u ON u.id= rp.creator 
+                         WHERE rp.id = ?");
+    $sql->execute(array($id)); // Sorguyu çalıştır
+
+    $row = $sql->fetch(PDO::FETCH_ASSOC);
+    echo json_encode(
+        array(
+            "creator" => $row["username"],
+            "create_time" => $row["create_time"],
+        )
+    );
+}
+
+
+//MUSTERİ DETAYI SORGULAMA İÇİN
+if ($type == "customer-detail") {
+
+    try {
+        $sql = $ac->prepare("SELECT c.id, u.username as username, c.regdate, c.updater, c.updated_at  from customers c
+                         LEFT JOIN users u ON u.id = c.creativer
+                         where c.id = ?");
+        $sql->execute(array($id)); // Sorguyu çalıştır
+
+        $row = $sql->fetch(PDO::FETCH_ASSOC);
+
+        $res = array(
+            "creator" => $row["username"],
+            "create_time" => $row["regdate"],
+            "updater" => $row["updater"],
+            "updated_at" => $row["updated_at"],
+        );
+        echo json_encode($res);
+     
+       return false;
+    } catch (PDOException $ex) {
+        $message = $ex->getMessage();
+        $statu = 400;
+    }
+
+    //echo json_encode($res);
+}
+
+
+
+if ($type == "delete-file") {
+
+    $sql = $ac->prepare("SELECT * FROM offers where id = ?");
+    $sql->execute(array($id));
+    $result = $sql->fetch(PDO::FETCH_ASSOC);
+    $file_path = "../../files/offer/" . $result["file"];
+
+
+    if (file_exists($file_path)) {
+        unlink($file_path);
+        $sql = $ac->prepare("UPDATE offers SET file = '' WHERE id = ?");
+        $sql->execute(array($id));
+        echo json_encode(
+            array(
+                "message" => "Belirlenen dosya silindi.",
+                "status" => "success"
+            )
+        );
+
+    } else {
+        echo json_encode(
+            array(
+                "message" => "Belirlenen dosya " . $file_path . " dizininde değildir.",
+                "status" => "error"
+            )
+        );
+        ;
+    }
+
+
+}
+
+if ($_POST["page"] == "offers" && $_GET["mode"] == "delete" && @$_GET["code"] == "04md177") {
+    $id = @$_POST["id"];
+    permcontrol("offerdelete");
+    try {
+        permcontrol("offerdelete");
+
+
+        $ofs = $ac->prepare("SELECT * FROM offers WHERE id = ?");
+        $ofs->execute(array($id));
+        $of = $ofs->fetch(PDO::FETCH_ASSOC);
+
+        $fileq = $ac->prepare("SELECT * FROM files WHERE oid = ?");
+        $fileq->execute(array($id));
+        while ($ff = $fileq->fetch(PDO::FETCH_ASSOC)) {
+            unlink("../../files/offer/" . $ff["filename"]);
+        }
+        $delets = $ac->prepare("DELETE FROM files WHERE oid = ?");
+        $delets->execute(array($id));
+
+        if ($of["statu"] == 3 || $of["statu"] == 5) {
+
+            $deleteproj = $ac->prepare("DELETE FROM projects WHERE poid = ?");
+            $deleteproj->execute(array($of["id"]));
+        }
+        $deleteone = $ac->prepare("DELETE FROM offers WHERE id = ?");
+        $deleteone->execute(array($id));
+
+        $deleteonet = $ac->prepare("DELETE FROM offermatters WHERE oid = ?");
+        $deleteonet->execute(array($id));
+
+
+        $res = array(
+            "message" => "Başarılı", // Silme işlemi başarılı olduğunda başarılı mesajı döndürülür
+            "status" => 200 // Başarılı durum kodu
+        );
+        echo json_encode($res);
+        return false;
+    } catch (PDOException $e) {
+        $res = array(
+            "message" => $e->getMessage(), // Hata mesajı döndürülür
+            "status" => 400 // Başarısız durum kodu
+        );
+        echo json_encode($res);
+        return false;
+    }
+}
+
+
+if ($_POST["page"] == "reports/reports") {
+    $ris = $_GET["id"];
+    if ($ris && @$_GET["mode"] == "delete" && @$_GET["code"] == "04md177") {
+        // permcontrol("reportdel");
+        try {
+
+            //RAPORA AİT İÇERİKLER SİLİNİR
+            $sql = $ac->prepare("SELECT rt.page_link FROM reports r 
+                            LEFT JOIN report_types rt on rt.id = r.report_type 
+                            WHERE r.id= ?");
+            $sql->execute(array($ris));
+            $content_table = $sql->fetchColumn();
+
+
+            //Bazı raporlara ait içerik olmadığından böyle bir tablo var mı diye kontrol edilir
+            $content_table_name = 'report_' . $content_table . '_content';
+            if (isTableExists($content_table_name)) {
+                $delete_content = $ac->prepare("DELETE FROM " . $content_table_name . " WHERE report_id = ?");
+                $delete_content->execute(array($ris));
+            }
+
+            // RAPORA AİT DOSYALAR GETİRİLİR VE FILES KLASORUNDEN SİLİNİR
+            $report_files = $ac->prepare("SELECT * FROM files WHERE report_id = ?");
+            $report_files->execute(array($ris));
+
+            while ($files = $report_files->fetch(PDO::FETCH_ASSOC)) {
+                $file_path = "files/" . $files["filename"]; // Dosya yolunu oluştur
+                if (file_exists($file_path)) { // Dosya var mı diye kontrol et
+                    unlink($file_path); // Dosyayı sil
+                    echo "Dosya silindi: $file_path<br>"; // İsteğe bağlı: silinen dosyayı göster
+                } else {
+                    echo "Dosya bulunamadı: $file_path<br>"; // İsteğe bağlı: bulunamayan dosyayı göster
+                }
+            }
+            //RAPORA AİT DOSYALAR VERİTABANINDAN SİLİNİR
+            $delete_files = $ac->prepare("DELETE FROM files WHERE report_id = ?");
+            $delete_files->execute(array($ris));
+
+
+            //RAPORUN KENDİSİ VERİTABANINNDAN SİLİNİR
+            $delets = $ac->prepare("DELETE FROM reports WHERE id = ?");
+            $delets->execute(array($ris));
+
+            $res = array(
+                "message" => "Başarılı", // Silme işlemi başarılı olduğunda başarılı mesajı döndürülür
+                "status" => 200 // Başarılı durum kodu
+            );
+            echo json_encode($res);
+            return false;
+        } catch (PDOException $e) {
+            $res = array(
+                "message" => $e->getMessage(), // Hata mesajı döndürülür
+                "status" => 400 // Başarısız durum kodu
+            );
+            echo json_encode($res);
+            return false;
+        }
+
+    }
+
+}
+
+
+
+
+
+if ($id && $_GET["mode"] == "delete" && $_GET["code"] == "04md177") {
+    if ($_POST["page"] != "offers" && $_POST["page"] != "reports/reports") {
+
+        $id = @$_POST["id"];
+        $table = $_POST["table"] ? $_POST["table"] : $_POST["page"];
+        try {
+            $pdq = $ac->prepare("DELETE FROM " . $table . " WHERE id = ?");
+            $pdq->execute(array($id));
+
+            $res = array(
+                "message" => "Başarılı", // Silme işlemi başarılı olduğunda başarılı mesajı döndürülür
+                "status" => 200 // Başarılı durum kodu
+            );
+            echo json_encode($res);
+            return false;
+        } catch (PDOException $e) {
+            $res = array(
+                "message" => $e->getMessage(), // Hata mesajı döndürülür
+                "status" => 400 // Başarısız durum kodu
+            );
+            echo json_encode($res);
+            return false;
+        }
+    }
+}
+
+
+
+
+if (isset($_POST["customer_id"])) {
+
+    try {
+
+        $customer_id = $_POST["customer_id"];
+        $sql = $ac->prepare("SELECT * FROM customers WHERE id = ?");
+        $sql->execute(array($customer_id));
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+
+        $of_query = $ac->prepare("SELECT id, offerNumber FROM offers WHERE cid = ? AND statu = 2");
+        $of_query->execute(array($customer_id));
+
+
+        $status = 200;
+        $res = array(
+            "city" => $result["city"],
+            "ilce" => $result["ilce"],
+            "region" => $result["region"],
+            "status" => $status,
+            "offers" => $of_query->fetchAll(PDO::FETCH_ASSOC),
+        );
+
+
+
+
+        echo json_encode($res);
+        return false;
+
+    } catch (PDOException $ex) {
+
+        $res = array(
+            "message" => $ex->getMessage(),
+            "status" => 400,
+        );
+        echo json_encode($res);
+        return false;
+    }
+}

@@ -1,0 +1,51 @@
+# Agent and temporary git backups
+.agent/
+.gitkk/
+
+# Composer
+vendor/
+composer.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+tmp/
+
+# Local config
+configs/config.php
+config.php
+.env
+.env.local
+
+# Database backups
+backups/
+*.sql
+
+# Session files
+ session/
+
+# Cache
+cache/
+.cache/
+
+# Node modules (if used)
+node_modules/
+
+# Public files that shouldn't be tracked
+uploads/
+files/downloads/
