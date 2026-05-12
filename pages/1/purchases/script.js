@@ -174,6 +174,17 @@ $(document).ready(function () {
     $("#tProduct").on("click", ".sil", function (e) {
         e.preventDefault();
         $(this).closest("tr").remove();
+        
+        // Re-index remaining rows and file inputs
+        $("#tProduct tbody tr").each(function(index) {
+            $(this).find("td:first-child span.text-muted").text(index + 1);
+            $(this).find("input[name='satirno[]']").val(index + 1);
+            $(this).find("input[type='file']").attr("name", "row_file_" + index);
+        });
+        
+        // Update the counter for adding new rows
+        $("#rowNumberId").val($("#tProduct tbody tr").length + 1);
+        
         updateToplamPurchase();
     })
 

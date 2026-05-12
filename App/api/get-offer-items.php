@@ -187,8 +187,7 @@ foreach ($results as $r) {
         : "<span class='badge badge-warning'>".$r['durum']."</span>";
         
     $actions = '
-        <a href="index.php?p=offers/offer-manage&id='.$r['oid'].'" class="btn btn-sm btn-outline-primary" data-tooltip="Teklifi Düzenle"><i class="fa fa-pencil"></i></a>
-        <a href="index.php?p=offer-view&id='.$r['oid'].'" target="_blank" class="btn btn-sm btn-outline-secondary ml-1" data-tooltip="Göster"><i class="fa fa-eye"></i></a>
+        <a href="index.php?p=offer-view&id='.$r['oid'].'" target="_blank" class="btn btn-sm btn-outline-secondary" data-tooltip="Göster"><i class="fa fa-eye"></i></a>
     ';
 
     $data[] = [

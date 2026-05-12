@@ -186,7 +186,7 @@ if ($demand == true) {
         <div class="clearfix">
             <div class="pull-left">
                 <h4 class="text-blue">
-                    <?php echo $pdat["p_title"]; ?>
+                    <?php global $pdat; echo $pdat["p_title"] ?? 'Yeni Satın Alma'; ?>
                 </h4>
                 <p class="mb-30 font-14">Sayfadaki <font color="red">(*)</font> yıldız ile belirtilen alanları boş
                     bırakmayın..<br>
@@ -317,7 +317,7 @@ if ($demand == true) {
 
                     <div class="col-sm-12 col-md-8">
                         <input type="text" class="form-control date-picker" name="invoice_date"
-                            value="<?php echo $purchase->invoice_date; ?>">
+                            value="<?php echo $purc["invoice_date"] ?? ''; ?>">
                     </div>
                 </div>
                 <!-- Fatura Tarihi -->

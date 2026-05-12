@@ -963,7 +963,7 @@ function getUsername($id)
 	$sql = $ac->prepare('SELECT * FROM users WHERE id = ?');
 	$sql->execute(array($id));
 	$userInfo = $sql->fetch(PDO::FETCH_ASSOC);
-	return $userInfo['username'];
+	return $userInfo['username'] ?? '';
 }
 
 function getUserInfo($id, $field = 'username')
@@ -972,7 +972,7 @@ function getUserInfo($id, $field = 'username')
 	$sql = $ac->prepare('SELECT * FROM users WHERE id = ?');
 	$sql->execute(array($id));
 	$userInfo = $sql->fetch(PDO::FETCH_ASSOC);
-	return $userInfo[$field];
+	return $userInfo[$field] ?? '';
 }
 
 function getCustomerName($id)
@@ -981,7 +981,7 @@ function getCustomerName($id)
 	$sql = $ac->prepare('SELECT * FROM customers WHERE id = ?');
 	$sql->execute(array($id));
 	$company = $sql->fetch(PDO::FETCH_ASSOC);
-	return $company['company'];
+	return $company['company'] ?? '';
 }
 
 function getMailInfo($id, $field)
@@ -990,7 +990,7 @@ function getMailInfo($id, $field)
 	$sql = $ac->prepare('SELECT * FROM mail_accounts WHERE id = ?');
 	$sql->execute(array($id));
 	$mailinfo = $sql->fetch(PDO::FETCH_ASSOC);
-	return $mailinfo[$field];
+	return $mailinfo[$field] ?? '';
 }
 
 function getSettingsField($fieldname)
@@ -999,7 +999,7 @@ function getSettingsField($fieldname)
 	$sql = $ac->prepare('SELECT * FROM settings WHERE var = ?');
 	$sql->execute(array($fieldname));
 	$settingsinfo = $sql->fetch(PDO::FETCH_ASSOC);
-	return $settingsinfo['val'];
+	return $settingsinfo['val'] ?? '';
 }
 
 /*

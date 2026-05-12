@@ -2,8 +2,8 @@
 require_once '../../configs/config.php';
 require_once '../../configs/functions.php';
 
-$id = $_POST["id"];
-$type = $_GET["type"];
+$id = $_POST["id"] ?? null;
+$type = $_GET["type"] ?? null;
 
 //RAPOR DETAYI SORGULAMA İÇİN
 if ($type == "report-detail") {

@@ -8,6 +8,8 @@ use App\Model\PurchaseModel;
 
 $Purchases = new PurchaseModel();
 
+global $pdat; // IDE desteği ve global erişim için
+
 //güncelleme işlem ise id alınır yoksa 0 atanır.
 $id = isset($_GET["id"]) ? $_GET["id"] : 0;
 
@@ -23,6 +25,10 @@ if ($demand) {
 //Güncelleme işlemi ise satın alma bilgilerini getirir.
 $purchase = $Purchases->find($id);
 
+if (!$purchase) {
+    $purchase = new stdClass();
+}
+
 
 //Satın almanın ürünlerini getirir.
 $purchaseItems = $Purchases->getPurchaseItems($id);
@@ -34,7 +40,7 @@ if ($demand == true || $id == 0) {
     $getNumber = setNumber("purchase");
     $siparisNo = "SA000" . $getNumber;
 } else {
-    $siparisNo = $purchase->siparisNo;
+    $siparisNo = $purchase->siparisNo ?? '';
 }
 
 ?>
@@ -47,7 +53,7 @@ if ($demand == true || $id == 0) {
         <div class="clearfix">
             <div class="pull-left">
                 <h4 class="text-blue">
-                    <?php echo $pdat["p_title"]; ?>
+                    <?php echo $pdat["p_title"] ?? 'Satın Alma Yönetimi'; ?>
                 </h4>
                 <p class="mb-30 font-14">Sayfadaki <font color="red">(*)</font> yıldız ile belirtilen alanları boş
                     bırakmayın..<br>
@@ -229,7 +235,7 @@ if ($demand == true || $id == 0) {
                     </label>
                     <div class="col-md-8">
                         <textarea name="description2" class="form-control"
-                            type="text"><?php echo $purchase->description2; ?></textarea>
+                            type="text"><?php echo $purchase->description2 ?? ''; ?></textarea>
                     </div>
                 </div>
                 <!-- Açıklama -->
@@ -351,7 +357,7 @@ if ($demand == true || $id == 0) {
                         $i = 0;
                         //Eğer purchaseItems boş ise yeni bir satır eklenir.
                         if (empty($purchaseItems)) {
-                            $purchaseItems = [0];
+                            $purchaseItems = [new stdClass()];
                         }
                         foreach ($purchaseItems as $item) {
                             $i++;
@@ -370,8 +376,8 @@ if ($demand == true || $id == 0) {
                                 <!--Sırano-->
 
                                 <!-- Stok Kodu -->
-                                <td class="app-item-stock"><input type="text" id="stokKodu<?php echo $satirNo; ?>"
-                                        value="<?php echo $item->stokKodu; ?>" name="stokKodu[]" class="form-control"
+                                <td class="app-item-stock"><input type="text" id="stokKodu<?php echo $i; ?>"
+                                        value="<?php echo $item->stokKodu ?? ''; ?>" name="stokKodu[]" class="form-control"
                                         placeholder="Stok Kodu giriniz!">
                                 </td>
                                 <!-- Stok Kodu -->
@@ -381,7 +387,7 @@ if ($demand == true || $id == 0) {
                                     <div class="input-group m-0">
 
                                         <input type="text" class="urunAdi form-control" name="urunAdi[]"
-                                            id="urunAdi<?php echo $i; ?>" value="<?php echo $item->product; ?>"
+                                            id="urunAdi<?php echo $i; ?>" value="<?php echo $item->product ?? ''; ?>"
                                             placeholder="Ürün adını giriniz!">
                                         <button type="button" id="<?php echo $i; ?>"
                                             class="btn btn-sm btn-info selectProduct" data-bs-toggle="modal"
@@ -396,27 +402,27 @@ if ($demand == true || $id == 0) {
                                 <!-- MİKTAR -->
                                 <td class="app-item-amount">
                                     <input type="number" autocomplete="off" required id="amount" name="amount[]"
-                                        value="<?php echo $item->amount; ?>" class="Adet form-control">
+                                        value="<?php echo $item->amount ?? ''; ?>" class="Adet form-control">
                                 </td>
                                 <!-- MİKTAR -->
 
                                 <!-- ÖLÇÜ BİRİMLERİ -->
                                 <td class="app-item-unit">
-                                    <?php OlcuBirimleri('unit[]', $item->unit, "required", "unit" . $i) ?>
+                                    <?php OlcuBirimleri('unit[]', $item->unit ?? '', "required", "unit" . $i) ?>
                                 </td>
                                 <!-- ÖLÇÜ BİRİMLERİ -->
 
                                 <!-- FİYAT -->
                                 <td class="app-item-price">
                                     <input required id="price<?php echo $i; ?>" name="price[]" type="number"
-                                        value="<?php echo $item->price; ?>" class="form-control mr-1" autocomplete="off">
+                                        value="<?php echo $item->price ?? ''; ?>" class="form-control mr-1" autocomplete="off">
 
                                 </td>
                                 <!-- FİYAT -->
 
                                 <!-- PARA BİRİMLERİ -->
                                 <td class="app-item-cur">
-                                    <?php echo Financial::getCurrencySelect("currency[]", $item->currency, "currency" . $i) ?>
+                                    <?php echo Financial::getCurrencySelect("currency[]", $item->currency ?? '', "currency" . $i) ?>
                                 </td>
                                 <!-- PARA BİRİMLERİ -->
                             </tr>
@@ -468,20 +474,20 @@ if ($demand == true || $id == 0) {
                             </td>
                             <td>
                                 <input type="text" class="form-control" name="EuroAlttoplam" id="EuroAlttoplam"
-                                    value="<?php echo $purchase->EuroTotal ?>">
+                                    value="<?php echo $purchase->EuroTotal ?? '0.00' ?>">
                             </td>
                             <td>
                                 <input type="text" class="form-control" name="DolarAlttoplam" id="DolarAlttoplam"
-                                    value="<?php echo $purchase->DolarTotal ?>">
+                                    value="<?php echo $purchase->DolarTotal ?? '0.00' ?>">
                             </td>
                             <td>
                                 <input type="text" class="form-control" name="TLAlttoplam" id="TLAlttoplam"
-                                    value="<?php echo $purchase->TLTotal ?>">
+                                    value="<?php echo $purchase->TLTotal ?? '0.00' ?>">
                             </td>
 
                             <td>
                                 <input type="number" autocomplete="off" class="form-control text-center" name="iskonto"
-                                    value="<?php echo $purchase->iskonto; ?>" id="iskonto">
+                                    value="<?php echo $purchase->iskonto ?? '0.00'; ?>" id="iskonto">
                             </td>
                             <td>
 
@@ -489,7 +495,7 @@ if ($demand == true || $id == 0) {
                             </td>
                             <td>
                                 <input type="text" autocomplete="off" class="form-control text-center" name="altToplam"
-                                    id="altToplamInput" value="<?php echo $purchase->altToplam; ?>">
+                                    id="altToplamInput" value="<?php echo $purchase->altToplam ?? '0.00'; ?>">
                                 <input type="hidden" id="araToplam" name="araToplam" value="">
                             </td>
                         </tr>

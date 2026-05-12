@@ -2,9 +2,9 @@
 
 $pids = @$_GET['id'];
 
-if ($_GET["st"] == "success-mail") {
+if ((@$_GET["st"] ?? "") == "success-mail") {
     showAlert("success", "Mail başarı ile gönderildi!");
-} else if (@$_GET["st"] == "unsuccessful") {
+} else if ((@$_GET["st"] ?? "") == "unsuccessful") {
     showAlert("alert", "Mail gönderilirken bir hata oluştu");
 }
 
@@ -120,8 +120,8 @@ use App\Helper\Helper;
                         <?php
                         $user = getUserName($purc['creator']); // Oluşturan kullanıcı
                         $updatedUser = getUserName($purc['updater']); // Güncelleyen kullanıcı
-                        $createdDate = $purc['created_at']; // Oluşturulma tarihi
-                        $updatedDate = $purc['updated_at']; // Güncelleme tarihi
+                        $createdDate = $purc['create_time'] ?? ''; // Oluşturulma tarihi
+                        $updatedDate = $purc['updated_at'] ?? ''; // Güncelleme tarihi
 
                         echo "<span class='custom-tooltip' data-tooltip=\"Oluşturulma Tarihi: {$createdDate}\nGüncelleyen: {$updatedUser}\nGüncelleme Tarihi: {$updatedDate}\">";
                         if (!empty($user)) {
@@ -135,10 +135,10 @@ use App\Helper\Helper;
                     <td>
                         <?php
                         if ($purc['type'] == 1) {
-                            $demand = 'demand-';
                             $type = 'TALEP';
+                        } else if ($purc['type'] == 2) {
+                            $type = 'FİYAT TALEBİ';
                         } else {
-                            $demand = '';
                             $type = 'SİPARİŞ';
                         }
 

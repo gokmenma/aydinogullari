@@ -1,6 +1,4 @@
-# Aydın Oğulları İnşaat - İnsan Kaynakları Yönetim Sistemi
-
-Modern ve profesyonel PHP tabanlı İK yönetim sistemi.
+# Aydınoğulları Yangın Söndürme Sistemleri - Yönetim Sistemi
 
 ## 🎯 Özellikler
 
@@ -122,13 +120,9 @@ ini_set('display_errors', 1);
 
 ## 📞 İletişim
 
-**Proje Sahibi**: Aydın Oğulları İnşaat
-**Email**: info@aydinogullari.com
-
-## 📄 Lisans
-
-Proprietary - Tüm hakları saklıdır.
+**Proje Sahibi**: Aydınoğulları Yangın Söndürme Sistemleri
+**Email**: [EMAIL_ADDRESS]
 
 ---
 
-**Son Güncelleme**: 11 Kasım 2025
+**Son Güncelleme**: 12 Mayıs 2026

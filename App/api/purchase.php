@@ -25,12 +25,37 @@ if ($_POST['action'] == 'doneDemand') {
         'message' => $message
     );
     echo json_encode($res);
+    exit;
+}
+
+if ($_POST['action'] == 'deleteItemFile') {
+    $purchaseId = $_POST['purchaseId'];
+    $itemId = $_POST['itemId'];
+
+    try {
+        // Clear both image and excel_file fields as we merged them in the UI
+        $sql = $ac->prepare('UPDATE purchase_items SET image = NULL, excel_file = NULL WHERE id = ?');
+        $sql->execute(array($itemId));
+
+        $status = 'success';
+        $message = 'Dosya başarıyla silindi.';
+    } catch (PDOException $ex) {
+        $status = 'error';
+        $message = $ex->getMessage();
+    }
+
+    $res = array(
+        'status' => $status,
+        'message' => $message
+    );
+    echo json_encode($res);
+    exit;
 }
 
 if ($_POST['action'] == 'savePurchases') {
 
     $id = $_POST['id'];
-    $demand = $_POST['demand'];
+    $demand = $_POST['demand'] ?? 0;
     
     //Eğer satın alma talebinden geliyorsa yeni bir satın alma işlemi oluşturulacak
     if ($demand == 1) {
@@ -45,24 +70,24 @@ if ($_POST['action'] == 'savePurchases') {
             'companyID' => $_POST['customers'],
             'currency' => $_POST['cur_type'],
             'deadline' => $_POST['deadline'],
-            'payment_period' => $_POST['payment_period'],
-            'payment_date' => $_POST['payment_date'],
+            'payment_period' => $_POST['payment_period'] ?? '',
+            'payment_date' => $_POST['payment_date'] ?? '',
             'description1' => $_POST['description1'],
-            'description2' => $_POST['description2'],
+            'description2' => $_POST['description2'] ?? '',
             'altToplam' => $_POST['altToplam'],
-            'vadeGun' => $_POST['vadeGun'],
-            'Dollar' => $_POST['Dollar'],
-            'Euro' => $_POST['Euro'],
-            'DolarTotal' => $_POST['DolarAlttoplam'],
-            'EuroTotal' => $_POST['EuroAlttoplam'],
-            'TLTotal' => $_POST['TLAlttoplam'],
-            'Kdv' => $_POST['Kdv'],
-            'iskonto' => $_POST['iskonto'],
-            'ToplamTL' => $_POST['ToplamTL'],
+            'vadeGun' => $_POST['vadeGun'] ?? 0,
+            'Dollar' => $_POST['Dollar'] ?? 0,
+            'Euro' => $_POST['Euro'] ?? 0,
+            'DolarTotal' => $_POST['DolarAlttoplam'] ?? 0,
+            'EuroTotal' => $_POST['EuroAlttoplam'] ?? 0,
+            'TLTotal' => $_POST['TLAlttoplam'] ?? 0,
+            'Kdv' => $_POST['Kdv'] ?? 0,
+            'iskonto' => $_POST['iskonto'] ?? 0,
+            'ToplamTL' => $_POST['ToplamTL'] ?? 0,
             'state' => $_POST['state'] ?? 1,
-            'invoice_date' => $_POST['invoice_date'],
-            'invoice_number' => $_POST['invoice_number'],
-            'type' => 2
+            'invoice_date' => $_POST['invoice_date'] ?? '',
+            'invoice_number' => $_POST['invoice_number'] ?? '',
+            'type' => $_POST['type'] ?? 0
             
         ];   
 
@@ -90,21 +115,53 @@ if ($_POST['action'] == 'savePurchases') {
 
         $urunAdi = $_POST['urunAdi'];
         if (isset($urunAdi)) {
+            // Mevcut ürünleri al (resim/excel yollarını korumak için)
+            $existingItems = $Purchase->getPurchaseItems($id);
+            
             //Satın alma'nın ürünlerini siler
             $Purchase->deletePurchaseItems($id);
 
             //Satın alma'nın ürünlerini ekler
             for ($i = 0; $i < count($urunAdi); $i++) {
-                $Purchase->savePurchaseItems([
+                $itemData = [
                     'purID' => $lastInsertId,
                     'product' => $urunAdi[$i],
                     'stokKodu' => $_POST['stokKodu'][$i],
                     'amount' => $_POST['amount'][$i],
                     'unit' => $_POST['unit'][$i],
                     'price' => $_POST['price'][$i],
-                    'currency' => $_POST['currency'][$i]
+                    'currency' => $_POST['currency'][$i],
+                    'rowdescription' => $_POST['rowdescription'][$i] ?? ''
+                ];
 
-                ]);
+                // Tek bir dosya yükleme işlemi (Resim veya Excel)
+                if (isset($_FILES["row_file_$i"]) && $_FILES["row_file_$i"]['error'] == 0) {
+                    $fileInfo = pathinfo($_FILES["row_file_$i"]['name']);
+                    $ext = strtolower($fileInfo['extension']);
+                    $fileName = time() . "_" . preg_replace("/[^a-zA-Z0-9\._-]/", "", $_FILES["row_file_$i"]['name']);
+                    $targetPath = "uploads/purchases/" . $fileName;
+                    
+                    if (move_uploaded_file($_FILES["row_file_$i"]['tmp_name'], dirname(__DIR__, 2) . "/" . $targetPath)) {
+                        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                        $docExtensions = ['xls', 'xlsx', 'csv', 'pdf'];
+                        
+                        if (in_array($ext, $imageExtensions)) {
+                            $itemData['image'] = $targetPath;
+                        } elseif (in_array($ext, $docExtensions)) {
+                            $itemData['excel_file'] = $targetPath;
+                        }
+                    }
+                } else {
+                    // Yeni dosya yoksa mevcutları koru
+                    if (isset($existingItems[$i]->image)) {
+                        $itemData['image'] = $existingItems[$i]->image;
+                    }
+                    if (isset($existingItems[$i]->excel_file)) {
+                        $itemData['excel_file'] = $existingItems[$i]->excel_file;
+                    }
+                }
+
+                $Purchase->savePurchaseItems($itemData);
             }
         }
 
@@ -114,12 +171,16 @@ if ($_POST['action'] == 'savePurchases') {
 
 //Geriye mesaj ve durumu döndür
         $status = "success";
-        $message = "Satın alma işlemi başarıyla tamamlandı." ;
+        $message = "İşlem başarıyla tamamlandı." ;
         $id = $lastInsertId;
 
 
         //Bir sonraki sipariş numarasını belirle
-        Helper::setDefineNumber('purchase');
+        if ($_POST['type'] == 2) {
+             Helper::setDefineNumber('price_request');
+        } else {
+             Helper::setDefineNumber('purchase');
+        }
 
     } catch (PDOException $ex) {
         $status = "error";

@@ -86,6 +86,7 @@
                         if (permtrue("purchaseadd")) { ?>
                             <li><a href="index.php?p=purchases/manage">Yeni Sipariş</a></li>
                         <?php } ?>
+                        <li><a href="index.php?p=purchases/price-request-list">Fiyat Talepleri</a></li>
                         <li><a href="index.php?p=purchases">Tümünü Görüntüle</a></li>
 
                     </ul>
