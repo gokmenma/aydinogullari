@@ -169,112 +169,94 @@ if ($cid || $sid) {
 }
 
 ?>
-<div class="content pd-20 bg-white border-radius-16 box-shadow mb-10">
-    <div class="clearfix mb-10">
-        <div class="row">
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-10">
-                <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                    <div class="project-info">
-                        <div class="project-info-left">
-                            <div class="icon box-shadow bg-yellow text-white">
-                                <i class="fa fa-hourglass-o"></i>
-                            </div>
-                        </div>
-                        <div class="project-info-right">
-                            <span class="no text-blue weight-500 font-24">
-                                <?php echo $bekleyen_servis_sayisi; ?>
-                            </span>
-                            <p>
-                                <a target="_blank" class="weight-400 font-18" href="">Bekleyen Servis Sayısı</a>
-                            </p>
-                        </div>
+<div class="bg-white premium-section-card box-shadow mb-4 animate-fade-in">
+    <div class="row">
+        <!-- Bekleyen Servisler -->
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-4 mb-lg-0">
+            <div class="dashboard-card card-yellow">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Bekleyen Servis Sayısı</span>
+                        <span class="no text-warning weight-700 font-30">
+                            <?php echo $bekleyen_servis_sayisi; ?>
+                        </span>
+                    </div>
+                    <div class="icon bg-warning text-white box-shadow">
+                        <i class="fa fa-hourglass-o"></i>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-10">
-                <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                    <div class="project-info">
-                        <div class="project-info-left">
-                            <div class="icon box-shadow bg-blue text-white">
-                                <i class="fa fa-wrench"></i>
-                            </div>
-                        </div>
-                        <div class="project-info-right">
-                            <span class="no text-blue weight-500 font-24">
-                                <?php echo $calisilan_servis_sayisi; ?>
-                            </span>
-                            <p>
-                                <a target="_blank" class="weight-400 font-18" href="">Çalışılan Servis Sayısı:</a>
-                            </p>
-                        </div>
+        </div>
+        
+        <!-- Çalışılan Servisler -->
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-4 mb-lg-0">
+            <div class="dashboard-card card-blue">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Çalışılan Servis Sayısı</span>
+                        <span class="no text-blue weight-700 font-30">
+                            <?php echo $calisilan_servis_sayisi; ?>
+                        </span>
+                    </div>
+                    <div class="icon bg-blue text-white box-shadow">
+                        <i class="fa fa-wrench"></i>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-10">
-                <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                    <div class="project-info clearfix">
-                        <div class="project-info-left">
-                            <div class="icon box-shadow bg-green text-white">
-                                <i class="fa fa-check"></i>
-                            </div>
-                        </div>
-                        <div class="project-info-right">
-                            <span class="no text-blue weight-500 font-24">
-                                <?php echo $tamamlanan_servis_sayisi; ?>
-                            </span>
-                            <p class="weight-400 font-18">
-                                <a target="_blank" href="">
-                                    Tamamlanan Servis Sayısı
-                                </a>
-                            </p>
-                        </div>
+        </div>
+        
+        <!-- Tamamlanan Servisler -->
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-4 mb-md-0">
+            <div class="dashboard-card card-green">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Tamamlanan Servis Sayısı</span>
+                        <span class="no text-success weight-700 font-30">
+                            <?php echo $tamamlanan_servis_sayisi; ?>
+                        </span>
+                    </div>
+                    <div class="icon bg-success text-white box-shadow">
+                        <i class="fa fa-check"></i>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-10">
-                <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                    <div class="project-info clearfix">
-                        <div class="project-info-left">
-                            <div class="icon box-shadow bg-danger text-white">
-                                <i class="fa fa-close"></i>
-                            </div>
-                        </div>
-                        <div class="project-info-right">
-                            <span class="no text-blue weight-500 font-24">
-                                <?php echo $iptal_servis_sayisi; ?>
-                            </span>
-                            <p class="weight-400 font-18">
-                                <a target="_blank" href="">
-                                    İptal Edilen Servis Sayısı
-                                </a>
-                            </p>
-                        </div>
+        </div>
+        
+        <!-- İptal Edilen Servisler -->
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="dashboard-card card-red">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">İptal Edilen Servis Sayısı</span>
+                        <span class="no text-danger weight-700 font-30">
+                            <?php echo $iptal_servis_sayisi; ?>
+                        </span>
+                    </div>
+                    <div class="icon bg-danger text-white box-shadow">
+                        <i class="fa fa-close"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="content pd-20 bg-white border-radius-16 box-shadow mb-30">
-    <div class="clearfix mb-20">
-        <div class="pull-left">
-            <h5 class="text-blue">Oluşturulan Tüm Servisler</h5>
+
+<div class="bg-white premium-section-card box-shadow mb-30 animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-30" style="flex-wrap: wrap; gap: 15px;">
+        <div>
+            <h4 class="text-blue weight-600 mb-0">Oluşturulan Tüm Servisler</h4>
         </div>
-        <div class="float-right">
+        <div>
             <!-- Excele Aktar -->
             <?php if (permtrue("data_export_service")) { ?>
-                <a href="#" class="btn btn-secondary" id="exportExcel"><i class="fa fa-file-excel-o"></i>
-                    Excele Aktar</a>
-                <!-- Excele Aktar -->
-                </a>
+                <a href="#" class="btn btn-outline-success mr-2" id="exportExcel"><i class="fa fa-file-excel-o mr-1"></i>
+                    Excel'e Aktar</a>
             <?php } ?>
             <?php if (permtrue("serviceAdd")) { ?>
-                <a href="index.php?p=service/manage" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Yeni Servis
+                <a href="index.php?p=service/manage" class="btn btn-primary"><i class="fa fa-plus-circle mr-1"></i> Yeni Servis
                     Oluştur</a>
-
             <?php } ?>
         </div>
-
     </div>
     <div class="search-input-area d-flex"></div>
     <div class="table-responsive">

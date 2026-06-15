@@ -115,6 +115,15 @@ if ($_POST) {
         $price_desc = $_POST['price_desc'];
         $pstatu = $_POST['pstatu'];
         $contract_statu = $_POST['contract_statu'];
+        $contract_updated_at = $cc['contract_updated_at'] ?? null;
+        $contract_updated_by = $cc['contract_updated_by'] ?? null;
+        if ($contract_statu == 2 && $cc['contract_statu'] != 2) {
+            $contract_updated_at = date('Y-m-d H:i:s');
+            $contract_updated_by = sesset('id');
+        } elseif ($contract_statu != 2) {
+            $contract_updated_at = null;
+            $contract_updated_by = null;
+        }
         $pps = '';
         foreach ($_POST['permings'] as $psx) {
             $pps .= $psx . '|';
@@ -136,7 +145,9 @@ if ($_POST) {
                 price = ?,price_desc = ?,
                 pnotes = ?,
                 pstatu = ? ,
-                contract_statu = ?
+                contract_statu = ?,
+                contract_updated_at = ?,
+                contract_updated_by = ?
                  WHERE id = ?");
 
         $upxsx->execute(array(
@@ -157,6 +168,8 @@ if ($_POST) {
             $pnote,
             $pstatu,
             $contract_statu,
+            $contract_updated_at,
+            $contract_updated_by,
             $sid
         ));
 
@@ -199,6 +212,12 @@ if ($_POST) {
         $pnote = addslashes(@$_POST["servicesnote"]);
         $pstatu = $_POST["pstatu"];
         $contract_statu = $_POST["contract_statu"];
+        $contract_updated_at = null;
+        $contract_updated_by = null;
+        if ($contract_statu == 2) {
+            $contract_updated_at = date('Y-m-d H:i:s');
+            $contract_updated_by = sesset('id');
+        }
         $pps = "";
 
         foreach ($_POST["permings"] as $psx) {
@@ -209,7 +228,8 @@ if ($_POST) {
                 pcid = ?, poid = ?, servicestype = ?, service_number = ?,
                 collectiontype = ?, address = ?, region = ?, pcreativer = ?,
                 pdesc = ?, pstart_date = ?, pauthors = ?, price = ?,
-                price_desc = ?, teklifID = ?, pnotes = ?, pstatu = ?, contract_statu = ?");
+                price_desc = ?, teklifID = ?, pnotes = ?, pstatu = ?, contract_statu = ?,
+                contract_updated_at = ?, contract_updated_by = ?");
 
         $regxs->execute(array(
             $company,
@@ -228,7 +248,9 @@ if ($_POST) {
             $teklifID,
             $pnote,
             $pstatu,
-            $contract_statu
+            $contract_statu,
+            $contract_updated_at,
+            $contract_updated_by
         ));
 
         if ($regxs) {
@@ -1396,6 +1418,18 @@ $pageIcon = $isEdit ? 'fa-pencil-square-o' : 'fa-plus-circle';
                             <span class="audit-label">Son Güncelleme</span>
                             <span class="audit-value"><?php echo date_tr($cc['update_at']); ?></span>
                         </div>
+                        <?php if ($cc['contract_statu'] == 2 && !empty($cc['contract_updated_at'])) { ?>
+                            <div class="audit-row">
+                                <div class="audit-icon"><i class="fa fa-file-text-o"></i></div>
+                                <span class="audit-label">Sözleşmeyi Yapan</span>
+                                <span class="audit-value"><?php echo getUserName($cc['contract_updated_by']); ?></span>
+                            </div>
+                            <div class="audit-row">
+                                <div class="audit-icon"><i class="fa fa-calendar-check-o"></i></div>
+                                <span class="audit-label">Sözleşme Tarihi</span>
+                                <span class="audit-value"><?php echo date_tr($cc['contract_updated_at']); ?></span>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             <?php } ?>

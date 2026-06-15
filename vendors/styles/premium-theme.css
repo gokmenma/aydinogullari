@@ -46,6 +46,8 @@
 .dashboard-card.card-green::before { background: #10b981; }
 .dashboard-card.card-orange::before { background: #f59e0b; }
 .dashboard-card.card-purple::before { background: #8b5cf6; }
+.dashboard-card.card-red::before { background: #ef4444; }
+.dashboard-card.card-yellow::before { background: #eab308; }
 
 .dashboard-card .icon {
     width: 48px;
@@ -196,3 +198,246 @@ table {
 .animate-fade-in {
     animation: fadeInUp 0.5s ease forwards;
 }
+
+/* Premium DataTables Styling */
+.data-table thead th {
+    background: #f8fafc !important;
+    color: #475569 !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 12px !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    border-top: none !important;
+    vertical-align: middle !important;
+}
+
+.data-table tbody td {
+    padding: 16px 12px !important;
+    font-size: 14px;
+    color: #334155;
+    vertical-align: middle !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    border-color: #f1f5f9 !important;
+}
+
+.data-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+
+/* Style the input fields inside filters */
+.search-input-row th {
+    padding: 10px 8px !important;
+    background: #f8fafc !important;
+}
+
+.search-input-row th input {
+    border-radius: 6px !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    transition: all 0.2s;
+    background-color: #ffffff !important;
+    width: 100%;
+    color: #334155;
+}
+
+.search-input-row th input:focus {
+    border-color: #6366f1 !important;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+/* Datatable pagination and search container */
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 6px 12px !important;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus,
+.dataTables_wrapper .dataTables_length select:focus {
+    border-color: #6366f1 !important;
+}
+
+/* Modern soft badges in the table */
+.data-table .badge {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    border: none !important;
+    color: #fff !important;
+    display: inline-block;
+}
+
+/* Action buttons styling */
+.data-table .btn {
+    border-radius: 6px !important;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease;
+}
+
+.data-table .btn-outline-info {
+    border-color: #3b82f6 !important;
+    color: #3b82f6 !important;
+}
+.data-table .btn-outline-info:hover {
+    background: #3b82f6 !important;
+    color: #ffffff !important;
+}
+
+.data-table .btn-outline-success {
+    border-color: #10b981 !important;
+    color: #10b981 !important;
+}
+.data-table .btn-outline-success:hover {
+    background: #10b981 !important;
+    color: #ffffff !important;
+}
+
+.data-table .btn-outline-danger {
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+}
+.data-table .btn-outline-danger:hover {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+/* Premium Styling for Bootstrap Select / Selectpicker dropdowns */
+.bootstrap-select:not(.bs-container) {
+    width: 100% !important;
+}
+
+.bootstrap-select > .dropdown-toggle {
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    background-color: #ffffff !important;
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #334155 !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
+    transition: all 0.2s ease !important;
+}
+
+.bootstrap-select > .dropdown-toggle:hover,
+.bootstrap-select > .dropdown-toggle:focus,
+.bootstrap-select.show > .dropdown-toggle {
+    border-color: #6366f1 !important;
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+    outline: none !important;
+}
+
+/* Dropdown Menu Container */
+.bootstrap-select .dropdown-menu {
+    border-radius: 12px !important;
+    border: 1px solid #f1f5f9 !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+    padding: 6px !important;
+    margin-top: 6px !important;
+    background-color: #ffffff !important;
+    animation: dropdownFadeIn 0.15s ease-out !important;
+}
+
+/* Dropdown Items styling */
+.bootstrap-select .dropdown-menu li {
+    margin: 2px 0 !important;
+}
+
+.bootstrap-select .dropdown-menu li a {
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    color: #475569 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    transition: all 0.15s ease !important;
+    display: block !important;
+    text-decoration: none !important;
+}
+
+/* Hover and Focus States */
+.bootstrap-select .dropdown-menu li a:hover,
+.bootstrap-select .dropdown-menu li a:focus,
+.bootstrap-select .dropdown-menu li.active a {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+/* Selected State */
+.bootstrap-select .dropdown-menu li.selected a {
+    background: #6366f1 !important;
+    color: #ffffff !important;
+}
+
+.bootstrap-select .dropdown-menu li.selected a:hover {
+    background: #4f46e5 !important;
+    color: #ffffff !important;
+}
+
+/* Checkmark/Icon indicator style if present */
+.bootstrap-select .dropdown-menu li a .glyphicon-ok,
+.bootstrap-select .dropdown-menu li a .fa-check {
+    margin-top: 4px !important;
+    float: right !important;
+    color: currentColor !important;
+}
+
+/* Search Box container and inputs */
+.bootstrap-select .bs-searchbox {
+    padding: 8px 8px 6px 8px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    margin-bottom: 4px !important;
+}
+
+.bootstrap-select .bs-searchbox input {
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    color: #334155 !important;
+    background-color: #f8fafc !important;
+    transition: all 0.2s ease !important;
+}
+
+.bootstrap-select .bs-searchbox input:focus {
+    border-color: #6366f1 !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+    outline: none !important;
+}
+
+/* No results state styling */
+.bootstrap-select .no-results {
+    padding: 12px !important;
+    color: #64748b !important;
+    font-size: 13px !important;
+    text-align: center !important;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
