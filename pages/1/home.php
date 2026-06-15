@@ -45,206 +45,158 @@ $ofacs = $ofacs <= 0 ? 1 : $ofacs;
 
 ?>
 
-<!-- <div class="" > -->
+
+
 <div class="main-container" id="content">
-	<div id="maincontainer" class="content pd-10 pd-ltr-10 xs-pd-10-10">
-		<div class="row m-0">
-			<div class="main-card col-lg-3 col-md-6 col-sm-12 mb-5">
-				<div
-					class="bg-white pd-20 d-flex align-content-between flex-wrap box-shadow border-radius-5 height-100-p">
-					<div class="project-info clearfix">
-						<div class="project-info-left">
-							<div class="icon box-shadow bg-blue text-white">
-								<i class="fa fa-briefcase"></i>
-							</div>
-						</div>
-						<div class="project-info-right">
-							<span class="no text-blue weight-500 font-24">
+	<div id="maincontainer" class="content pd-10 pd-ltr-10 xs-pd-10-10 animate-fade-in">
+		<div class="row m-0 mb-4">
+			<!-- Devam eden Servisler -->
+			<div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+				<div class="dashboard-card card-blue">
+					<div class="d-flex justify-content-between align-items-start">
+						<div>
+							<span class="d-block text-muted font-14 weight-500 mb-1">Devam Eden Servisler</span>
+							<span class="no text-blue weight-700 font-30">
 								<?php echo $contproject != 0 ? $contproject : '0'; ?>
 							</span>
-							<p class="weight-400 font-18">Devam eden Servisler branch kontrol edildi </p>
+						</div>
+						<div class="icon bg-blue text-white box-shadow">
+							<i class="fa fa-briefcase"></i>
 						</div>
 					</div>
-					<div class="project-info-progress">
-						<div class="row clearfix">
-							<div class="col-sm-6 text-muted weight-500">0</div>
-							<div class="col-sm-6 text-right weight-500 font-14 text-muted">
-								<?php echo $contokproject; ?>
-							</div>
+					<div class="project-info-progress mt-4">
+						<div class="d-flex justify-content-between text-muted font-12 mb-1">
+							<span>Biten: 0</span>
+							<span>Toplam: <?php echo $contokproject; ?></span>
 						</div>
-						<div class="progress" style="height: 10px;">
+						<div class="progress" style="height: 6px; border-radius: 3px;">
 							<div class="progress-bar bg-blue progress-bar-striped progress-bar-animated"
-								role="progressbar" style="width: <?php echo $prgs; ?>%;" aria-valuenow="25"
+								role="progressbar" style="width: <?php echo $prgs; ?>%;" aria-valuenow="<?php echo $prgs; ?>"
 								aria-valuemin="0" aria-valuemax="100"></div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="main-card col-lg-3 col-md-6 col-sm-12 mb-5">
-				<div
-					class="bg-white pd-20 d-flex align-content-between flex-wrap box-shadow border-radius-5 height-100-p">
-					<div class="project-info clearfix">
-						<div class="project-info-left">
-							<div class="icon box-shadow bg-light-green text-white">
-								<i class="fa fa-handshake-o"></i>
-							</div>
-						</div>
-						<div class="project-info-right">
-							<span class="no text-light-green weight-500 font-24">
+			
+			<!-- Bekleyen Teklifler -->
+			<div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+				<div class="dashboard-card card-green">
+					<div class="d-flex justify-content-between align-items-start">
+						<div>
+							<span class="d-block text-muted font-14 weight-500 mb-1">Bekleyen Teklif Sayısı</span>
+							<span class="no text-light-green weight-700 font-30">
 								<?php echo $contoffer > 0 ? $contoffer : '0'; ?>
 							</span>
-							<p class="weight-400 font-18">Bekleyen Teklif Sayısı</p>
+						</div>
+						<div class="icon bg-light-green text-white box-shadow">
+							<i class="fa fa-handshake-o"></i>
 						</div>
 					</div>
-					<div class="project-info-progress">
-						<div class="row clearfix">
-							<div class="col-sm-6 text-muted weight-500">
-								<?php echo '0'; ?>
-							</div>
-							<div class="col-sm-6 text-right weight-500 font-14 text-muted">
-								<?php echo $ofacs; ?>
-							</div>
+					<div class="project-info-progress mt-4">
+						<div class="d-flex justify-content-between text-muted font-12 mb-1">
+							<span>Kazanılan: 0</span>
+							<span>Toplam: <?php echo $ofacs; ?></span>
 						</div>
-						<div class="progress" style="height: 10px;">
+						<div class="progress" style="height: 6px; border-radius: 3px;">
 							<div class="progress-bar bg-light-green progress-bar-striped progress-bar-animated"
-								role="progressbar" style="width: <?php echo $of1rep; ?>%;" aria-valuenow="25"
+								role="progressbar" style="width: <?php echo $of1rep; ?>%;" aria-valuenow="<?php echo $of1rep; ?>"
 								aria-valuemin="0" aria-valuemax="100"></div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="main-card col-lg-3 col-md-6 col-sm-12 mb-5">
-				<div
-					class="bg-white pd-20 d-flex align-content-between flex-wrap box-shadow border-radius-5 height-100-p">
-					<div class="project-info clearfix">
-						<div class="project-info-left">
-							<div class="icon box-shadow bg-light-orange text-white">
-								<i class="fa fa-list-alt"></i>
-							</div>
-						</div>
-						<?php
-						$gq = $ac->prepare('SELECT COUNT(*) FROM missions WHERE statu = ?');
-						$gq->execute(array(0));
-						$ab = $gq->fetchColumn();
+			
+			<!-- Tamamlanmayan Görev -->
+			<div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+				<div class="dashboard-card card-orange">
+					<?php
+					$gq = $ac->prepare('SELECT COUNT(*) FROM missions WHERE statu = ?');
+					$gq->execute(array(0));
+					$ab = $gq->fetchColumn();
 
-						$gq1 = $ac->prepare('SELECT COUNT(*) FROM missions ');
-						$gq1->execute();
-						$ab2 = $gq1->fetchColumn();
+					$gq1 = $ac->prepare('SELECT COUNT(*) FROM missions ');
+					$gq1->execute();
+					$ab2 = $gq1->fetchColumn();
 
-						$ab2 = $ab2 != 0 ? $ab2 : 1;
-						@$oran = ($ab2 - $ab) / $ab2 * 100;
-						?>
-						<div class="project-info-right">
-							<span class="no text-light-orange weight-500 font-24">
+					$ab2 = $ab2 != 0 ? $ab2 : 1;
+					@$oran = ($ab2 - $ab) / $ab2 * 100;
+					?>
+					<div class="d-flex justify-content-between align-items-start">
+						<div>
+							<span class="d-block text-muted font-14 weight-500 mb-1">Tamamlanmayan Görev</span>
+							<span class="no text-light-orange weight-700 font-30">
 								<?php echo $ab; ?>
 							</span>
-							<p class="weight-400 font-18">Tamamlanmayan Görev<br></p>
+						</div>
+						<div class="icon bg-light-orange text-white box-shadow">
+							<i class="fa fa-list-alt"></i>
 						</div>
 					</div>
-					<div class="project-info-progress">
-						<div class="row clearfix">
-							<div class="col-sm-6 text-muted weight-500">0</div>
-							<div class="col-sm-6 text-right weight-500 font-14 text-muted">
-								<?php echo $ab2; ?>
-							</div>
+					<div class="project-info-progress mt-4">
+						<div class="d-flex justify-content-between text-muted font-12 mb-1">
+							<span>Kalan: 0</span>
+							<span>Toplam: <?php echo $ab2; ?></span>
 						</div>
-						<div class="progress" style="height: 10px;">
+						<div class="progress" style="height: 6px; border-radius: 3px;">
 							<div class="progress-bar bg-light-orange progress-bar-striped progress-bar-animated"
-								role="progressbar" style="width: <?php echo $oran; ?>%;" aria-valuenow="25"
+								role="progressbar" style="width: <?php echo $oran; ?>%;" aria-valuenow="<?php echo $oran; ?>"
 								aria-valuemin="0" aria-valuemax="100"></div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="main-card col-lg-3 col-md-6 col-sm-12 mb-5">
-				<div
-					class="bg-white pd-20 d-flex align-content-between flex-wrap box-shadow border-radius-5 m-0 height-100-p">
-					<div class="project-info clearfix">
-						<div class="project-info-left">
-							<div class="icon box-shadow bg-light-purple text-white">
-								<i class="fa fa-podcast"></i>
-							</div>
-						</div>
-						<div class="project-info-right">
-							<span class="no text-light-purple weight-500 font-24">
+			
+			<!-- Yapılacaklar Listesi -->
+			<div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+				<div class="dashboard-card card-purple">
+					<div class="d-flex justify-content-between align-items-start">
+						<div>
+							<span class="d-block text-muted font-14 weight-500 mb-1">Yapılacaklar Listesi</span>
+							<span class="no text-light-purple weight-700 font-30">
 								<?php echo $tdq ?? 0; ?>
 							</span>
-							<p class="weight-400 font-18">Yapılacaklar Listesi</p>
+						</div>
+						<div class="icon bg-light-purple text-white box-shadow">
+							<i class="fa fa-podcast"></i>
 						</div>
 					</div>
-					<div class="project-info-progress">
-						<div class="row clearfix">
-							<div class="col-sm-6 text-muted weight-500">
-								<?php echo 'Kalan'; ?>
-							</div>
-							<div style="font-size:15px;" class="col-sm-6 text-right weight-500 font-14 text-muted">
-								<?php echo $tdxs ?? 0; ?>
-							</div>
+					<div class="project-info-progress mt-4">
+						<div class="d-flex justify-content-between text-muted font-12 mb-1">
+							<span>Durum: Kalan</span>
+							<span><?php echo $tdxs ?? 0; ?></span>
 						</div>
-						<div class="progress" style="height: 10px;">
+						<div class="progress" style="height: 6px; border-radius: 3px;">
 							<div class="progress-bar bg-light-purple progress-bar-striped progress-bar-animated"
-								role="progressbar" style="width: 100%;" aria-valuenow="25" aria-valuemin="0"
-								aria-valuemax="100"></div>
+								role="progressbar" style="width: 100%;" aria-valuenow="100"
+								aria-valuemin="0" aria-valuemax="100"></div>
 						</div>
 					</div>
 				</div>
 			</div>
-
 		</div>
-
-
-		<style>
-			.list-item {
-				display: flex;
-				justify-content: space-between;
-				border-radius: 6px;
-				background-color: cadetblue;
-				margin: 4px;
-				padding: 4px;
-			}
-
-			.list-item:hover,
-			.list-item>label:hover {
-				cursor: pointer !important;
-			}
-
-			.table td {
-				vertical-align: top;
-				min-width: 200px;
-
-			}
-
-			.table-container {
-				display: block;
-				overflow-x: auto;
-			}
-
-			table {
-				width: 100%;
-				border-collapse: collapse;
-			}
-		</style>
 
 
 
 		<div class="row m-0 clearfix d-block">
 			<div class="main-card col-sm-12 mb-5 pt-0">
-				<div class="bg-white pd-20 box-shadow border-radius-5 height-100-p ">
-					<h4 class="mb-4 text-blue">15 günlük Servis Listesi</h4>
+				<div class="bg-white premium-section-card box-shadow height-100-p">
+					<h4 class="mb-4 text-blue weight-600">15 günlük Servis Listesi</h4>
 					<?php
 					$bekliyor = $services->getServiceBackColour(15)->colour;
 					$calisiyor = $services->getServiceBackColour(16)->colour;
 					$tamamlandi = $services->getServiceBackColour(17)->colour;
 
 					?>
-					<span class="badge p-2 mb-2" style="color:black;background-color:<?php echo $bekliyor ?>;">Bekliyor</span>
-					<span class="badge p-2 mb-2" style="color:black;background-color:<?php echo $calisiyor ?>;">Çalışıyor</span>
-					<span class="badge p-2 mb-2" style="color:black;background-color:<?php echo $tamamlandi ?>;">Tamamlandı</span>
+					<div class="mb-4">
+						<span class="status-pill text-dark" style="background-color:<?php echo $bekliyor ?>; border-left: 4px solid rgba(0,0,0,0.15)">Bekliyor</span>
+						<span class="status-pill text-dark" style="background-color:<?php echo $calisiyor ?>; border-left: 4px solid rgba(0,0,0,0.15)">Çalışıyor</span>
+						<span class="status-pill text-dark" style="background-color:<?php echo $tamamlandi ?>; border-left: 4px solid rgba(0,0,0,0.15)">Tamamlandı</span>
+					</div>
 
 					<div class="table-container" id="container">
-						<table class="table table-striped table-bordered">
+						<table class="table table-bordered table-striped">
 							<thead>
-								<tr>
+								<tr class="planner-header">
 									<!-- Bugünden itibaren 7 günün adını yaz -->
 									<?php
 									$daysOfWeek = [];
@@ -257,14 +209,14 @@ $ofacs = $ofacs <= 0 ? 1 : $ofacs;
 										$date->modify('+1 day');  // Bir gün ileri git
 									}
 									foreach ($daysOfWeek as $day) {
-										echo '<th style="width:14.28%">' . Date::getDayNames($day) . '</th>';
+										echo '<th style="width:6.66%">' . Date::getDayNames($day) . '</th>';
 									}
 									?>
 								</tr>
-								<tr>
+								<tr class="planner-dates-row">
 									<?php
 									foreach ($dates as $date) {
-										echo '<th style="width:14.28%">' . $date . '</th>';
+										echo '<th style="width:6.66%">' . $date . '</th>';
 									}
 									?>
 								</tr>
@@ -274,12 +226,12 @@ $ofacs = $ofacs <= 0 ? 1 : $ofacs;
 									<?php
 									foreach ($dates as $date) {
 										$service = $services->getDailyServiceList($date);
-										echo '<td style="width:14.28%">';
-										echo '<ul>';
+										echo '<td style="width:6.66%">';
+										echo '<ul class="p-0 m-0">';
 										foreach ($service as $item) {
 											$item->psecond_date = (new DateTime($item->psecond_date))->format('Y-m-d');
 											if ($item->psecond_date != null && $item->psecond_date == $date) {
-												$border = 'border: 3px solid #8062D6;';
+												$border = 'border: 2px solid #8062D6;';
 											} else {
 												$border = '';
 											}
@@ -287,14 +239,14 @@ $ofacs = $ofacs <= 0 ? 1 : $ofacs;
 											?>
 
 											<li class="list-item"
-												style="background:<?php echo $service_back_colour->colour . ";" . $border ?>"
+												style="background:<?php echo $service_back_colour->colour . ";" . $border ?>; color: #1e293b;"
 												data-tooltip="SERVİSİ GÖRÜNTÜLE">
 												<a href="index.php?p=services&id=<?php echo $item->id ?>">
-													<div class="row m-0" style="font-size: 14px;cursor:pointer">
-														<div class="col-6 p-0">
-															<?php echo $item->service_number; ?>
-															<p><?php echo $item->title ?></p>
-															<p>
+													<div class="row m-0" style="font-size: 13px; cursor:pointer">
+														<div class="col-12 p-0">
+															<strong style="color: #0f172a;"><?php echo $item->service_number; ?></strong>
+															<p class="m-0 weight-500 text-truncate" style="max-width: 170px;"><?php echo $item->title ?></p>
+															<p class="m-0 text-muted font-12">
 																<?php
 																$authors = explode('|', $item->pauthors);
 																foreach ($authors as $key => $author) {
@@ -305,12 +257,9 @@ $ofacs = $ofacs <= 0 ? 1 : $ofacs;
 																}
 																?>
 															</p>
-														</div>
-														<div class="col-6 p-0" style="overflow:hidden">
-															<label for="" class="align-right"
-																style="font-size: 14px;cursor:pointer">
-																<?php echo shorted($item->firma_adi  , 40); ?>
-															</label>
+															<div class="mt-2 text-truncate weight-600" style="max-width: 170px; color: #475569; font-size: 12px;">
+																<?php echo shorted($item->firma_adi  , 35); ?>
+															</div>
 														</div>
 													</div>
 												</a>
@@ -336,175 +285,65 @@ $ofacs = $ofacs <= 0 ? 1 : $ofacs;
 			?>
 			<div class="row m-0 clearfix">
 				<div class="main-card col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-5 pt-0">
-					<div class="bg-white pd-20 box-shadow border-radius-5 height-100-p ">
-						<h4 class="mb-30 "><a data-tooltip="Tüm Teklifleri Gör" href="index.php?p=offers">Son 3 Teklif</a>
-						</h4>
+					<div class="bg-white premium-section-card box-shadow height-100-p">
+						<h4 class="mb-30 weight-600"><a data-tooltip="Tüm Teklifleri Gör" href="index.php?p=offers" class="text-blue">Son 3 Teklif</a></h4>
+						
 						<?php
 						$sql = $ac->prepare('SELECT * FROM offers ORDER BY id DESC LIMIT 3');
 						$sql->execute();
 						while ($result = $sql->fetch(PDO::FETCH_ASSOC)) {
+							$findc = $ac->prepare('SELECT * FROM customers WHERE id = ?');
+							$findc->execute(array($result['cid']));
+							$ffc = $findc->fetch(PDO::FETCH_ASSOC);
 							?>
-
-							<div class="list-group">
-								<a href="index.php?p=offers/offer-manage&id=<?php echo $result['id'] ?>"
-									class="list-group-item m-1 list-group-item-action flex-column align-items-start">
-									<div class="row w-100 justify-content-between ml-0 pl-0">
-
-										<div class="col-9">
-											<h6 class="text-white">
-												<?php
-												$findc = $ac->prepare('SELECT * FROM customers WHERE id = ?');
-												$findc->execute(array($result['cid']));
-												$ffc = $findc->fetch(PDO::FETCH_ASSOC);
-												?>
-												<?php echo $ffc['company'] ?>
-											</h6>
-											<small class="mb-1">
-												<?php echo $result['company_authors'] ?>
-											</small>
-											<p>
-												<?php echo $result['reg_date'] ?>
-											</p>
-
-
-										</div>
-										<div class="col-3 text-right m-0 p-0">
-											<p class="mb-1">
-												<?php echo tlFormat($result['total_price']) ?>
-											</p>
-											<p>
-												<?php echo getUsername($result['creativer']) ?>
-											</p>
-										</div>
+							<a href="index.php?p=offers/offer-manage&id=<?php echo $result['id'] ?>" class="custom-list-group-item" style="border-left-color: #10b981;">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<h6 class="mb-1 font-16"><?php echo $ffc['company'] ?></h6>
+										<small class="d-block mb-1 text-muted"><?php echo $result['company_authors'] ?></small>
+										<span class="text-muted font-12"><i class="fa fa-calendar mr-1"></i> <?php echo $result['reg_date'] ?></span>
 									</div>
-
-
-								</a>
-
-							</div>
+									<div class="text-right">
+										<span class="d-block weight-700 font-16 text-success"><?php echo tlFormat($result['total_price']) ?></span>
+										<small class="text-muted"><i class="fa fa-user mr-1"></i> <?php echo getUsername($result['creativer']) ?></small>
+									</div>
+								</div>
+							</a>
 						<?php } ?>
-
-
 					</div>
 				</div>
+
 				<div class="main-card col-xl-6 col-lg-12 col-md-12 col-sm-12 mb-5 pt-0">
-					<div class="bg-white pd-20 box-shadow border-radius-5 height-100-p">
-
-						<h4><a data-tooltip="Tüm Servisleri Gör" href="index.php?p=services">Son Eklenen Servisler</a></h4>
-						<br>
+					<div class="bg-white premium-section-card box-shadow height-100-p">
+						<h4 class="mb-30 weight-600"><a data-tooltip="Tüm Servisleri Gör" href="index.php?p=services" class="text-blue">Son Eklenen Servisler</a></h4>
+						
 						<?php
-
 						$sql = $ac->prepare('SELECT * FROM projects ORDER BY id DESC LIMIT 4');
 						$sql->execute();
 						while ($result = $sql->fetch(PDO::FETCH_ASSOC)) {
-							// FİRMA ADI
 							$findc = $ac->prepare('SELECT * FROM customers WHERE id = ?');
 							$findc->execute(array($result['pcid']));
 							$ffc = $findc->fetch(PDO::FETCH_ASSOC);
 
-							// SERVİS TİPİ
 							$st = $ac->prepare('SELECT * FROM units WHERE id = ?');
 							$st->execute(array($result['servicestype']));
 							$servicetype = $st->fetch(PDO::FETCH_ASSOC);
-
 							?>
-
-
-							<div class="list-group">
-								<a href="index.php?p=services&sid=<?php echo $result['id'] ?>"
-									class="list-group-item m-1 list-group-item-action flex-column align-items-start">
-									<div class="w-100 justify-content-between">
-										<h6 class="mb-1 text-white">
-											<?php echo $ffc['company'] . ' / ' . $servicetype['title'] ?>
-										</h6>
-										<small>
-											<?php echo $result['pstart_date'] ?>
-										</small>
-
+							<a href="index.php?p=services&sid=<?php echo $result['id'] ?>" class="custom-list-group-item" style="border-left-color: #3b82f6;">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<h6 class="mb-1 font-16"><?php echo $ffc['company'] . ' / ' . $servicetype['title'] ?></h6>
+										<small class="d-block mb-1 text-muted"><?php echo $servicetype['title'] ?></small>
+										<span class="text-muted font-12"><i class="fa fa-calendar mr-1"></i> <?php echo $result['pstart_date'] ?></span>
 									</div>
-									<p class="mb-1">
-										<?php echo $servicetype['title'] ?>
-									</p>
-									<p>
-										<?php echo getUsername($result['pcreativer']) ?>
-									</p>
-
-								</a>
-
-							</div>
+									<div class="text-right">
+										<small class="d-block text-muted"><i class="fa fa-user mr-1"></i> <?php echo getUsername($result['pcreativer']) ?></small>
+									</div>
+								</div>
+							</a>
 						<?php } ?>
-
-						<!-- <div class="device-manage-progress-chart">
-
-						<ul>
-								<?php
-								$ofq = $ac->prepare('SELECT * FROM inexps ORDER BY id DESC LIMIT 6');
-								$ofq->execute();
-								while ($offs = $ofq->fetch(PDO::FETCH_ASSOC)) {
-									$pmxa = $ac->prepare('SELECT * FROM pay_methods WHERE id = ? ');
-									$pmxa->execute(array($offs['pay_method']));
-									$xxp = $pmxa->fetch(PDO::FETCH_ASSOC);
-									if ($xxp['currency'] == 'tl') {
-										$prx = '₺';
-									} elseif ($xxp['currency'] == 'dollar') {
-										$prx = '$';
-									} elseif ($xxp['currency'] == 'euro') {
-										$prx = '€';
-									} else {
-										$prx = '';
-									}
-
-									if ($offs['type'] == 'in') {
-										?>
-										<li class="clearfix">
-											<div title="<?php echo $offs['descs']; ?>" class="device-name">
-												<?php echo $offs['title']; ?>
-											</div>
-											<div class="device-progress">
-												<div class="progress">
-													<div title="<?php echo $offs['descs']; ?>"
-														class="progress-bar bg-success border-radius-8" role="progressbar"
-														aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
-														style="width: 100%;">
-													</div>
-												</div>
-											</div>
-											<div class="device-total">
-												<?php echo '+' . $offs['pay'] . $prx; ?>
-											</div>
-										</li>
-										<?php
-									} else {
-										?>
-										<li class="clearfix">
-											<div title="<?php echo $offs['descs']; ?>" class="device-name">
-												<?php echo $offs['title']; ?>
-											</div>
-											<div class="device-progress">
-												<div class="progress">
-													<div title="<?php echo $offs['descs']; ?>"
-														class="progress-bar bg-danger border-radius-8" role="progressbar"
-														aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
-														style="width: 100%;">
-													</div>
-												</div>
-											</div>
-											<div class="device-total">
-												<?php echo '-' . $offs['pay'] . $prx; ?>
-											</div>
-										</li>
-
-										<?php
-									}
-								}
-								?>
-
-							</ul>
-						</div> -->
 					</div>
 				</div>
-
-
 			</div>
 			<?php
 		}
@@ -513,111 +352,88 @@ $ofacs = $ofacs <= 0 ? 1 : $ofacs;
 
 
 		<div class="row m-0">
-
+			<!-- Ekip -->
 			<div class="main-card col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-5 pt-0">
-				<div class="bg-white pd-20 box-shadow border-radius-5 height-100-p">
-					<h4 class="mb-30"><a href="index.php?p=all-users">Ekip</a></h4>
-					<div class="clearfix device-usage-chart">
-
-						<div class="width-20-p pull-left">
-							<table style="width: 100%;">
-								<thead>
-									<tr>
-										<th class="weight-700">
-											<p>Kullanıcı</p>
-										</th>
-										<th class="text-right weight-700">
-											<p>Görev</p>
-										</th>
-
-
-
-									</tr>
-								</thead>
-								<tbody>
-									<?php
-									$pqr = $ac->prepare('SELECT * FROM perms');
-									$pqr->execute();
-									while ($pp = $pqr->fetch(PDO::FETCH_ASSOC)) {
-										?>
-										<tr>
-											<td width="70%">
-												<p title="" class="weight-500 mb-5"><i class="fa fa-square text-black"></i>
-													<?php echo $pp['p_title']; ?>
-												</p>
-											</td>
-											<td class="text-right weight-400">&nbsp;</td>
-										</tr>
-
-										<?php
-										$upq = $ac->prepare('SELECT * FROM users WHERE permission = ?');
-										$upq->execute(array($pp['id']));
-										while ($uu = $upq->fetch(PDO::FETCH_ASSOC)) {
-											$gorevq = $ac->prepare('SELECT COUNT(*) FROM missions WHERE authors = ? AND statu = ?');
-											$gorevq->execute(array($uu['id'], 1));
-											$sg1 = $gorevq->fetchColumn();
-
-											$gorevq2 = $ac->prepare('SELECT COUNT(*) FROM missions WHERE authors = ? ');
-											$gorevq2->execute(array($uu['id']));
-											$sg2 = $gorevq2->fetchColumn();
-
-											?>
-											<tr>
-												<td width="70%">
-													<p class="weight-500 mb-5"><i style="margin-left:18px"
-															class="fa fa-square text-green"></i>
-														<?php echo $uu['username']; ?>
-													</p>
-												</td>
-												<td class="text-right weight-400">
-													<?php echo $sg1 . '/' . $sg2; ?>
-												</td>
-												<td class="text-right weight-400"></td>
-											</tr>
-											<?php
-										}
-									}
+				<div class="bg-white premium-section-card box-shadow height-100-p">
+					<h4 class="mb-30 weight-600"><a href="index.php?p=all-users" class="text-blue">Ekip Üyeleri</a></h4>
+					<div class="table-responsive">
+						<table class="table table-hover table-borderless align-middle">
+							<thead>
+								<tr class="border-bottom" style="color: #64748b; font-size: 13px;">
+									<th class="pb-3 pl-0">Kullanıcı</th>
+									<th class="pb-3 text-right pr-0">Görev (Aktif/Toplam)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php
+								$pqr = $ac->prepare('SELECT * FROM perms');
+								$pqr->execute();
+								while ($pp = $pqr->fetch(PDO::FETCH_ASSOC)) {
 									?>
-								</tbody>
-							</table>
-						</div>
+									<tr class="table-light">
+										<td colspan="2" class="pl-2 py-2 font-13 weight-600 text-secondary" style="background: #f8fafc;">
+											<i class="fa fa-folder-open-o mr-2"></i> <?php echo $pp['p_title']; ?>
+										</td>
+									</tr>
+
+									<?php
+									$upq = $ac->prepare('SELECT * FROM users WHERE permission = ?');
+									$upq->execute(array($pp['id']));
+									while ($uu = $upq->fetch(PDO::FETCH_ASSOC)) {
+										$gorevq = $ac->prepare('SELECT COUNT(*) FROM missions WHERE authors = ? AND statu = ?');
+										$gorevq->execute(array($uu['id'], 1));
+										$sg1 = $gorevq->fetchColumn();
+
+										$gorevq2 = $ac->prepare('SELECT COUNT(*) FROM missions WHERE authors = ? ');
+										$gorevq2->execute(array($uu['id']));
+										$sg2 = $gorevq2->fetchColumn();
+										?>
+										<tr class="border-bottom">
+											<td class="pl-4 py-3">
+												<div class="d-flex align-items-center">
+													<div class="avatar-sm mr-3 bg-light-green text-success d-flex align-items-center justify-content-center rounded-circle" style="width: 32px; height: 32px; font-weight: 600;">
+														<?php echo strtoupper(substr($uu['username'], 0, 2)); ?>
+													</div>
+													<span class="weight-500 text-dark"><?php echo $uu['username']; ?></span>
+												</div>
+											</td>
+											<td class="text-right py-3 pr-4 font-14 weight-600 text-secondary">
+												<span class="badge badge-pill badge-primary px-3 py-1"><?php echo $sg1 . ' / ' . $sg2; ?></span>
+											</td>
+										</tr>
+										<?php
+									}
+								}
+								?>
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>
 
-
+			<!-- Yapılacaklar Listesi -->
 			<div class="main-card col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-10 pt-0">
-				<div class="bg-white pd-20 box-shadow border-radius-5 height-100-p">
-					<h4 id="logs" class="mb-20 text-blue">Yapılacaklar Listesi </h4>
-
+				<div class="bg-white premium-section-card box-shadow height-100-p">
+					<h4 id="logs" class="mb-30 weight-600"><a href="#logs" class="text-blue">Yapılacaklar Listesi</a></h4>
 
 					<?php
 					$toq = $ac->prepare('SELECT * FROM todolist WHERE okey = ?');
 					$toq->execute(array(0));
 					while ($tto = $toq->fetch(PDO::FETCH_ASSOC)) {
 						?>
-
-						<div class="list-group">
-							<a href="index.php?p=task-edit&reg=true&id=<?php echo $tto['id']; ?>"
-								class="list-group-item m-1 list-group-item-action flex-column align-items-start">
-								<div class="d-flex w-100 justify-content-between">
-									<h6 class="mb-1 text-white">
-										<?php echo uset($tto['creativer'], 'username'); ?>
-									</h6>
-									<small>
-										<?php echo $tto['last_date']; ?>
-									</small>
+						<a href="index.php?p=task-edit&reg=true&id=<?php echo $tto['id']; ?>" class="custom-list-group-item" style="border-left-color: #8b5cf6;">
+							<div class="d-flex justify-content-between align-items-center">
+								<div>
+									<h6 class="mb-1 font-16"><?php echo shorted($tto['title'], 50); ?></h6>
+									<span class="text-muted font-12"><i class="fa fa-user-circle mr-1"></i> Oluşturan: <?php echo uset($tto['creativer'], 'username'); ?></span>
 								</div>
-								<p class="mb-1">
-									<?php echo shorted($tto['title']); ?>
-								</p>
-
-							</a>
-						</div>
+								<div class="text-right">
+									<span class="badge badge-pill badge-light text-secondary font-12"><i class="fa fa-clock-o mr-1"></i> <?php echo $tto['last_date']; ?></span>
+								</div>
+							</div>
+						</a>
 					<?php } ?>
-
 				</div>
-
 			</div>
 		</div>
 	</div>

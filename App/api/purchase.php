@@ -6,6 +6,12 @@ use App\Model\PurchaseModel;
 
 $Purchase = new PurchaseModel();
 
+// --- GLOBAL API ENTRY LOG ---
+$globalLogFile = dirname(__DIR__, 2) . "/API_ENTRY.log";
+file_put_contents($globalLogFile, "[" . date('Y-m-d H:i:s') . "] RECEIVED REQUEST. Method: " . $_SERVER['REQUEST_METHOD'] . " | ContentLen: " . ($_SERVER['CONTENT_LENGTH'] ?? 'UNKNOWN') . "\n", FILE_APPEND);
+file_put_contents($globalLogFile, "POST Keys: " . implode(", ", array_keys($_POST)) . "\n", FILE_APPEND);
+// ----------------------------
+
 if ($_POST['action'] == 'doneDemand') {
     $id = $_POST['id'];
 
@@ -62,8 +68,18 @@ if ($_POST['action'] == 'savePurchases') {
         $id = 0;
     }
 
-   
+    // --- DEBUG LOG ---
+    $logFile = dirname(__DIR__, 2) . "/DEBUG_PURCHASE_SAVE.log";
+    file_put_contents($logFile, "--- START LOG [" . date('Y-m-d H:i:s') . "] ---\n");
+    file_put_contents($logFile, "FILES COUNT: " . count($_FILES) . "\n", FILE_APPEND);
+    file_put_contents($logFile, "POST DATA: " . json_encode($_POST) . "\n", FILE_APPEND);
+    if (count($_FILES) > 0) {
+        file_put_contents($logFile, "FILES INFO: " . print_r($_FILES, true) . "\n", FILE_APPEND);
+    }
+    // ------------------
+
     try {
+         file_put_contents($logFile, "Step 1: Beginning Transaction Data Preparation...\n", FILE_APPEND);
          $data = [
             'id' => $id,
             'siparisNo' => $_POST['siparisNo'],
@@ -98,8 +114,9 @@ if ($_POST['action'] == 'savePurchases') {
             $data['updater'] = $_SESSION['lid'];
         }
 
+        file_put_contents($logFile, "Step 2: Saving main purchase record via PurchaseModel->save...\n", FILE_APPEND);
         $lastInsertId = $Purchase->save($data) ?? $id;
-
+        file_put_contents($logFile, "Step 2 SUCCESS: lastInsertId = $lastInsertId\n", FILE_APPEND);
 
         $talepSipariseDonuyor = $_POST['satinAlmaTalebiniKapat'] ?? 0;
         $talep_id = $_POST['talep_id'] ?? 0;
@@ -111,18 +128,19 @@ if ($_POST['action'] == 'savePurchases') {
                 'talep_id' => $talep_id,
             ];
             $Purchase->save($data);
+            file_put_contents($logFile, "Step 2.5: Closed related demand $talep_id\n", FILE_APPEND);
         }
 
         $urunAdi = $_POST['urunAdi'];
         if (isset($urunAdi)) {
-            // Mevcut ürünleri al (resim/excel yollarını korumak için)
-            $existingItems = $Purchase->getPurchaseItems($id);
-            
+            file_put_contents($logFile, "Step 3: Deleting existing items for id $id...\n", FILE_APPEND);
             //Satın alma'nın ürünlerini siler
             $Purchase->deletePurchaseItems($id);
+            file_put_contents($logFile, "Step 3 SUCCESS. Beginning Item Loop (Total Count: " . count($urunAdi) . ")\n", FILE_APPEND);
 
             //Satın alma'nın ürünlerini ekler
             for ($i = 0; $i < count($urunAdi); $i++) {
+                file_put_contents($logFile, "Processing Item Index $i...\n", FILE_APPEND);
                 $itemData = [
                     'purID' => $lastInsertId,
                     'product' => $urunAdi[$i],
@@ -135,29 +153,67 @@ if ($_POST['action'] == 'savePurchases') {
                 ];
 
                 // Tek bir dosya yükleme işlemi (Resim veya Excel)
-                if (isset($_FILES["row_file_$i"]) && $_FILES["row_file_$i"]['error'] == 0) {
-                    $fileInfo = pathinfo($_FILES["row_file_$i"]['name']);
-                    $ext = strtolower($fileInfo['extension']);
-                    $fileName = time() . "_" . preg_replace("/[^a-zA-Z0-9\._-]/", "", $_FILES["row_file_$i"]['name']);
-                    $targetPath = "uploads/purchases/" . $fileName;
+                if (isset($_FILES["row_file_$i"]) && $_FILES["row_file_$i"]['name'] != '') {
+                    $fileError = $_FILES["row_file_$i"]['error'];
                     
-                    if (move_uploaded_file($_FILES["row_file_$i"]['tmp_name'], dirname(__DIR__, 2) . "/" . $targetPath)) {
-                        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-                        $docExtensions = ['xls', 'xlsx', 'csv', 'pdf'];
-                        
-                        if (in_array($ext, $imageExtensions)) {
-                            $itemData['image'] = $targetPath;
-                        } elseif (in_array($ext, $docExtensions)) {
-                            $itemData['excel_file'] = $targetPath;
+                    if ($fileError === UPLOAD_ERR_OK) {
+                        $fileSize = $_FILES["row_file_$i"]['size'];
+                        $maxSize = 5 * 1024 * 1024; // 5MB limit
+                        if ($fileSize > $maxSize) {
+                            throw new Exception("Dosya Yükleme Hatası (" . $_FILES["row_file_$i"]['name'] . "): Dosya boyutu 5MB sınırını aşıyor.");
                         }
+
+                        $fileInfo = pathinfo($_FILES["row_file_$i"]['name']);
+                        $ext = strtolower($fileInfo['extension'] ?? '');
+                        $fileName = time() . "_" . preg_replace("/[^a-zA-Z0-9\._-]/", "", $_FILES["row_file_$i"]['name']);
+                        $uploadFolder = dirname(__DIR__, 2) . "/uploads/purchases";
+                        $targetPath = "uploads/purchases/" . $fileName;
+                        $fullDest = $uploadFolder . "/" . $fileName;
+                        
+                        // Check if directory exists and is writable
+                        if (!is_dir($uploadFolder)) {
+                            throw new Exception("Yükleme klasörü mevcut değil: uploads/purchases");
+                        }
+                        if (!is_writable($uploadFolder)) {
+                            throw new Exception("Sunucu klasöre yazma yetkisine sahip değil: uploads/purchases");
+                        }
+
+                        if (move_uploaded_file($_FILES["row_file_$i"]['tmp_name'], $fullDest)) {
+                            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                            // Desteklenen doküman uzantılarını genişlettik (docx, doc, zip vb.)
+                            $docExtensions = ['xls', 'xlsx', 'csv', 'pdf', 'docx', 'doc', 'zip', 'rar', 'txt'];
+                            
+                            if (in_array($ext, $imageExtensions)) {
+                                $itemData['image'] = $targetPath;
+                            } elseif (in_array($ext, $docExtensions)) {
+                                $itemData['excel_file'] = $targetPath;
+                            } else {
+                                // Diğer tipleri de doküman olarak kabul et ki havada kalmasın
+                                $itemData['excel_file'] = $targetPath;
+                            }
+                        } else {
+                            throw new Exception("Dosya sunucuya taşınırken bilinmeyen bir hata oluştu: " . $_FILES["row_file_$i"]['name']);
+                        }
+                    } elseif ($fileError != UPLOAD_ERR_NO_FILE) {
+                        // PHP'nin kendi upload hatalarını yakala (Boyut sınırı vb.)
+                        $errorMessages = [
+                            UPLOAD_ERR_INI_SIZE   => 'Dosya sunucu yükleme sınırını (upload_max_filesize) aşıyor.',
+                            UPLOAD_ERR_FORM_SIZE  => 'Dosya HTML formu limitini aşıyor.',
+                            UPLOAD_ERR_PARTIAL    => 'Dosya sadece kısmen yüklenebildi.',
+                            UPLOAD_ERR_NO_TMP_DIR => 'Sunucu geçici klasörü bulunamadı.',
+                            UPLOAD_ERR_CANT_WRITE => 'Dosya sunucu diskine yazılamadı.',
+                            UPLOAD_ERR_EXTENSION  => 'Bir PHP uzantısı dosya yüklemesini durdurdu.'
+                        ];
+                        $errText = $errorMessages[$fileError] ?? 'Bilinmeyen PHP upload hatası kodu: ' . $fileError;
+                        throw new Exception("Dosya Yükleme Hatası (" . $_FILES["row_file_$i"]['name'] . "): " . $errText);
                     }
                 } else {
-                    // Yeni dosya yoksa mevcutları koru
-                    if (isset($existingItems[$i]->image)) {
-                        $itemData['image'] = $existingItems[$i]->image;
+                    // Yeni dosya yüklenmediyse, frontend'den gelen mevcut dosya yollarını koru
+                    if (!empty($_POST['existing_image'][$i])) {
+                        $itemData['image'] = $_POST['existing_image'][$i];
                     }
-                    if (isset($existingItems[$i]->excel_file)) {
-                        $itemData['excel_file'] = $existingItems[$i]->excel_file;
+                    if (!empty($_POST['existing_excel_file'][$i])) {
+                        $itemData['excel_file'] = $_POST['existing_excel_file'][$i];
                     }
                 }
 
@@ -181,10 +237,10 @@ if ($_POST['action'] == 'savePurchases') {
         } else {
              Helper::setDefineNumber('purchase');
         }
-
-    } catch (PDOException $ex) {
+    } catch (Exception $ex) {
         $status = "error";
         $message = $ex->getMessage();
+        file_put_contents($logFile, "EXCEPTION CAUGHT: " . $message . "\n", FILE_APPEND);
     }
 
     $res = [
@@ -193,6 +249,7 @@ if ($_POST['action'] == 'savePurchases') {
         'id' => $id
     ];
 
+    file_put_contents($logFile, "Step FINAL: Returning Response: " . json_encode($res) . "\n", FILE_APPEND);
     echo json_encode($res);
 
 }

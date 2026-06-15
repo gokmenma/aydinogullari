@@ -30,13 +30,13 @@ $enc_id = Security::encrypt($oid);
             <div class="pull-left ">
 
                 <style>
-                    .btn-xls {
-                        background-color: #1F8A70;
-                    }
+                .btn-xls {
+                    background-color: #1F8A70;
+                }
 
-                    .btn-tl {
-                        background-color: #4CB9E7;
-                    }
+                .btn-tl {
+                    background-color: #4CB9E7;
+                }
                 </style>
                 <div class="form-group row ml-2">
                     <div class="d-flex flex-column">
@@ -74,9 +74,9 @@ $enc_id = Security::encrypt($oid);
                             <?php
                             if (permtrue('offerview')) {
                                 ?>
-                                <a type="button" href="index.php?p=offer-view&id=<?php echo $oid; ?>" target="_blank"
-                                    class="float-left btn btn-warning mr-1" data-tooltip="Teklifi Göster"
-                                    data-tooltip-location="bottom"><i class="fa fa-file"></i></a>
+                            <a type="button" href="index.php?p=offer-view&id=<?php echo $oid; ?>" target="_blank"
+                                class="float-left btn btn-warning mr-1" data-tooltip="Teklifi Göster"
+                                data-tooltip-location="bottom"><i class="fa fa-file"></i></a>
                             <?php } ?>
                             <!-- <a type="button" data-tooltip="Teklifi Göster" data-tooltip-location="bottom"
                                 class="float-left btn btn-warning mr-1"><i class="fa fa-file"></i></a> -->
@@ -143,19 +143,19 @@ $enc_id = Security::encrypt($oid);
                             $qct->execute();
                             while ($cscs = $qct->fetch(PDO::FETCH_ASSOC)) {
                                 ?>
-                                <option <?php echo $customer_id == $cscs['id'] ? ' selected' : '' ?>
-                                    value="<?php echo $cscs['id']; ?>">
-                                    <?php echo $cscs['company']; ?>
-                                </option>
-                                <?php
+                            <option <?php echo $customer_id == $cscs['id'] ? ' selected' : '' ?>
+                                value="<?php echo $cscs['id']; ?>">
+                                <?php echo $cscs['company']; ?>
+                            </option>
+                            <?php
                             }
                             ?>
                         </select>
                         <?php if (permtrue('customeradd')) { ?>
-                            <a href="index.php?p=new-customer" target="_blank"
-                                class="btn btn-info btn-sm d-flex align-items-center"
-                                data-tooltip="Yeni Firma Eklemek için tıklayınız!">
-                                <i class="fa fa-plus"></i></a>
+                        <a href="index.php?p=new-customer" target="_blank"
+                            class="btn btn-info btn-sm d-flex align-items-center"
+                            data-tooltip="Yeni Firma Eklemek için tıklayınız!">
+                            <i class="fa fa-plus"></i></a>
                         <?php } ?>
 
                     </div>
@@ -257,12 +257,12 @@ $enc_id = Security::encrypt($oid);
 
                         <?php if ($offer_file != '') {
                             ; ?>
-                            <a type="button" id="downloadfile" href="files/offer/<?php echo $offer_file; ?>" target="_blank"
-                                class="btn btn-info btn-sm d-flex align-items-center ml-1">Dosyayı İndir
-                            </a>
-                            <button id="deleteFile" onclick="DeleteFile(<?php echo $oid ?>)" type="button" target="_blank"
-                                class="btn btn-danger btn-sm d-flex align-items-center ml-1" data-tooltip="Dosyayı Sil"><i
-                                    class="fa fa-trash"></i></a>
+                        <a type="button" id="downloadfile" href="files/offer/<?php echo $offer_file; ?>" target="_blank"
+                            class="btn btn-info btn-sm d-flex align-items-center ml-1">Dosyayı İndir
+                        </a>
+                        <button id="deleteFile" onclick="DeleteFile(<?php echo $oid ?>)" type="button" target="_blank"
+                            class="btn btn-danger btn-sm d-flex align-items-center ml-1" data-tooltip="Dosyayı Sil"><i
+                                class="fa fa-trash"></i></a>
 
                             <?php }
                         ; ?>
@@ -286,14 +286,14 @@ $enc_id = Security::encrypt($oid);
                             <option <?php echo $offer_statu == 1 ? ' selected' : '' ?> value="1">Bekleyen</option>
                             <option <?php echo $offer_statu == 2 ? ' selected' : '' ?> value="2">Tamamlandı</option>
                         </select>
-                        <div id="create_service_div" class="mt-2"
-                            style="<?php echo $offer_statu == 2 ? '' : 'display:none;'; ?>">
+                        <!-- <div id="create_service_div" class="mt-2"
+                            style="<?php //echo $offer_statu == 2 ? '' : 'display:none;'; ?>">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="createService"
                                     name="createService" value="1">
                                 <label class="custom-control-label" for="createService">Otomatik Servis Oluştur</label>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
@@ -309,27 +309,27 @@ $enc_id = Security::encrypt($oid);
                     </div>
                 </div>
                 <?php if (permtrue('template_offer_create')) { ?>
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                            <label>Şablon Teklif Yap</label>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="custom-control custom-checkbox ml-3">
-                                <?php
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <label>Şablon Teklif Yap</label>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="custom-control custom-checkbox ml-3">
+                            <?php
                                 $checked = '';
                                 $is_template = $offer->is_template ?? 0;
                                 if (isset($is_template) && $is_template == 1) {
                                     $checked = 'checked';
                                 }
                                 ?>
-                                <input class="custom-control-input" type="checkbox" value="<?php echo $is_template ?>"
-                                    name="is_template" id="is_template" <?php echo $checked; ?> id="is_template">
-                                <label class="custom-control-label" for="is_template">
+                            <input class="custom-control-input" type="checkbox" value="<?php echo $is_template ?>"
+                                name="is_template" id="is_template" <?php echo $checked; ?> id="is_template">
+                            <label class="custom-control-label" for="is_template">
 
-                                </label>
-                            </div>
+                            </label>
                         </div>
                     </div>
+                </div>
                 <?php } ?>
             </div>
 
@@ -479,25 +479,25 @@ $enc_id = Security::encrypt($oid);
         <!-- ÖZET ALANLARI -->
 
         <style>
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin: 0;
-                border: 1px solid #444;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            border: 1px solid #444;
 
-            }
+        }
 
-            .hack1 {
-                display: table;
-                table-layout: fixed;
-                width: 100%;
-            }
+        .hack1 {
+            display: table;
+            table-layout: fixed;
+            width: 100%;
+        }
 
-            .hack2 {
-                display: table-cell;
-                overflow-x: auto;
-                width: 100%;
-            }
+        .hack2 {
+            display: table-cell;
+            overflow-x: auto;
+            width: 100%;
+        }
         </style>
 
         <!-- TEKLİF KALEMLERİ TABLOSU -->
@@ -531,8 +531,8 @@ $enc_id = Security::encrypt($oid);
                         while ($item = $items->fetch(PDO::FETCH_ASSOC)) {
                             $satirNo += 1;
                             ?>
-                            <tr class="ui-state-default">
-                                <?php
+                        <tr class="ui-state-default">
+                            <?php
                                 $stokKodu = $item['stokKodu'];
                                 $urunAdi = $item['title'];
                                 $amount = $item['amount'];
@@ -546,8 +546,8 @@ $enc_id = Security::encrypt($oid);
                                 include 'offer-row.php'
                                     ?>
 
-                            </tr>
-                            <?php
+                        </tr>
+                        <?php
                         }
                         if ($satirNo == 0) {
                             $satirNo = 1;
@@ -828,44 +828,43 @@ $enc_id = Security::encrypt($oid);
 <script src="pages/1/offers/offer.js?v=<?php echo filemtime("pages/1/offers/offer.js"); ?>"></script>
 
 <script>
-    $(document).ready(function () {
-        updateAltToplam();
+$(document).ready(function() {
+    updateAltToplam();
 
-        // Teklif durumu tamamlandı seçildiğinde otomatik servis oluştur checkbox'ını göster
-        $("#offerstatu").on("change", function () {
-            if ($(this).val() == 2) {
-                $("#create_service_div").show();
-            } else {
-                $("#create_service_div").hide();
-                $("#createService").prop("checked", false);
-            }
-        });
+    // Teklif durumu tamamlandı seçildiğinde otomatik servis oluştur checkbox'ını göster
+    // $("#offerstatu").on("change", function() {
+    //     if ($(this).val() == 2) {
+    //         $("#create_service_div").show();
+    //     } else {
+    //         $("#create_service_div").hide();
+    //         $("#createService").prop("checked", false);
+    //     }
+    // });
+});
+
+$(function() {
+
+    //date-picker ile çakıştığı için sortable kütüphaesi kullanıldı
+    // $("#sortable").sortable({
+    //     update: function(event, ui) {
+    //         // Sıralama sonrası numaralandırma
+    //         $("#kalem_ekle tbody tr").each(function(index) {
+    //             // Numara hücresini güncelle (örneğin ilk <td>)
+    //             $(this).find("input[name='satirno[]']").val(index + 1);
+    //         });
+    //     }
+    // });
+
+
+    var el = document.getElementById('sortable');
+    var sortable = Sortable.create(el, {
+        onUpdate: function( /**Event*/ evt) {
+            // Sıralama sonrası numaralandırma
+            $("#kalem_ekle tbody tr").each(function(index) {
+                // Numara hücresini güncelle (örneğin ilk <td>)
+                $(this).find("input[name='satirno[]']").val(index + 1);
+            });
+        }
     });
-
-    $(function () {
-
-        //date-picker ile çakıştığı için sortable kütüphaesi kullanıldı
-        // $("#sortable").sortable({
-        //     update: function(event, ui) {
-        //         // Sıralama sonrası numaralandırma
-        //         $("#kalem_ekle tbody tr").each(function(index) {
-        //             // Numara hücresini güncelle (örneğin ilk <td>)
-        //             $(this).find("input[name='satirno[]']").val(index + 1);
-        //         });
-        //     }
-        // });
-
-
-        var el = document.getElementById('sortable');
-        var sortable = Sortable.create(el, {
-            onUpdate: function (/**Event*/evt) {
-                // Sıralama sonrası numaralandırma
-                $("#kalem_ekle tbody tr").each(function (index) {
-                    // Numara hücresini güncelle (örneğin ilk <td>)
-                    $(this).find("input[name='satirno[]']").val(index + 1);
-                });
-            }
-        });
-    });
-
+});
 </script>

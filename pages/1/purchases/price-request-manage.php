@@ -150,7 +150,7 @@ if ($id == 0) {
                 <p class="mb-30 font-14">Lütfen kırmızı yıldız <span class="text-danger">(*)</span> ile işaretli zorunlu alanları doldurunuz.</p>
             </div>
             <div class="float-right">
-                <button type="button" id="saveButton" class="btn btn-primary shadow-sm">
+                <button type="button" id="savePriceRequestButton" class="btn btn-primary shadow-sm">
                     <i class="fa fa-save mr-1"></i> Kaydet
                 </button>
                 <a href="index.php?p=purchases/price-request-list" class="btn btn-outline-secondary ml-2">
@@ -340,6 +340,10 @@ if ($id == 0) {
                                         <i class="fa <?php echo $hasFile ? getFileIcon($fileUrl) . ' text-primary' : 'fa-paperclip'; ?>"></i>
                                     </div>
                                     <input type="file" name="row_file_<?php echo $index; ?>" accept=".jpg,.jpeg,.png,.pdf,.xls,.xlsx,.csv" onchange="handleSingleFileChange(this)">
+                                    
+                                    <!-- HIDDEN INPUTS TO SECURELY PRESERVE EXISTING FILES -->
+                                    <input type="hidden" name="existing_image[]" value="<?php echo $item->image ?? ''; ?>">
+                                    <input type="hidden" name="existing_excel_file[]" value="<?php echo $item->excel_file ?? ''; ?>">
                                     <?php if($hasFile): ?>
                                         <div class="d-flex align-items-center gap-2">
                                             <a href="<?php echo $fileUrl; ?>" target="_blank" class="status-indicator text-primary" title="<?php echo basename($fileUrl); ?>">
@@ -403,7 +407,20 @@ if ($id == 0) {
         const indicator = wrapper.find('.status-indicator');
         
         if (input.files && input.files[0]) {
-            const fileName = input.files[0].name;
+            const file = input.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (file.size > maxSize) {
+                Swal.fire('Hata', 'Dosya boyutu 5MB\'tan büyük olamaz. Lütfen daha küçük bir dosya seçin.', 'error');
+                input.value = ''; // Seçimi temizle
+                label.text('Dosya Seç...').css('color', '');
+                toggle.removeClass('border-primary bg-blue-light');
+                icon.attr('class', 'fa fa-paperclip');
+                indicator.html('<span class="status-indicator text-muted">Dosya yok</span>');
+                return;
+            }
+
+            const fileName = file.name;
             const shortName = fileName.length > 15 ? fileName.substring(0, 12) + '...' : fileName;
             label.text(shortName).css('color', '#3b82f6');
             toggle.addClass('border-primary bg-blue-light');
@@ -443,6 +460,10 @@ if ($id == 0) {
                         const toggle = wrapper.find('.btn-attachment-toggle');
                         const label = toggle.find('.file-label');
                         const icon = toggle.find('i');
+                        
+                        // CRITICAL: Clear hidden tracking fields so backend doesn't restore it on Save
+                        wrapper.find("input[name='existing_image[]']").val("");
+                        wrapper.find("input[name='existing_excel_file[]']").val("");
                         
                         label.text('Dosya Seç...').css('color', '');
                         toggle.removeClass('border-primary bg-blue-light');
@@ -536,6 +557,8 @@ if ($id == 0) {
                             <i class="fa fa-paperclip"></i>
                         </div>
                         <input type="file" name="row_file_${rowIndex}" accept=".jpg,.jpeg,.png,.pdf,.xls,.xlsx,.csv" onchange="handleSingleFileChange(this)">
+                        <input type="hidden" name="existing_image[]" value="">
+                        <input type="hidden" name="existing_excel_file[]" value="">
                         <span class="status-indicator text-muted">Dosya yok</span>
                     </div>
                 </td>
@@ -558,19 +581,39 @@ if ($id == 0) {
             sayac.val(parseInt(sayac.val(), 10) + 1);
         });
 
-        $(document).off("click", "#saveButton").on("click", "#saveButton", function (e) {
+        $(document).off("click", "#savePriceRequestButton").on("click", "#savePriceRequestButton", function (e) {
             e.preventDefault();
+            e.stopImmediatePropagation(); // Ensure other handlers don't run
             
-            if ($("#customers").val() == "" || $("#customers").val() == null) {
+            // Fix selector to be robust against generic Helper generated IDs
+            const customerVal = $("select[name='customers']").val();
+            if (!customerVal || customerVal === "") {
                 Swal.fire("Uyarı", "Lütfen bir firma seçiniz!", "warning");
                 return;
             }
+
+            // DYNAMIC REINDEXING OF FILE INPUTS TO ENSURE PERFECT PHP SYNC
+            // Loop through currently visible file inputs in the table row by row
+            // and re-index their name attributes so they match exact index 0, 1, 2...
+            // perfectly corresponding to PHP backend loop $i for $_FILES["row_file_$i"]
+            $("#tProduct tbody tr").each(function(index) {
+                $(this).find("input[type='file']").attr("name", "row_file_" + index);
+            });
 
             var form = $("#myForm");
             var formData = new FormData(form[0]);
             formData.append("action", "savePurchases");
 
-            $("#preloader").show();
+            // SHOW LOADER WITH SWEETALERT AS REQUESTED BY USER
+            Swal.fire({
+                title: 'İşlem Yapılıyor...',
+                text: 'Lütfen bekleyiniz, veriler kaydediliyor.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
             fetch("App/api/purchase.php", {
                 method: "POST",

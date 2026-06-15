@@ -172,54 +172,54 @@ if ($_POST['action'] == 'saveOffer') {
         }
 
         // Tamamlandı yapıldığında servis oluştur (eğer daha önce oluşturulmadıysa ve checkbox işaretlendiyse)
-        if ($_POST['offerstatu'] == 2 && isset($_POST['createService']) && $_POST['createService'] == 1) {
-            $checkService = $ac->prepare("SELECT id FROM projects WHERE poid = ?");
-            $checkService->execute([$lastInsertId]);
-            if (!$checkService->fetch()) {
-                // Müşteri bilgilerini al
-                $sql_cust = $ac->prepare("SELECT * FROM customers WHERE id = ?");
-                $sql_cust->execute([$_POST['customers']]);
-                $cust = $sql_cust->fetch(PDO::FETCH_ASSOC);
+        // if ($_POST['offerstatu'] == 2 && isset($_POST['createService']) && $_POST['createService'] == 1) {
+        //     $checkService = $ac->prepare("SELECT id FROM projects WHERE poid = ?");
+        //     $checkService->execute([$lastInsertId]);
+        //     if (!$checkService->fetch()) {
+        //         // Müşteri bilgilerini al
+        //         $sql_cust = $ac->prepare("SELECT * FROM customers WHERE id = ?");
+        //         $sql_cust->execute([$_POST['customers']]);
+        //         $cust = $sql_cust->fetch(PDO::FETCH_ASSOC);
 
-                // Servis Numarası
-                $getNumber = setNumber("service");
-                $service_number = "SRV" . str_pad($getNumber, 5, "0", STR_PAD_LEFT);
+        //         // Servis Numarası
+        //         $getNumber = setNumber("service");
+        //         $service_number = "SRV" . str_pad($getNumber, 5, "0", STR_PAD_LEFT);
 
-                $pdesc = $offerNumber . " numaralı teklife ait otomatik oluşturulan servis.";
+        //         $pdesc = $offerNumber . " numaralı teklife ait otomatik oluşturulan servis.";
 
-                $regxs = $ac->prepare("INSERT INTO projects SET
-                    pcid = ?, poid = ?, servicestype = ?, service_number = ?,
-                    collectiontype = ?, address = ?, region = ?, pcreativer = ?,
-                    pdesc = ?, pstart_date = ?, pauthors = ?, price = ?,
-                    price_desc = ?, pnotes = ?, pstatu = ?, contract_statu = ?");
+        //         $regxs = $ac->prepare("INSERT INTO projects SET
+        //             pcid = ?, poid = ?, servicestype = ?, service_number = ?,
+        //             collectiontype = ?, address = ?, region = ?, pcreativer = ?,
+        //             pdesc = ?, pstart_date = ?, pauthors = ?, price = ?,
+        //             price_desc = ?, pnotes = ?, pstatu = ?, contract_statu = ?");
 
-                $regxs->execute(array(
-                    $_POST['customers'],
-                    $lastInsertId,
-                    41, // Varsayılan SİSTEM KONTROL
-                    $service_number,
-                    'Cari', // Varsayılan Tahsilat Türü
-                    ($cust['address'] ?? '') . ' ' . ($cust['ilce'] ?? '') . ' / ' . ($cust['city'] ?? ''),
-                    $cust['region'] ?? '',
-                    $_SESSION['lid'],
-                    $pdesc,
-                    date('d.m.Y'),
-                    '', // pauthors
-                    Financial::formattedMoneyToNumber($_POST['tl_toplam_karsilik']),
-                    '', // price_desc
-                    '', // pnotes
-                    15, // Varsayılan Bekliyor
-                    1   // Sözleşme Bekliyor
-                ));
+        //         $regxs->execute(array(
+        //             $_POST['customers'],
+        //             $lastInsertId,
+        //             41, // Varsayılan SİSTEM KONTROL
+        //             $service_number,
+        //             'Cari', // Varsayılan Tahsilat Türü
+        //             ($cust['address'] ?? '') . ' ' . ($cust['ilce'] ?? '') . ' / ' . ($cust['city'] ?? ''),
+        //             $cust['region'] ?? '',
+        //             $_SESSION['lid'],
+        //             $pdesc,
+        //             date('d.m.Y'),
+        //             '', // pauthors
+        //             Financial::formattedMoneyToNumber($_POST['tl_toplam_karsilik']),
+        //             '', // price_desc
+        //             '', // pnotes
+        //             15, // Varsayılan Bekliyor
+        //             1   // Sözleşme Bekliyor
+        //         ));
 
-                if ($regxs) {
-                    // Sayaç artır
-                    $getNumber += 1;
-                    $upquery = $ac->prepare("UPDATE define_numbers SET service = ?");
-                    $upquery->execute(array($getNumber));
-                }
-            }
-        }
+        //         if ($regxs) {
+        //             // Sayaç artır
+        //             $getNumber += 1;
+        //             $upquery = $ac->prepare("UPDATE define_numbers SET service = ?");
+        //             $upquery->execute(array($getNumber));
+        //         }
+        //     }
+        // }
 
         //Geri dönüş mesajı
         if ($id == 0) {

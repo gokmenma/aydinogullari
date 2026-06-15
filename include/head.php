@@ -44,6 +44,7 @@
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <link rel="stylesheet" href="vendors/styles/style.css?v=<?php echo filemtime('vendors/styles/style.css'); ?>">
+<link rel="stylesheet" href="vendors/styles/premium-theme.css?v=<?php echo filemtime('vendors/styles/premium-theme.css'); ?>">
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
 <!-- manifest.json -->
