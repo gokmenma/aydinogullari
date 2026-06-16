@@ -101,7 +101,7 @@ if ($_POST) {
         }
 
         $company = $_POST['company'];
-        $offerno = $_POST['offerno'];
+        $offerno = !empty($_POST['offerno']) ? (int)$_POST['offerno'] : null;
         $servicestype = $_POST['ServisKonusu'];
         $collectiontype = $_POST['TahsilatTuru'];
         $address = $_POST['address'];
@@ -109,12 +109,12 @@ if ($_POST) {
         $updater = sesset('id');
         $update_at = date('Y-m-d H:i:s');
         $pdesc = $_POST['pdesc'];
-        $pstartdate = isset($_POST["pstartdate"]) ? date_tr($_POST['pstartdate']) : $cc['pstart_date'];
-        $psecond_date = isset($_POST["pseconddate"]) ? date_tr($_POST['pseconddate']) : $cc['psecond_date'];
-        $price = $_POST['price'];
-        $price_desc = $_POST['price_desc'];
-        $pstatu = $_POST['pstatu'];
-        $contract_statu = $_POST['contract_statu'];
+        $pstartdate = !empty($_POST["pstartdate"]) ? date_tr($_POST['pstartdate']) : ($cc['pstart_date'] ?: null);
+        $psecond_date = !empty($_POST["pseconddate"]) ? date_tr($_POST['pseconddate']) : ($cc['psecond_date'] ?: null);
+        $price = !empty($_POST['price']) ? $_POST['price'] : null;
+        $price_desc = $_POST['price_desc'] ?? null;
+        $pstatu = !empty($_POST['pstatu']) ? (int)$_POST['pstatu'] : null;
+        $contract_statu = !empty($_POST['contract_statu']) ? (int)$_POST['contract_statu'] : null;
         $contract_updated_at = $cc['contract_updated_at'] ?? null;
         $contract_updated_by = $cc['contract_updated_by'] ?? null;
         if ($contract_statu == 2 && $cc['contract_statu'] != 2) {
@@ -125,7 +125,7 @@ if ($_POST) {
             $contract_updated_by = null;
         }
         $pps = '';
-        foreach ($_POST['permings'] as $psx) {
+        foreach (($_POST['permings'] ?? []) as $psx) {
             $pps .= $psx . '|';
         }
 
@@ -198,20 +198,20 @@ if ($_POST) {
         }
 
         $company = $_POST["company"];
-        $offerno = $_POST["offerno"];
+        $offerno = !empty($_POST["offerno"]) ? (int)$_POST["offerno"] : null;
         $region = $_POST["region"];
         $servicestype = $_POST["ServisKonusu"];
         $collectiontype = $_POST["TahsilatTuru"];
         $address = $_POST["address"];
         $creativerx = sesset("id");
         $pdesc = $_POST["pdesc"];
-        $pstartdate = date_tr($_POST["pstartdate"]);
-        $price = $_POST["price"];
-        $price_desc = $_POST["price_desc"];
+        $pstartdate = !empty($_POST["pstartdate"]) ? date_tr($_POST["pstartdate"]) : null;
+        $price = !empty($_POST["price"]) ? $_POST["price"] : null;
+        $price_desc = $_POST["price_desc"] ?? null;
         $teklifID = $soneklenen_dosyaid;
         $pnote = addslashes(@$_POST["servicesnote"]);
-        $pstatu = $_POST["pstatu"];
-        $contract_statu = $_POST["contract_statu"];
+        $pstatu = !empty($_POST["pstatu"]) ? (int)$_POST["pstatu"] : null;
+        $contract_statu = !empty($_POST["contract_statu"]) ? (int)$_POST["contract_statu"] : null;
         $contract_updated_at = null;
         $contract_updated_by = null;
         if ($contract_statu == 2) {
@@ -220,7 +220,7 @@ if ($_POST) {
         }
         $pps = "";
 
-        foreach ($_POST["permings"] as $psx) {
+        foreach (($_POST["permings"] ?? []) as $psx) {
             $pps .= $psx . "|";
         }
 
@@ -646,12 +646,14 @@ $pageIcon = $isEdit ? 'fa-pencil-square-o' : 'fa-plus-circle';
         width: 100%;
     }
 
-    .form-field .input-group .bootstrap-select {
+    .form-field .input-group .bootstrap-select,
+    .form-field .input-group .select2-container {
         flex: 1 !important;
         width: auto !important;
     }
 
-    .form-field .input-group .bootstrap-select .btn {
+    .form-field .input-group .bootstrap-select .btn,
+    .form-field .input-group .select2-container .select2-selection {
         border-top-right-radius: 0 !important;
         border-bottom-right-radius: 0 !important;
     }
@@ -1038,6 +1040,51 @@ $pageIcon = $isEdit ? 'fa-pencil-square-o' : 'fa-plus-circle';
         border-color: #4b5563 !important;
         color: #fff !important;
     }
+
+    /* ─── Zorunlu Alan Hata Durumu ─── */
+    .form-field.field-error label {
+        color: #ef4444;
+    }
+
+    .form-field.field-error .form-control {
+        border-color: #ef4444 !important;
+        background: #fff5f5 !important;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+    }
+
+    .form-field.field-error .bootstrap-select .dropdown-toggle {
+        border-color: #ef4444 !important;
+        background: #fff5f5 !important;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+    }
+
+    .form-field.field-error .required-dot {
+        background: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+        animation: pulseDot 1s ease-in-out infinite;
+    }
+
+    .field-error-msg {
+        font-size: 12px;
+        color: #ef4444;
+        font-weight: 500;
+        display: none;
+        margin-top: 4px;
+    }
+
+    .form-field.field-error .field-error-msg {
+        display: block;
+    }
+
+    @keyframes pulseDot {
+        0%, 100% { box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); }
+        50%       { box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.4); }
+    }
+
+    .dark-mode .form-field.field-error .form-control,
+    .dark-mode .form-field.field-error .bootstrap-select .dropdown-toggle {
+        background: #3b1111 !important;
+    }
 </style>
 
 <div class="service-manage-wrapper pd-ltr-20 xs-pd-20-10">
@@ -1085,7 +1132,7 @@ $pageIcon = $isEdit ? 'fa-pencil-square-o' : 'fa-plus-circle';
                 </div>
                 <div class="form-grid">
                     <!-- Firma -->
-                    <div class="form-field">
+                    <div class="form-field" id="field-company">
                         <label><span class="required-dot"></span> Firma</label>
                         <div class="input-group">
                             <?php echo customers("company", $isEdit ? $cc['pcid'] : $comp_id) ?>
@@ -1094,10 +1141,11 @@ $pageIcon = $isEdit ? 'fa-pencil-square-o' : 'fa-plus-circle';
                                 <i class="fa fa-plus"></i>
                             </a>
                         </div>
+                        <span class="field-error-msg"><i class="fa fa-exclamation-circle"></i> Firma seçimi zorunludur</span>
                     </div>
 
                     <!-- Servis Konusu -->
-                    <div class="form-field">
+                    <div class="form-field" id="field-ServisKonusu">
                         <label><span class="required-dot"></span> Servis Konusu</label>
                         <div class="input-group">
                             <select required name="ServisKonusu" data-live-search="true" data-size="12"
@@ -1122,10 +1170,11 @@ $pageIcon = $isEdit ? 'fa-pencil-square-o' : 'fa-plus-circle';
                         <span class="wait-span-modern" id="waitSpan">
                             Sözleşme durumu <strong>Sözleşme Bekliyor</strong> olarak seçildi
                         </span>
+                        <span class="field-error-msg"><i class="fa fa-exclamation-circle"></i> Servis konusu seçimi zorunludur</span>
                     </div>
 
                     <!-- Tahsilat Türü -->
-                    <div class="form-field">
+                    <div class="form-field" id="field-TahsilatTuru">
                         <label><span class="required-dot"></span> Tahsilat Türü</label>
                         <div class="input-group">
                             <select required name="TahsilatTuru" id="TahsilatTuru" class="selectpicker form-control"
@@ -1146,12 +1195,14 @@ $pageIcon = $isEdit ? 'fa-pencil-square-o' : 'fa-plus-circle';
                                 <i class="fa fa-plus"></i>
                             </a>
                         </div>
+                        <span class="field-error-msg"><i class="fa fa-exclamation-circle"></i> Tahsilat türü seçimi zorunludur</span>
                     </div>
 
                     <!-- Adres Bölge -->
-                    <div class="form-field">
+                    <div class="form-field" id="field-region">
                         <label><span class="required-dot"></span> Adres Bölge</label>
                         <?php echo Helper::selectRegion("region", $isEdit ? ($cc['region'] ?? '') : ($comp_region ?? '')); ?>
+                        <span class="field-error-msg"><i class="fa fa-exclamation-circle"></i> Adres bölge seçimi zorunludur</span>
                     </div>
 
                     <!-- Adres İl/İlçe -->
@@ -1454,46 +1505,127 @@ $pageIcon = $isEdit ? 'fa-pencil-square-o' : 'fa-plus-circle';
 
 
     // ═══════ FORM GÖNDERİM ═══════
+    var REQUIRED_FIELDS = [
+        { id: 'company',       fieldId: 'field-company',       label: 'Firma' },
+        { id: 'ServisKonusu',  fieldId: 'field-ServisKonusu',  label: 'Servis Konusu' },
+        { id: 'TahsilatTuru',  fieldId: 'field-TahsilatTuru',  label: 'Tahsilat Türü' },
+        { id: 'region',        fieldId: 'field-region',         label: 'Adres Bölge' }
+    ];
+
     function submitServiceForm() {
-        var form = document.getElementById('serviceForm');
+        // Önceki hataları temizle
+        $('.form-field.field-error').removeClass('field-error');
 
-        // Basit validasyon
-        var company = document.getElementById('company');
-        var region = document.getElementById('region');
+        var errors = [];
+        var firstErrorEl = null;
 
-        if (company && !company.value) {
-            showToast('Lütfen firma seçin!', 'error');
+        REQUIRED_FIELDS.forEach(function (f) {
+            var val = $('#' + f.id).val();
+            var isEmpty = !val || val === '' || val === '0' || (Array.isArray(val) && val.length === 0);
+            if (isEmpty) {
+                errors.push(f.label);
+                var fieldDiv = document.getElementById(f.fieldId);
+                if (fieldDiv) {
+                    fieldDiv.classList.add('field-error');
+                    if (!firstErrorEl) firstErrorEl = fieldDiv;
+                }
+            }
+        });
+
+        if (errors.length > 0) {
+            showToast('Zorunlu alanlar eksik: <b>' + errors.join(', ') + '</b>', 'error');
+            if (firstErrorEl) {
+                firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
             return;
         }
 
-        if (region && !region.value) {
-            showToast('Lütfen bölge seçin!', 'error');
-            return;
-        }
+        <?php if (!$isEdit) { ?>
+        // Başarılı kayıt öncesi local storage temizle
+        try { localStorage.removeItem('<?php echo 'svcForm_' . $service_number; ?>'); } catch(e) {}
+        <?php } ?>
 
-        form.submit();
+        document.getElementById('serviceForm').submit();
     }
+
+    // Hata göstergelerini alana tekrar tıklandığında/değiştirildiğinde temizle
+    $(document).on('change', '#company, #ServisKonusu, #TahsilatTuru, #region', function () {
+        var fieldId = 'field-' + this.id;
+        var fieldDiv = document.getElementById(fieldId);
+        if (fieldDiv) fieldDiv.classList.remove('field-error');
+    });
 
     // ═══════ TOAST BİLDİRİM ═══════
     function showToast(message, type) {
+        // Varsa eski toast'u kaldır
+        var existing = document.getElementById('svc-toast');
+        if (existing) existing.remove();
+
         var toast = document.createElement('div');
-        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;padding:14px 24px;border-radius:12px;color:#fff;font-size:14px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.2);animation:fadeSlideIn 0.4s ease;display:flex;align-items:center;gap:10px;';
+        toast.id = 'svc-toast';
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;padding:14px 24px;border-radius:12px;color:#fff;font-size:14px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.2);animation:fadeSlideIn 0.4s ease;display:flex;align-items:center;gap:10px;max-width:420px;';
 
         if (type === 'error') {
             toast.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
-            toast.innerHTML = '<i class="fa fa-exclamation-circle"></i> ' + message;
+            toast.innerHTML = '<i class="fa fa-exclamation-circle" style="flex-shrink:0;font-size:18px;"></i><span>' + message + '</span>';
         } else {
             toast.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-            toast.innerHTML = '<i class="fa fa-check-circle"></i> ' + message;
+            toast.innerHTML = '<i class="fa fa-check-circle" style="flex-shrink:0;font-size:18px;"></i><span>' + message + '</span>';
         }
 
         document.body.appendChild(toast);
         setTimeout(function () {
             toast.style.opacity = '0';
             toast.style.transition = 'opacity 0.3s ease';
-            setTimeout(function () { toast.remove(); }, 300);
-        }, 3000);
+            setTimeout(function () { if (toast.parentNode) toast.remove(); }, 300);
+        }, 4000);
     }
+
+    <?php if (!$isEdit) { ?>
+    // ═══════ FORM OTOMATİK KAYDET / GERİ YÜKLE (Yeni Servis Modu) ═══════
+    var SVC_STORAGE_KEY = '<?php echo 'svcForm_' . $service_number; ?>';
+
+    function saveFormDraft() {
+        try {
+            var draft = {
+                ServisKonusu:  $('#ServisKonusu').val(),
+                TahsilatTuru:  $('#TahsilatTuru').val(),
+                pstartdate:    $('input[name="pstartdate"]').val(),
+                pdesc:         $('#pdesc').val(),
+                servicesnote:  $('#servicesnote').val(),
+                price:         $('input[name="price"]').val(),
+                price_desc:    $('textarea[name="price_desc"]').val(),
+                pstatu:        $('#pstatu').val(),
+                contract_statu:$('#contract_statu').val()
+            };
+            localStorage.setItem(SVC_STORAGE_KEY, JSON.stringify(draft));
+        } catch(e) {}
+    }
+
+    function restoreFormDraft() {
+        try {
+            var raw = localStorage.getItem(SVC_STORAGE_KEY);
+            if (!raw) return;
+            var d = JSON.parse(raw);
+
+            if (d.ServisKonusu)   { $('#ServisKonusu').selectpicker('val', d.ServisKonusu); }
+            if (d.TahsilatTuru)   { $('#TahsilatTuru').selectpicker('val', d.TahsilatTuru); }
+            if (d.pstartdate)     { $('input[name="pstartdate"]').val(d.pstartdate); }
+            if (d.pdesc)          { $('#pdesc').val(d.pdesc); }
+            if (d.servicesnote)   { $('#servicesnote').val(d.servicesnote); }
+            if (d.price)          { $('input[name="price"]').val(d.price); }
+            if (d.price_desc)     { $('textarea[name="price_desc"]').val(d.price_desc); }
+            if (d.pstatu)         { $('#pstatu').selectpicker('val', d.pstatu); }
+            if (d.contract_statu) { $('#contract_statu').selectpicker('val', d.contract_statu); }
+
+            showToast('Önceki yarım kalan form verileri geri yüklendi.', 'success');
+        } catch(e) {}
+    }
+
+    // Değişiklikleri izle ve kaydet
+    $(document).on('change', '#ServisKonusu, #TahsilatTuru, #pstatu, #contract_statu', saveFormDraft);
+    $(document).on('input', '[name="pstartdate"], #pdesc, #servicesnote, [name="price"], [name="price_desc"]', saveFormDraft);
+    <?php } ?>
 
     // ═══════ SELECTPICKER INIT ═══════
     $(document).ready(function () {
@@ -1514,6 +1646,9 @@ $pageIcon = $isEdit ? 'fa-pencil-square-o' : 'fa-plus-circle';
 
         <?php if ($isEdit) { ?>
             kontrolEt();
+        <?php } else { ?>
+            // Yeni mod: taslak veri varsa geri yükle
+            restoreFormDraft();
         <?php } ?>
     });
 

@@ -663,3 +663,33 @@ function deleteReport(id,table){
 }
 
 $('#some-textarea').wysihtml5();
+
+// Initialize AJAX searchable customer select (Select2)
+$(document).ready(function() {
+    if ($.fn.select2) {
+        $('.ajax-customer-select').each(function() {
+            var $this = $(this);
+            $this.select2({
+                placeholder: $this.attr('placeholder') || 'Müşteri Seçiniz',
+                allowClear: !$this.prop('required'),
+                ajax: {
+                    url: 'pages/1/ajax.php?action=search-customers',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            q: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.results
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 0
+            });
+        });
+    }
+});

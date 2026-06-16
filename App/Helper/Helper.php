@@ -24,7 +24,7 @@ class Helper
         $sql->execute();
         $result = $sql->fetchAll(PDO::FETCH_OBJ);
 
-        $select = '<select name="' . $name . '" class="selectpicker form-control" data-style="border bg-white" required>';
+        $select = '<select name="' . $name . '" id="' . $name . '" class="selectpicker form-control" data-style="border bg-white" required>';
         $select .= '<option value="0">Bölge Seçiniz</option>';
         foreach ($result as $unit) {
             $isSelected = ($selected == $unit->id) ? 'selected' : '';

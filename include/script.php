@@ -32,6 +32,7 @@ if ($page == 'products/manage' || $page == 'products/list') {
 
 ?>
 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="vendors/scripts/script.js"></script>
 <script src="src/scripts/validate/core.js"></script>
 <script src="include/js/app.js?v=<?php echo filemtime('include/js/app.js'); ?>"></script>

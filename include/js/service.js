@@ -13,6 +13,7 @@
 
                     $('#address').val(data.city + " / " + data.ilce);
                     $('#region').val(data.region);
+                    $('#region').selectpicker('refresh');
 
                     var offers = data.offers;
                     var options = '';

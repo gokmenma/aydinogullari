@@ -436,24 +436,21 @@ function ParaBirimleri($name, $val, $id)
 
 function customers($name, $val, $required = 'required')
 {
-	echo '<select id="' . $name . '" ' . $required . ' name="' . $name . '" class="selectpicker form-control" 
-    data-container="body" data-style="bg-white" data-live-search="true">
-	<option value="">Müşteri Seçiniz</option>
-	';
-
 	global $ac;
-
-	$sql = $ac->prepare('SELECT * FROM customers');
-	$sql->execute();
-	while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-		if ($row['id'] == $val) {
-			echo '<option value="' . $row['id'] . '" selected>' . $row['company'] . '</option>';
-		} else {
-			echo '<option value="' . $row['id'] . '">' . $row['company'] . '</option>';
+	$selectedOption = '';
+	if (!empty($val)) {
+		$sql = $ac->prepare("SELECT id, company FROM customers WHERE id = ?");
+		$sql->execute(array($val));
+		$row = $sql->fetch(PDO::FETCH_ASSOC);
+		if ($row && !empty(trim($row['company']))) {
+			$selectedOption = '<option value="' . $row['id'] . '" selected>' . htmlspecialchars($row['company']) . '</option>';
 		}
 	}
 
-	echo '</select>';
+	echo '<select id="' . $name . '" ' . $required . ' name="' . $name . '" class="form-control ajax-customer-select">
+	<option value="">Müşteri Seçiniz</option>
+	' . $selectedOption . '
+	</select>';
 }
 
 function yangin_sondurme_sinifi($name, $val)

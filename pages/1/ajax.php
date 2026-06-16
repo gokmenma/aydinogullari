@@ -266,3 +266,38 @@ if (isset($_POST["customer_id"])) {
         return false;
     }
 }
+
+// Merkezi AJAX ile Firma/Müşteri Arama Endpoint'i
+if (isset($_GET["action"]) && $_GET["action"] == "search-customers") {
+    try {
+        $q = isset($_GET["q"]) ? trim($_GET["q"]) : '';
+        
+        if ($q !== '') {
+            $sql = $ac->prepare("SELECT id, company FROM customers WHERE company LIKE ? AND company IS NOT NULL AND company != '' ORDER BY company ASC LIMIT 30");
+            $sql->execute(array("%" . $q . "%"));
+        } else {
+            $sql = $ac->prepare("SELECT id, company FROM customers WHERE company IS NOT NULL AND company != '' ORDER BY company ASC LIMIT 30");
+            $sql->execute();
+        }
+        
+        $customers = $sql->fetchAll(PDO::FETCH_ASSOC);
+        
+        $results = [];
+        foreach ($customers as $c) {
+            $results[] = [
+                'id' => $c['id'],
+                'text' => $c['company']
+            ];
+        }
+        
+        echo json_encode([
+            'results' => $results
+        ]);
+        return false;
+    } catch (PDOException $ex) {
+        echo json_encode([
+            'error' => $ex->getMessage()
+        ]);
+        return false;
+    }
+}

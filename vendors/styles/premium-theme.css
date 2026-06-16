@@ -321,6 +321,7 @@ table {
 /* Premium Styling for Bootstrap Select / Selectpicker dropdowns */
 .bootstrap-select:not(.bs-container) {
     width: 100% !important;
+    position: relative !important;
 }
 
 .bootstrap-select > .dropdown-toggle {
@@ -347,9 +348,9 @@ table {
 
 /* Dropdown Menu Container */
 .bootstrap-select .dropdown-menu,
-.bootstrap-select.dropdown-menu,
-.bs-container .dropdown-menu,
-.bs-container.dropdown-menu {
+.bootstrap-select.bs-container .dropdown-menu {
+    width: 100% !important;
+    min-width: 100% !important;
     border-radius: 12px !important;
     border: 1px solid #f1f5f9 !important;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
@@ -361,12 +362,12 @@ table {
 
 /* Dropdown Items styling */
 .bootstrap-select .dropdown-menu li,
-.bs-container .dropdown-menu li {
+.bootstrap-select.bs-container .dropdown-menu li {
     margin: 2px 0 !important;
 }
 
 .bootstrap-select .dropdown-menu li a,
-.bs-container .dropdown-menu li a {
+.bootstrap-select.bs-container .dropdown-menu li a {
     border-radius: 8px !important;
     padding: 10px 14px !important;
     color: #475569 !important;
@@ -381,22 +382,22 @@ table {
 .bootstrap-select .dropdown-menu li a:hover,
 .bootstrap-select .dropdown-menu li a:focus,
 .bootstrap-select .dropdown-menu li.active a,
-.bs-container .dropdown-menu li a:hover,
-.bs-container .dropdown-menu li a:focus,
-.bs-container .dropdown-menu li.active a {
+.bootstrap-select.bs-container .dropdown-menu li a:hover,
+.bootstrap-select.bs-container .dropdown-menu li a:focus,
+.bootstrap-select.bs-container .dropdown-menu li.active a {
     background-color: #f1f5f9 !important;
     color: #0f172a !important;
 }
 
 /* Selected State */
 .bootstrap-select .dropdown-menu li.selected a,
-.bs-container .dropdown-menu li.selected a {
+.bootstrap-select.bs-container .dropdown-menu li.selected a {
     background: #6366f1 !important;
     color: #ffffff !important;
 }
 
 .bootstrap-select .dropdown-menu li.selected a:hover,
-.bs-container .dropdown-menu li.selected a:hover {
+.bootstrap-select.bs-container .dropdown-menu li.selected a:hover {
     background: #4f46e5 !important;
     color: #ffffff !important;
 }
@@ -404,8 +405,8 @@ table {
 /* Checkmark/Icon indicator style if present */
 .bootstrap-select .dropdown-menu li a .glyphicon-ok,
 .bootstrap-select .dropdown-menu li a .fa-check,
-.bs-container .dropdown-menu li a .glyphicon-ok,
-.bs-container .dropdown-menu li a .fa-check {
+.bootstrap-select.bs-container .dropdown-menu li a .glyphicon-ok,
+.bootstrap-select.bs-container .dropdown-menu li a .fa-check {
     margin-top: 4px !important;
     float: right !important;
     color: currentColor !important;
@@ -413,14 +414,14 @@ table {
 
 /* Search Box container and inputs */
 .bootstrap-select .bs-searchbox,
-.bs-container .bs-searchbox {
+.bootstrap-select.bs-container .bs-searchbox {
     padding: 8px 8px 6px 8px !important;
     border-bottom: 1px solid #f1f5f9 !important;
     margin-bottom: 4px !important;
 }
 
 .bootstrap-select .bs-searchbox input,
-.bs-container .bs-searchbox input {
+.bootstrap-select.bs-container .bs-searchbox input {
     border-radius: 8px !important;
     border: 1px solid #cbd5e1 !important;
     padding: 8px 12px !important;
@@ -431,7 +432,7 @@ table {
 }
 
 .bootstrap-select .bs-searchbox input:focus,
-.bs-container .bs-searchbox input:focus {
+.bootstrap-select.bs-container .bs-searchbox input:focus {
     border-color: #6366f1 !important;
     background-color: #ffffff !important;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
@@ -440,7 +441,7 @@ table {
 
 /* No results state styling */
 .bootstrap-select .no-results,
-.bs-container .no-results {
+.bootstrap-select.bs-container .no-results {
     padding: 12px !important;
     color: #64748b !important;
     font-size: 13px !important;
@@ -544,6 +545,185 @@ table {
 .dark-mode .table-bordered td {
     border-color: #4b5563 !important;
 }
+
+/* 15 Days Planner Board in Dark Mode */
+.dark-mode .planner-header {
+    background: #1a1a1a !important;
+    color: #f3f4f6 !important;
+}
+
+.dark-mode .planner-header th {
+    color: #f3f4f6 !important;
+}
+
+.dark-mode .planner-dates-row {
+    background: #252526 !important;
+}
+
+.dark-mode .planner-dates-row th {
+    color: #9ca3af !important;
+    border-color: #4b5563 !important;
+}
+
+.dark-mode .table-bordered td {
+    background: var(--bg-light-container) !important;
+    border-color: #4b5563 !important;
+}
+
+/* Custom list-group items in Dark Mode (Son 3 Teklif & Son Eklenenler) */
+.dark-mode .custom-list-group-item {
+    background: var(--bg-light-container) !important;
+    border-color: #4b5563 !important;
+}
+
+.dark-mode .custom-list-group-item:hover {
+    background: #2e2e2f !important;
+}
+
+.dark-mode .custom-list-group-item h6 {
+    color: #f3f4f6 !important;
+}
+
+.dark-mode .custom-list-group-item p {
+    color: #cbd5e1 !important;
+}
+
+.dark-mode .custom-list-group-item small,
+.dark-mode .custom-list-group-item .text-muted {
+    color: #9ca3af !important;
+}
+
+/* Team section & general text styling in Dark Mode */
+.dark-mode tr.table-light td {
+    background: #252526 !important;
+    color: #cbd5e1 !important;
+}
+
+.dark-mode .text-dark {
+    color: #f3f4f6 !important;
+}
+
+.dark-mode .text-secondary {
+    color: #9ca3af !important;
+}
+
+.dark-mode .table-borderless td {
+    color: #e5e7eb !important;
+}
+
+/* ==========================================
+   SELECT2 PREMIUM THEME STYLING
+   ========================================== */
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-container--default .select2-selection--single {
+    height: 48px !important;
+    padding: 10px 16px !important;
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    background-color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    font-size: 14px !important;
+    transition: all 0.2s ease !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #334155 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 46px !important;
+    right: 12px !important;
+}
+
+.select2-container--default.select2-container--open .select2-selection--single {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Select2 Dropdown Menu */
+.select2-dropdown {
+    border-radius: 12px !important;
+    border: 1px solid #f1f5f9 !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+    padding: 6px !important;
+    background-color: #ffffff !important;
+    z-index: 99999 !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 8px 12px !important;
+    outline: none !important;
+    background-color: #f8fafc !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+    border-color: #6366f1 !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+.select2-container--default .select2-results__option {
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    color: #475569 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: #6366f1 !important;
+    color: #ffffff !important;
+}
+
+/* Select2 Dark Mode Styles */
+.dark-mode .select2-container--default .select2-selection--single {
+    border-color: #4b5563 !important;
+    background-color: #1f1f1f !important;
+}
+
+.dark-mode .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #e5e7eb !important;
+}
+
+.dark-mode .select2-dropdown {
+    border-color: #4b5563 !important;
+    background-color: #1f1f1f !important;
+}
+
+.dark-mode .select2-container--default .select2-search--dropdown .select2-search__field {
+    border-color: #4b5563 !important;
+    background-color: #111827 !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .select2-container--default .select2-results__option {
+    color: #cbd5e1 !important;
+}
+
+.dark-mode .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #2e2e2f !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: #6366f1 !important;
+    color: #ffffff !important;
+}
+
+
 
 
 
