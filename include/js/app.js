@@ -374,7 +374,7 @@ async function purchaseRowAdd(sayac,demand=false) {
    if(demand) {
     var rowdescription = 
       '<td>' +
-          '<input type="text" class="form-control" style="width:300px" ' +
+          '<input type="text" class="form-control" style="min-width: 150px; width: 100%;" ' +
           'name="rowdescription[]" value="">' +
       '</td>'
    }
@@ -438,7 +438,7 @@ const responde = await fetch("/App/api/units.php",
   $("#tProduct tbody").append(
     "<tr>" +
     '<td><a href="#" class="btn btn-sm"><i class="fa fa-arrows-alt"></i></a></td>' +
-      '<td class="app-item-action"><a href="#" class="sil btn btn-sm btn-danger">Sil</a></td>' +
+      '<td class="app-item-action"><a href="#" class="sil btn btn-sm btn-danger"><i class="fa fa-trash"></i></a></td>' +
       '<td class="app-item-number"><input class="form-control" type="text" value="' +
       sayac +
       '"></td>' +

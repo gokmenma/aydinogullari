@@ -167,102 +167,88 @@ $start_time = microtime(true);
         overflow: visible;
     }
 </style>
-<div class="content pd-20 bg-white border-radius-16 box-shadow mb-10">
-    <div class="clearfix mb-10">
-        <!-- Özet bilgiler -->
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5">
-            <div class="col mb-10">
-                <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                    <div class="project-info">
-                        <div class="project-info-left">
-                            <div class="icon box-shadow bg-blue text-white">
-                                <i class="fa fa-list"></i>
-                            </div>
-                        </div>
-                        <div class="project-info-right">
-                            <span class="no text-blue weight-500 font-24">
-                                <?php echo $toplam_kesif; ?>
-                            </span>
-                            <p>
-                                <a target="_blank" class="weight-400 font-18" href="">Toplam Keşif Sayısı</a>
-                            </p>
-                        </div>
+<div class="bg-white premium-section-card box-shadow mb-4 animate-fade-in">
+    <div class="row">
+        <!-- Toplam Keşif Sayısı -->
+        <div class="col-xl col-lg-4 col-md-6 col-sm-12 mb-4 mb-xl-0">
+            <div class="dashboard-card card-blue">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Toplam Keşif Sayısı</span>
+                        <span class="no text-blue weight-700 font-30">
+                            <?php echo $toplam_kesif; ?>
+                        </span>
+                    </div>
+                    <div class="icon bg-blue text-white box-shadow">
+                        <i class="fa fa-list"></i>
                     </div>
                 </div>
             </div>
-            <div class="col mb-10">
-                <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                    <div class="project-info">
-                        <div class="project-info-left">
-                            <div class="icon box-shadow bg-yellow text-white">
-                                <i class="fa fa-hourglass-o"></i>
-                            </div>
-                        </div>
-                        <div class="project-info-right">
-                            <span class="no text-blue weight-500 font-24">
-                                <?php echo $bekleyen_kesif; ?>
-                            </span>
-                            <p>
-                                <a target="_blank" class="weight-400 font-18" href="">Bekleyen Keşif</a>
-                            </p>
-                        </div>
+        </div>
+
+        <!-- Bekleyen Keşif -->
+        <div class="col-xl col-lg-4 col-md-6 col-sm-12 mb-4 mb-xl-0">
+            <div class="dashboard-card card-yellow">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Bekleyen Keşif</span>
+                        <span class="no text-warning weight-700 font-30">
+                            <?php echo $bekleyen_kesif; ?>
+                        </span>
+                    </div>
+                    <div class="icon bg-warning text-white box-shadow">
+                        <i class="fa fa-hourglass-o"></i>
                     </div>
                 </div>
             </div>
-            <div class="col mb-10">
-                <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                    <div class="project-info">
-                        <div class="project-info-left">
-                            <div class="icon box-shadow bg-danger text-white">
-                                <i class="fa fa-times-circle"></i>
-                            </div>
-                        </div>
-                        <div class="project-info-right">
-                            <span class="no text-blue weight-500 font-24">
-                                <?php echo $iptal_kesif; ?>
-                            </span>
-                            <p>
-                                <a target="_blank" class="weight-400 font-18" href="">İptal Edilen Keşif</a>
-                            </p>
-                        </div>
+        </div>
+
+        <!-- İptal Edilen Keşif -->
+        <div class="col-xl col-lg-4 col-md-6 col-sm-12 mb-4 mb-xl-0">
+            <div class="dashboard-card card-red">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">İptal Edilen Keşif</span>
+                        <span class="no text-danger weight-700 font-30">
+                            <?php echo $iptal_kesif; ?>
+                        </span>
+                    </div>
+                    <div class="icon bg-danger text-white box-shadow">
+                        <i class="fa fa-times-circle"></i>
                     </div>
                 </div>
             </div>
-            <div class="col mb-10">
-                <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                    <div class="project-info clearfix">
-                        <div class="project-info-left">
-                            <div class="icon box-shadow bg-success text-white">
-                                <i class="fa fa-paper-plane"></i>
-                            </div>
-                        </div>
-                        <div class="project-info-right">
-                            <span class="no text-blue weight-500 font-24">
-                                <?php echo $teklif_gonderilen_kesif; ?>
-                            </span>
-                            <p class="weight-400 font-18">
-                                <a target="_blank" href="">Teklif İşlemleri</a>
-                            </p>
-                        </div>
+        </div>
+
+        <!-- Teklif İşlemleri -->
+        <div class="col-xl col-lg-4 col-md-6 col-sm-12 mb-4 mb-md-0">
+            <div class="dashboard-card card-purple">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Teklif İşlemleri</span>
+                        <span class="no text-purple weight-700 font-30">
+                            <?php echo $teklif_gonderilen_kesif; ?>
+                        </span>
+                    </div>
+                    <div class="icon bg-purple text-white box-shadow">
+                        <i class="fa fa-paper-plane"></i>
                     </div>
                 </div>
             </div>
-            <div class="col mb-10">
-                <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                    <div class="project-info clearfix">
-                        <div class="project-info-left">
-                            <div class="icon box-shadow bg-info text-white">
-                                <i class="fa fa-check"></i>
-                            </div>
-                        </div>
-                        <div class="project-info-right">
-                            <span class="no text-blue weight-500 font-24">
-                                <?php echo $tamamlanan_kesif; ?>
-                            </span>
-                            <p class="weight-400 font-18">
-                                <a target="_blank" href="">Tamamlanan Keşif</a>
-                            </p>
-                        </div>
+        </div>
+
+        <!-- Tamamlanan Keşif -->
+        <div class="col-xl col-lg-4 col-md-6 col-sm-12">
+            <div class="dashboard-card card-green">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Tamamlanan Keşif</span>
+                        <span class="no text-success weight-700 font-30">
+                            <?php echo $tamamlanan_kesif; ?>
+                        </span>
+                    </div>
+                    <div class="icon bg-success text-white box-shadow">
+                        <i class="fa fa-check"></i>
                     </div>
                 </div>
             </div>
@@ -272,31 +258,28 @@ $start_time = microtime(true);
 
 
 
-<div class="content pd-20 bg-white border-radius-16 box-shadow mb-30">
-    <div class="clearfix mb-20">
-        <div class="pull-left">
-            <h5 class="text-blue">Oluşturulan Tüm Keşifler</h5>
+<div class="bg-white premium-section-card box-shadow mb-30 animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-30" style="flex-wrap: wrap; gap: 15px;">
+        <div>
+            <h4 class="text-blue weight-600 mb-0">Oluşturulan Tüm Keşifler</h4>
         </div>
-        <div class="float-right">
-
+        <div>
             <!-- Excele aktarma yetkisi varsa aktar butonu -->
-
             <?php if (permtrue('kesifExport')) { ?>
-                <a href="/pages/1/kesif/export.php" target="_blank" class="btn btn-success" id="exceleAktar">
-                    <i class="fa fa-file-excel-o"></i> Excel Aktar
+                <a href="/pages/1/kesif/export.php" target="_blank" class="btn btn-outline-success mr-2" id="exceleAktar">
+                    <i class="fa fa-file-excel-o mr-1"></i> Excel Aktar
                 </a>
             <?php } ?>
             <?php if (permtrue('kesifCreate')) { ?>
                 <button class="btn btn-primary" data-toggle="modal" data-target="#kesifModal">
-                    <i class="fa fa-plus"></i> Yeni Keşif Ekle
+                    <i class="fa fa-plus-circle mr-1"></i> Yeni Keşif Ekle
                 </button>
             <?php } ?>
-
-
         </div>
     </div>
     <div class="search-input-area d-flex"></div>
-    <table id="kesifTable" class="data-table table-hover table-bordered table-responsive-sm">
+    <div class="table-responsive">
+        <table id="kesifTable" class="data-table table-hover table-bordered" style="width: 100%;">
         <thead>
             <tr>
                 <th scope="col">Sıra No</th>
@@ -448,6 +431,7 @@ $start_time = microtime(true);
             </tr>
         </tfoot> -->
     </table>
+    </div>
 </div>
 
 

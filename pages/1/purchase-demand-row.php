@@ -3,7 +3,7 @@
     <td style="width: 10px;"><a href="#" class="btn btn-sm"><i class="fa fa-arrows-alt"></i></a></td>
 
     <td class="app-item-action" style="max-width: 20px;">
-        <a type="button" class="sil btn btn-sm btn-danger text-white">Sil</a>
+        <a type="button" class="sil btn btn-sm btn-danger text-white"><i class="fa fa-trash"></i></a>
     </td>
 
     <!--Sırano-->
@@ -85,7 +85,7 @@
 
     <!-- AÇIKLAMA -->
         <td>
-            <input type="text" class="form-control" style="width:300px" 
+            <input type="text" class="form-control" style="min-width: 150px; width: 100%;" 
             name="rowdescription[]" value="<?php echo $rowdescription ;?>">
         </td>
     <!-- AÇIKLAMA -->
