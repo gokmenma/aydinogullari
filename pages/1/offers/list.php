@@ -246,23 +246,25 @@ if (@$_GET["st"] == "success-mail") {
         </div>
     </div>
 
-    <!-- Filtreler Card -->
+    <!-- Liste Card -->
     <div class="form-card animate-fade-in">
-        <div class="form-card-header">
+        <div class="form-card-header d-flex justify-content-between align-items-center">
             <div class="header-left-inner">
                 <div class="card-icon">
-                    <i class="fa fa-filter"></i>
+                    <i class="fa fa-list"></i>
                 </div>
                 <div>
-                    <h5>Detaylı Filtreleme</h5>
+                    <h5>Teklif Listesi</h5>
                 </div>
             </div>
-            <button type="button" id="filtersToggle" class="btn btn-outline-secondary btn-sm" style="border-radius: 8px;">
-                <i class="fa fa-chevron-down mr-1"></i> Göster
-            </button>
+            <div>
+                <button type="button" id="filtersToggle" class="btn btn-outline-secondary btn-sm" style="border-radius: 8px;">
+                    <i class="fa fa-filter mr-1"></i> Detaylı Filtreleme
+                </button>
+            </div>
         </div>
-
-        <div id="filtersCollapse" style="display:none;" class="filters-form">
+        
+        <div id="filtersCollapse" style="display:none; margin-bottom: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 20px;" class="filters-form">
             <div class="row">
                 <div class="col-md-3 mb-10">
                     <label class="form-label">Teklif No</label>
@@ -314,20 +316,6 @@ if (@$_GET["st"] == "success-mail") {
             <div class="text-right mt-15">
                 <button type="button" id="applyFilters" class="btn btn-success" style="border-radius: 8px; padding: 8px 20px;">ARA</button>
                 <button type="button" id="clearFilters" class="btn btn-outline-secondary ml-1" style="border-radius: 8px; padding: 8px 20px;">Temizle</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Liste Card -->
-    <div class="form-card animate-fade-in">
-        <div class="form-card-header">
-            <div class="header-left-inner">
-                <div class="card-icon">
-                    <i class="fa fa-list"></i>
-                </div>
-                <div>
-                    <h5>Teklif Listesi</h5>
-                </div>
             </div>
         </div>
         
@@ -604,7 +592,7 @@ $(document).ready(function() {
         var $c = $('#filtersCollapse');
         if($c.is(':visible')){
             $c.slideUp(150);
-            $('#filtersToggle').html('<i class="fa fa-chevron-down mr-1"></i> Göster');
+            $('#filtersToggle').html('<i class="fa fa-filter mr-1"></i> Detaylı Filtreleme');
         }else{
             $c.slideDown(150);
             $('#filtersToggle').html('<i class="fa fa-chevron-up mr-1"></i> Gizle');

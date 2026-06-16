@@ -152,7 +152,7 @@ try {
     <script>
         if (window.jQuery && $.fn.dataTable) {
             $.extend(true, $.fn.dataTable.defaults, {
-                dom: '<"row"<"col-sm-12 col-md-12"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>><"row"<"col-sm-12 col-md-12"l>>'
+                dom: 'rt<"row mt-3"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>><"row mt-2"<"col-sm-12 col-md-12"l>>'
             });
         }
     </script>

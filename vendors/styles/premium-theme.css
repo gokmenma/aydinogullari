@@ -200,26 +200,49 @@ table {
 }
 
 /* Premium DataTables Styling */
+.data-table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    border-radius: 10px !important;
+    border: 1px solid #e2e8f0 !important;
+    overflow: hidden !important;
+}
+
 .data-table thead th {
     background: #f8fafc !important;
     color: #475569 !important;
     font-weight: 600 !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 16px 12px !important;
+    padding: 8px 10px !important;
     border-bottom: 2px solid #e2e8f0 !important;
     border-top: none !important;
+    border-left: none !important;
+    border-right: 1px solid #e2e8f0 !important;
     vertical-align: middle !important;
 }
 
+.data-table thead th:last-child {
+    border-right: none !important;
+}
+
 .data-table tbody td {
-    padding: 16px 12px !important;
-    font-size: 14px;
+    padding: 6px 10px !important;
+    font-size: 13px;
     color: #334155;
     vertical-align: middle !important;
-    border-bottom: 1px solid #f1f5f9 !important;
-    border-color: #f1f5f9 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    border-left: none !important;
+    border-right: 1px solid #e2e8f0 !important;
+}
+
+.data-table tbody td:last-child {
+    border-right: none !important;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none !important;
 }
 
 .data-table tbody tr {
@@ -232,15 +255,16 @@ table {
 
 /* Style the input fields inside filters */
 .search-input-row th {
-    padding: 10px 8px !important;
+    padding: 6px 8px !important;
     background: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
 }
 
 .search-input-row th input {
     border-radius: 6px !important;
     border: 1px solid #cbd5e1 !important;
     padding: 6px 10px !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
     font-weight: 400 !important;
     transition: all 0.2s;
     background-color: #ffffff !important;
@@ -272,9 +296,9 @@ table {
 
 /* Modern soft badges in the table */
 .data-table .badge {
-    font-size: 12px !important;
+    font-size: 11px !important;
     font-weight: 600 !important;
-    padding: 6px 12px !important;
+    padding: 3px 8px !important;
     border-radius: 20px !important;
     box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
     border: none !important;
@@ -285,8 +309,8 @@ table {
 /* Action buttons styling */
 .data-table .btn {
     border-radius: 6px !important;
-    padding: 6px 10px !important;
-    font-size: 13px !important;
+    padding: 4px 8px !important;
+    font-size: 12px !important;
     font-weight: 500 !important;
     transition: all 0.2s ease;
 }
@@ -480,18 +504,23 @@ table {
 }
 
 /* Premium DataTables Styling in Dark Mode */
+.dark-mode .data-table {
+    border-color: #4b5563 !important;
+}
+
 .dark-mode .data-table thead th {
     background: #252526 !important;
     color: #f3f4f6 !important;
     border-bottom: 2px solid #4b5563 !important;
     border-top: none !important;
+    border-right: 1px solid #4b5563 !important;
 }
 
 .dark-mode .data-table tbody td {
     background-color: var(--bg-light-container) !important;
     color: #e5e7eb !important;
     border-bottom: 1px solid #4b5563 !important;
-    border-color: #4b5563 !important;
+    border-right: 1px solid #4b5563 !important;
 }
 
 .dark-mode .data-table tbody tr {
@@ -510,7 +539,8 @@ table {
 /* Filter Row and Inputs in Dark Mode */
 .dark-mode .search-input-row th {
     background: #252526 !important;
-    border-color: #4b5563 !important;
+    border-right: 1px solid #4b5563 !important;
+    border-bottom: 1px solid #4b5563 !important;
 }
 
 .dark-mode .search-input-row th input {
@@ -857,6 +887,13 @@ table {
     transition: box-shadow 0.3s ease;
 }
 
+/* Reduce padding of cards that contain tables to maximize table space */
+.form-card:has(.data-table),
+.form-card:has(.responsive),
+.form-card:has(.table-container) {
+    padding: 16px 20px !important;
+}
+
 .form-card:hover {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
@@ -1001,6 +1038,14 @@ table {
     margin-bottom: 24px;
     padding-bottom: 16px;
     border-bottom: 2px solid #f3f4f6;
+}
+
+/* Reduce margin-bottom of header when followed immediately by table/responsive container */
+.form-card-header + .responsive,
+.form-card-header + .table-container,
+.form-card-header + .data-table,
+.form-card-header + .dataTables_wrapper {
+    margin-top: -16px;
 }
 
 .form-card-header .card-icon {
@@ -1292,13 +1337,342 @@ table {
     color: #ffffff !important;
 }
 
-.dark-mode .bootstrap-select .bs-searchbox input:focus,
 .dark-mode .bootstrap-select.bs-container .bs-searchbox input:focus {
     border-color: #6366f1 !important;
     background-color: #111827 !important;
 }
 
+/* ==============================================================
+   UNIFORM VERTICAL GRID GAPS (20px)
+   ============================================================== */
+.form-card {
+    margin-bottom: 20px !important;
+}
 
+.row.mb-4, .mb-4 {
+    margin-bottom: 20px !important;
+}
 
+.row:has(.dashboard-card) {
+    margin-bottom: 20px !important;
+}
 
+/* Adjust collapsed form card padding and header margin when collapse element is display: none */
+.form-card:has([id*="Collapse"][style*="display: none"]),
+.form-card:has([id*="Collapse"][style*="display:none"]),
+.form-card:has([class*="collapse"][style*="display: none"]),
+.form-card:has([class*="collapse"][style*="display:none"]) {
+    padding-bottom: 16px !important;
+}
 
+.form-card:has([id*="Collapse"][style*="display: none"]) .form-card-header,
+.form-card:has([id*="Collapse"][style*="display:none"]) .form-card-header,
+.form-card:has([class*="collapse"][style*="display: none"]) .form-card-header,
+.form-card:has([class*="collapse"][style*="display:none"]) .form-card-header {
+    margin-bottom: 0 !important;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+}
+
+/* ==============================================================
+   PREMIUM MODERN AIR-DATEPICKER THEMING
+   ============================================================== */
+.datepicker {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 5px 15px -3px rgba(0, 0, 0, 0.04) !important;
+    border-radius: 14px !important;
+    font-family: 'Geist', 'Inter', sans-serif !important;
+    font-size: 13.5px !important;
+    color: #334155 !important;
+    padding: 8px !important;
+    width: 260px !important;
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.datepicker--pointer {
+    display: none !important; /* Hide standard pointer arrow for a clean floating look */
+}
+
+/* Nav Header */
+.datepicker--nav {
+    border-bottom: 1px solid #f1f5f9 !important;
+    min-height: 40px !important;
+    padding: 2px 4px 8px 4px !important;
+    align-items: center !important;
+}
+
+.datepicker--nav-title {
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+    padding: 4px 12px !important;
+}
+
+.datepicker--nav-title i {
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+.datepicker--nav-title:hover {
+    background: #f1f5f9 !important;
+}
+
+.datepicker--nav-action {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+    background: #f8fafc !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s !important;
+}
+
+.datepicker--nav-action:hover {
+    background: #e2e8f0 !important;
+}
+
+.datepicker--nav-action svg {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+.datepicker--nav-action path {
+    stroke: #475569 !important;
+    stroke-width: 2.5px !important;
+}
+
+/* Day Names */
+.datepicker--days-names {
+    margin: 10px 0 5px 0 !important;
+}
+
+.datepicker--day-name {
+    color: #94a3b8 !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.datepicker--day-name.-weekend- {
+    color: #ef4444 !important;
+}
+
+/* Cells Grid */
+.datepicker--cells {
+    padding: 2px 0 !important;
+}
+
+.datepicker--cell {
+    height: 34px !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    color: #334155 !important;
+    transition: all 0.15s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Hover State */
+.datepicker--cell.-focus- {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+/* Current Day Highlight */
+.datepicker--cell.-current- {
+    color: #4f46e5 !important;
+    font-weight: 700 !important;
+    background: #eef2ff !important;
+}
+
+.datepicker--cell.-current-.-focus- {
+    background: #e0e7ff !important;
+    color: #4f46e5 !important;
+}
+
+/* Selected Day Highlight */
+.datepicker--cell.-selected- {
+    background: #6366f1 !important;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35) !important;
+    border: none !important;
+}
+
+.datepicker--cell.-selected-.-current- {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    color: #ffffff !important;
+}
+
+.datepicker--cell.-selected-.-focus- {
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%) !important;
+}
+
+/* Other Months Days */
+.datepicker--cell-day.-other-month- {
+    color: #cbd5e1 !important;
+}
+
+.datepicker--cell-day.-other-month-:hover {
+    color: #64748b !important;
+    background: #f8fafc !important;
+}
+
+.datepicker--cell-day.-other-month-.-selected- {
+    color: rgba(255, 255, 255, 0.8) !important;
+    background: #818cf8 !important;
+}
+
+/* In Range Selection */
+.datepicker--cell.-in-range- {
+    background: rgba(99, 102, 241, 0.08) !important;
+    color: #4f46e5 !important;
+    border-radius: 0 !important;
+}
+
+.datepicker--cell.-in-range-.-focus- {
+    background: rgba(99, 102, 241, 0.15) !important;
+}
+
+.datepicker--cell.-range-from- {
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+    background: #6366f1 !important;
+    color: #ffffff !important;
+}
+
+.datepicker--cell.-range-to- {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+    background: #6366f1 !important;
+    color: #ffffff !important;
+}
+
+/* Disabled Cells */
+.datepicker--cell.-disabled- {
+    color: #cbd5e1 !important;
+    background: transparent !important;
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
+}
+
+/* Buttons section */
+.datepicker--buttons {
+    border-top: 1px solid #f1f5f9 !important;
+    padding-top: 8px !important;
+    gap: 8px !important;
+}
+
+.datepicker--button {
+    color: #4f46e5 !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    transition: all 0.2s !important;
+}
+
+.datepicker--button:hover {
+    background: #f1f5f9 !important;
+    color: #4338ca !important;
+}
+
+/* ==============================================================
+   DARK MODE OVERRIDES FOR DATEPICKER
+   ============================================================== */
+.dark-mode .datepicker {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 5px 15px -3px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark-mode .datepicker--nav {
+    border-bottom-color: #334155 !important;
+}
+
+.dark-mode .datepicker--nav-title {
+    color: #f1f5f9 !important;
+}
+
+.dark-mode .datepicker--nav-title:hover {
+    background: #334155 !important;
+}
+
+.dark-mode .datepicker--nav-title i {
+    color: #94a3b8 !important;
+}
+
+.dark-mode .datepicker--nav-action {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+}
+
+.dark-mode .datepicker--nav-action:hover {
+    background: #334155 !important;
+}
+
+.dark-mode .datepicker--nav-action path {
+    stroke: #94a3b8 !important;
+}
+
+.dark-mode .datepicker--day-name {
+    color: #64748b !important;
+}
+
+.dark-mode .datepicker--cell {
+    color: #e2e8f0 !important;
+}
+
+.dark-mode .datepicker--cell-day.-other-month- {
+    color: #475569 !important;
+}
+
+.dark-mode .datepicker--cell-day.-other-month-:hover {
+    color: #94a3b8 !important;
+    background: #1e293b !important;
+}
+
+.dark-mode .datepicker--cell.-focus- {
+    background: #334155 !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .datepicker--cell.-current- {
+    color: #818cf8 !important;
+    background: #312e81 !important;
+}
+
+.dark-mode .datepicker--cell.-current-.-focus- {
+    background: #3730a3 !important;
+}
+
+.dark-mode .datepicker--cell.-selected- {
+    color: #ffffff !important;
+}
+
+.dark-mode .datepicker--cell.-in-range- {
+    background: rgba(99, 102, 241, 0.15) !important;
+    color: #a5b4fc !important;
+}
+
+.dark-mode .datepicker--cell.-disabled- {
+    color: #475569 !important;
+}
+
+.dark-mode .datepicker--buttons {
+    border-top-color: #334155 !important;
+}
+
+.dark-mode .datepicker--button {
+    color: #818cf8 !important;
+}
+
+.dark-mode .datepicker--button:hover {
+    background: #334155 !important;
+    color: #a5b4fc !important;
+}
