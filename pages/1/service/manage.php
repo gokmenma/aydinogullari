@@ -1421,7 +1421,7 @@ $pageIcon = $isEdit ? 'fa-pencil-square-o' : 'fa-plus-circle';
                         <?php if ($cc['contract_statu'] == 2 && !empty($cc['contract_updated_at'])) { ?>
                             <div class="audit-row">
                                 <div class="audit-icon"><i class="fa fa-file-text-o"></i></div>
-                                <span class="audit-label">Sözleşmeyi Yapan</span>
+                                <span class="audit-label">Sözleşmeyi Yapıldı İşaretleyen</span>
                                 <span class="audit-value"><?php echo getUserName($cc['contract_updated_by']); ?></span>
                             </div>
                             <div class="audit-row">

@@ -49,15 +49,8 @@ $sayfa_basligi = "Teklif Satır Listesi";
     /* Fix Bootstrap Select visual bleed-through & duplicates */
     .bootstrap-select > .dropdown-toggle {
         height: 38px !important;
-        background-color: #fff !important;
-        border: 1px solid #d1d5db !important;
-        border-radius: 8px !important;
         padding: 0.5rem 0.75rem !important;
         font-size: 0.875rem !important;
-        box-shadow: none !important;
-    }
-    .bootstrap-select.show > .dropdown-toggle {
-        border-color: #3b82f6 !important;
     }
     
     .thead-colored { 

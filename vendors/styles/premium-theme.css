@@ -346,7 +346,10 @@ table {
 }
 
 /* Dropdown Menu Container */
-.bootstrap-select .dropdown-menu {
+.bootstrap-select .dropdown-menu,
+.bootstrap-select.dropdown-menu,
+.bs-container .dropdown-menu,
+.bs-container.dropdown-menu {
     border-radius: 12px !important;
     border: 1px solid #f1f5f9 !important;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
@@ -357,11 +360,13 @@ table {
 }
 
 /* Dropdown Items styling */
-.bootstrap-select .dropdown-menu li {
+.bootstrap-select .dropdown-menu li,
+.bs-container .dropdown-menu li {
     margin: 2px 0 !important;
 }
 
-.bootstrap-select .dropdown-menu li a {
+.bootstrap-select .dropdown-menu li a,
+.bs-container .dropdown-menu li a {
     border-radius: 8px !important;
     padding: 10px 14px !important;
     color: #475569 !important;
@@ -375,38 +380,47 @@ table {
 /* Hover and Focus States */
 .bootstrap-select .dropdown-menu li a:hover,
 .bootstrap-select .dropdown-menu li a:focus,
-.bootstrap-select .dropdown-menu li.active a {
+.bootstrap-select .dropdown-menu li.active a,
+.bs-container .dropdown-menu li a:hover,
+.bs-container .dropdown-menu li a:focus,
+.bs-container .dropdown-menu li.active a {
     background-color: #f1f5f9 !important;
     color: #0f172a !important;
 }
 
 /* Selected State */
-.bootstrap-select .dropdown-menu li.selected a {
+.bootstrap-select .dropdown-menu li.selected a,
+.bs-container .dropdown-menu li.selected a {
     background: #6366f1 !important;
     color: #ffffff !important;
 }
 
-.bootstrap-select .dropdown-menu li.selected a:hover {
+.bootstrap-select .dropdown-menu li.selected a:hover,
+.bs-container .dropdown-menu li.selected a:hover {
     background: #4f46e5 !important;
     color: #ffffff !important;
 }
 
 /* Checkmark/Icon indicator style if present */
 .bootstrap-select .dropdown-menu li a .glyphicon-ok,
-.bootstrap-select .dropdown-menu li a .fa-check {
+.bootstrap-select .dropdown-menu li a .fa-check,
+.bs-container .dropdown-menu li a .glyphicon-ok,
+.bs-container .dropdown-menu li a .fa-check {
     margin-top: 4px !important;
     float: right !important;
     color: currentColor !important;
 }
 
 /* Search Box container and inputs */
-.bootstrap-select .bs-searchbox {
+.bootstrap-select .bs-searchbox,
+.bs-container .bs-searchbox {
     padding: 8px 8px 6px 8px !important;
     border-bottom: 1px solid #f1f5f9 !important;
     margin-bottom: 4px !important;
 }
 
-.bootstrap-select .bs-searchbox input {
+.bootstrap-select .bs-searchbox input,
+.bs-container .bs-searchbox input {
     border-radius: 8px !important;
     border: 1px solid #cbd5e1 !important;
     padding: 8px 12px !important;
@@ -416,7 +430,8 @@ table {
     transition: all 0.2s ease !important;
 }
 
-.bootstrap-select .bs-searchbox input:focus {
+.bootstrap-select .bs-searchbox input:focus,
+.bs-container .bs-searchbox input:focus {
     border-color: #6366f1 !important;
     background-color: #ffffff !important;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
@@ -424,7 +439,8 @@ table {
 }
 
 /* No results state styling */
-.bootstrap-select .no-results {
+.bootstrap-select .no-results,
+.bs-container .no-results {
     padding: 12px !important;
     color: #64748b !important;
     font-size: 13px !important;
@@ -439,5 +455,95 @@ table {
         opacity: 1;
     }
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES
+   ========================================== */
+.dark-mode .premium-section-card {
+    background-color: var(--bs-content-dark) !important;
+    border-color: #4b5563 !important;
+}
+
+/* Premium Dashboard Cards in Dark Mode */
+.dark-mode .dashboard-card {
+    background: var(--bg-light-container) !important;
+    border-color: #4b5563 !important;
+}
+
+.dark-mode .dashboard-card .text-muted {
+    color: #9ca3af !important;
+}
+
+.dark-mode .dashboard-card .no {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Premium DataTables Styling in Dark Mode */
+.dark-mode .data-table thead th {
+    background: #252526 !important;
+    color: #f3f4f6 !important;
+    border-bottom: 2px solid #4b5563 !important;
+    border-top: none !important;
+}
+
+.dark-mode .data-table tbody td {
+    background-color: var(--bg-light-container) !important;
+    color: #e5e7eb !important;
+    border-bottom: 1px solid #4b5563 !important;
+    border-color: #4b5563 !important;
+}
+
+.dark-mode .data-table tbody tr {
+    background-color: var(--bg-light-container) !important;
+}
+
+.dark-mode .data-table tbody tr:hover {
+    background-color: #2e2e2f !important;
+}
+
+.dark-mode .data-table tbody tr:hover td {
+    background-color: #2e2e2f !important;
+    color: #ffffff !important;
+}
+
+/* Filter Row and Inputs in Dark Mode */
+.dark-mode .search-input-row th {
+    background: #252526 !important;
+    border-color: #4b5563 !important;
+}
+
+.dark-mode .search-input-row th input {
+    background-color: #1f1f1f !important;
+    border: 1px solid #4b5563 !important;
+    color: #f3f4f6 !important;
+}
+
+.dark-mode .search-input-row th input:focus {
+    border-color: #6366f1 !important;
+    background-color: #1a1a1a !important;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25) !important;
+}
+
+/* Datatable pagination and search container in Dark Mode */
+.dark-mode .dataTables_wrapper .dataTables_length select,
+.dark-mode .dataTables_wrapper .dataTables_filter input {
+    background-color: #1f1f1f !important;
+    border: 1px solid #4b5563 !important;
+    color: #f3f4f6 !important;
+}
+
+.dark-mode .dataTables_wrapper .dataTables_filter input:focus,
+.dark-mode .dataTables_wrapper .dataTables_length select:focus {
+    border-color: #6366f1 !important;
+    background-color: #1a1a1a !important;
+}
+
+/* Table borders in Dark Mode */
+.dark-mode .table-bordered,
+.dark-mode .table-bordered th,
+.dark-mode .table-bordered td {
+    border-color: #4b5563 !important;
+}
+
 
 
