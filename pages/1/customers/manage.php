@@ -45,12 +45,14 @@ $sonteklif = $sot->fetch(PDO::FETCH_ASSOC);
 //Son Oluşturulan Servis
 $sos = $ac->prepare("SELECT * FROM projects WHERE pcid = ? ORDER BY id DESC");
 $sos->execute(array($id));
-$ojsp = $sos->fetch(PDO::FETCH_ASSOC) ?? 0;
+$ojsp = $sos->fetch(PDO::FETCH_ASSOC);
 
 //Servis Tipi getirilir
-// $sql = $ac->prepare("SELECT * FROM units WHERE id = ? ");
-// $sql->execute(array($ojsp["servicestype"]));
-// $servicestype = $sql->fetch(PDO::FETCH_ASSOC);
+if ($ojsp) {
+    $sql = $ac->prepare("SELECT * FROM units WHERE id = ? ");
+    $sql->execute(array($ojsp["servicestype"]));
+    $servicestype = $sql->fetch(PDO::FETCH_ASSOC);
+}
 
 
 
@@ -455,7 +457,7 @@ if (@$_POST["status"] == "success") {
                 </div>
                 <div class="mt-2">
                     <?php if (!empty($sonteklif["id"])): ?>
-                        <a target="_blank" class="small weight-600 font-14 text-warning" href="index.php?p=offers&id=<?php echo $sonteklif["id"]; ?>">Teklife Git <i class="fa fa-arrow-right ml-1"></i></a>
+                        <a target="_blank" class="small weight-600 font-14 text-warning" href="index.php?p=offers/offer-manage&id=<?php echo $sonteklif["id"]; ?>">Teklife Git <i class="fa fa-arrow-right ml-1"></i></a>
                     <?php else: ?>
                         <span class="text-muted small">Teklif bulunamadı</span>
                     <?php endif; ?>
@@ -478,8 +480,8 @@ if (@$_POST["status"] == "success") {
                     </div>
                 </div>
                 <div class="mt-2">
-                    <?php if (!empty($servicestype["id"])): ?>
-                        <a target="_blank" class="small weight-600 font-14 text-purple" href="index.php?p=services&id=<?php echo $servicestype["id"]; ?>">Servise Git <i class="fa fa-arrow-right ml-1"></i></a>
+                    <?php if (!empty($ojsp["id"])): ?>
+                        <a target="_blank" class="small weight-600 font-14 text-purple" href="index.php?p=service/manage&id=<?php echo $ojsp["id"]; ?>">Servise Git <i class="fa fa-arrow-right ml-1"></i></a>
                     <?php else: ?>
                         <span class="text-muted small">Servis bulunamadı</span>
                     <?php endif; ?>

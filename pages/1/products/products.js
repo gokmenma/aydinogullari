@@ -109,16 +109,15 @@ $(document).on("click", ".product-delete", function () {
         })
           .then((response) => response.json())
           .then((data) => {
-            //console.log(data);
             title = data.status == "success" ? "Başarılı" : "Hata";
             Swal.fire({
               title: title,
               text: data.message,
               icon: data.status
             });
-            table = $("#tblProducts").DataTable();
-           //satırı sil
-            table.row($(this).parents("tr")).remove().draw();
+            if ($.fn.DataTable.isDataTable('#tblProducts')) {
+              $('#tblProducts').DataTable().ajax.reload(null, false);
+            }
           })
           .catch((error) => {
             console.error("Error:", error);
@@ -126,3 +125,62 @@ $(document).on("click", ".product-delete", function () {
       }
     });
 });
+
+$(document).ready(function () {
+  if ($("#tblProducts").length) {
+    $("#tblProducts").DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: "api/products_datatables.php",
+        type: "GET"
+      },
+      columns: [
+        { data: 0, className: "text-center" }, // Sıra
+        { data: 1 }, // Stok Kodu
+        { data: 2 }, // Ürün/Hizmet Adı
+        { data: 3 }, // Birimi
+        { data: 4 }, // Alış Fiyatı
+        { data: 5 }, // Satış Fiyatı
+        { data: 6 }, // Açıklama
+        { data: 7, orderable: false, className: "text-center" } // İşlem
+      ],
+      pageLength: 25,
+      lengthMenu: [10, 25, 50, 100],
+      language: {
+        url: "include/js/tr.json",
+        processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Yükleniyor...</span>'
+      },
+      responsive: true,
+      dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+      order: [[0, "asc"]],
+      orderCellsTop: true,
+      initComplete: function () {
+        var api = this.api();
+        var tableId = api.table().node().id;
+        // Arama satırını <thead> içine ekle
+        $("#" + tableId + " thead").append('<tr class="search-input-row"></tr>');
+
+        api.columns().every(function (index) {
+          let column = this;
+          let header = $(column.header());
+          let title = header.text();
+
+          // Sadece arama yapılabilecek alanlar için input oluştur (İşlem ve Sıra hariç)
+          if (column.visible() && title && title.trim() !== "İşlem" && title.trim() !== "İşlemler" && title.trim() !== "Sıra" && title.trim() !== "#Sıra") {
+            let input = $('<input type="text" class="form-control form-control-sm" placeholder="' + title + '" autocomplete="off">')
+              .appendTo($('<th class="search"></th>').appendTo("#" + tableId + " .search-input-row"))
+              .on("keyup change clear", function () {
+                if (column.search() !== this.value) {
+                  column.search(this.value).draw();
+                }
+              });
+          } else {
+            $("#" + tableId + " .search-input-row").append("<th></th>");
+          }
+        });
+      }
+    });
+  }
+});
+

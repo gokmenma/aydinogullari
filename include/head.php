@@ -84,5 +84,11 @@
 				document.getElementById('light-mode').style.display = 'block';
 			});
 		}
+
+		// Sidebar collapse state
+		const sidebarCollapsed = localStorage.getItem('sidebar-collapsed');
+		if (sidebarCollapsed === 'true' && window.innerWidth > 1200) {
+			document.documentElement.classList.add('sidebar-collapsed');
+		}
 	})();
 </script>

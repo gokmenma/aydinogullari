@@ -692,4 +692,34 @@ $(document).ready(function() {
             });
         });
     }
+
+    // Sidebar desktop toggle and persistence functionality
+    function syncMenuIconState() {
+        if ($(window).width() > 1200) {
+            if ($('html').hasClass('sidebar-collapsed')) {
+                $('.menu-icon').removeClass('open');
+            } else {
+                $('.menu-icon').addClass('open');
+            }
+        }
+    }
+
+    // On page load, sync menu icon state
+    syncMenuIconState();
+
+    // On resize, sync menu icon state (override vendor script logic for desktop)
+    $(window).on('resize', function() {
+        syncMenuIconState();
+    });
+
+    // Handle click on desktop menu icon
+    $('.menu-icon').on('click', function(e) {
+        if ($(window).width() > 1200) {
+            e.preventDefault();
+            var isCollapsed = $('html').toggleClass('sidebar-collapsed').hasClass('sidebar-collapsed');
+            localStorage.setItem('sidebar-collapsed', isCollapsed ? 'true' : 'false');
+            syncMenuIconState();
+        }
+    });
 });
+

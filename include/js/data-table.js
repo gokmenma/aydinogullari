@@ -135,11 +135,11 @@ $(document).ready(function () {
   var tableId = $(".data-table").attr("id");
   
   // Skip initialization for tables managed elsewhere
-  if (tableId === "customerlist" || tableId === "service-table" || tableId === "itemsTable") {
+  if (tableId === "customerlist" || tableId === "service-table" || tableId === "itemsTable" || tableId === "tblProducts") {
     return;
   }
   
-  table = $(".data-table").DataTable({
+  table = $(".data-table").not("#customerlist, #service-table, #itemsTable, #tblProducts").DataTable({
     
      lengthMenu: [
       [10, 25, 50, -1],

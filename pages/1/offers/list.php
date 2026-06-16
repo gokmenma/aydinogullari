@@ -93,187 +93,269 @@ if (@$_GET["st"] == "success-mail") {
 ?>
 
 <style>
+    /* Premium offer list page styles */
+    .offer-list-wrapper {
+        width: 100%;
+    }
+
+    /* Dashboard cards styling */
+    .dashboard-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f0f0f0;
+        position: relative;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .dashboard-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .dashboard-card .icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+
+    /* Form Card styling */
+    .form-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        margin-bottom: 25px;
+        border: 1px solid #f0f0f0;
+    }
+
+    .form-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .form-card-header .header-left-inner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .form-card-header .card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        background: #eff6ff;
+        color: #3b82f6;
+    }
+
+    .form-card-header h5 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e3a5f;
+    }
+
     .responsive {
-        overflow: auto;
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    .filters-form .form-label {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 6px;
+    }
+
+    .filters-form .form-control,
+    .filters-form .bootstrap-select .btn {
+        border-radius: 8px !important;
+        border: 1.5px solid #e5e7eb !important;
+        padding: 8px 12px;
+        font-size: 13.5px;
+        background: #fafafa;
     }
 </style>
-<!-- <link rel="stylesheet" href="src/plugins/bootstrap-select/dist/css/bootstrap-select.min.css"> -->
 
-<div class="content pd-20 bg-white border-radius-16 box-shadow mb-10">
-    <div class="clearfix mb-10">
-
-        <!-- Özet bilgiler -->
-        <div class="row">
-
-            <div class="col-lg-6 col-md-6 col-sm-12 mb-10">
-                <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                    <div class="project-info">
-                        <div class="project-info-left">
-                            <div class="icon box-shadow bg-warning text-white">
-                                <i class="fa fa-wrench"></i>
-                            </div>
-                        </div>
-                        <div class="project-info-right">
-                            <span class="no text-blue weight-500 font-24">
-                                <?php echo $bekleyen_teklif_sayisi; ?>
-                            </span>
-                            <p>
-                                <a target="_blank" class="weight-400 font-18" href="">Bekleyen Teklif Sayısı:</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12 mb-10">
-                <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                    <div class="project-info clearfix">
-                        <div class="project-info-left">
-                            <div class="icon box-shadow bg-green text-white">
-                                <i class="fa fa-check"></i>
-                            </div>
-                        </div>
-                        <div class="project-info-right">
-
-                            <span class="no text-blue weight-500 font-24">
-                                <?php echo $tamamlanan_teklif_sayisi; ?>
-
-                            </span>
-                            <p class="weight-400 font-18">
-                                <a target="_blank" href="">
-                                    Tamamlanan Teklif Sayısı
-                                </a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-        </div>
-    </div>
-</div>
-<div class="content pd-20 bg-white border-radius-16 box-shadow mb-30">
-    <div class="clearfix mb-30">
-        <div class="pull-left">
-            <h5 class="text-blue"><?php echo $sayfa_basligi; ?></h5>
-
-        </div>
-
-        <div class="float-right gap-2">
-
-            <!-- Excele Aktar -->
+<div class="pd-ltr-20 xs-pd-20-10">
+    <div class="offer-list-wrapper">
+    <!-- Clean Title & Actions Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-dark font-weight-bold" style="font-size: 22px; margin: 0;"><?php echo $sayfa_basligi; ?></h4>
+        <div class="d-flex align-items-center">
             <?php if (permtrue("data_export_offers")) { ?>
-                <a href="#" class="btn btn-secondary mr-1" id="exportExcel"><i class="fa fa-file-excel-o"></i>
-                    Excele Aktar</a>
-                <!-- Excele Aktar -->
+                <a href="#" class="btn btn-outline-secondary btn-sm d-flex align-items-center" id="exportExcel" style="border-radius: 8px; padding: 8px 16px; height: 38px;">
+                    <i class="fa fa-file-excel-o mr-1"></i> Excel'e Aktar
+                </a>
             <?php } ?>
-
             <?php if (permtrue("offerAdd")) { ?>
-                <a href="index.php?p=offers/offer-manage"><button style="float:right;" type="button"
-                        class="btn btn-primary">
-                        <i class="fa fa-plus pr-1"></i>Yeni Teklif Oluştur</button></a> <br><br>
+                <a href="index.php?p=offers/offer-manage" class="btn btn-primary btn-sm d-flex align-items-center ml-2" style="border-radius: 8px; padding: 8px 16px; height: 38px; background: linear-gradient(135deg, #1e3a5f, #3b7dd8); border: none;">
+                    <i class="fa fa-plus mr-1"></i> Yeni Teklif Oluştur
+                </a>
             <?php } ?>
         </div>
     </div>
 
-    <?php
+    <!-- Özet Bilgiler -->
+    <div class="row mb-4 mx-0">
+        <!-- Bekleyen Teklif Sayısı -->
+        <div class="col-lg-6 col-md-6 col-sm-12 mb-3">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Bekleyen Teklif Sayısı</span>
+                        <span class="no text-warning weight-700 font-30">
+                            <?php echo $bekleyen_teklif_sayisi; ?>
+                        </span>
+                    </div>
+                    <div class="icon bg-warning text-white box-shadow">
+                        <i class="fa fa-clock-o"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Tamamlanan Teklif Sayısı -->
+        <div class="col-lg-6 col-md-6 col-sm-12 mb-3">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Tamamlanan Teklif Sayısı</span>
+                        <span class="no text-success weight-700 font-30">
+                            <?php echo $tamamlanan_teklif_sayisi; ?>
+                        </span>
+                    </div>
+                    <div class="icon bg-success text-white box-shadow">
+                        <i class="fa fa-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-
-    ?>
-    <div class="content pd-20 bg-light border-radius-16 box-shadow mb-20">
-        <div class="d-flex align-items-center justify-content-between mb-10">
-            <h6 class="text-blue m-0">Filtreler</h6>
-            <button type="button" id="filtersToggle" class="btn btn-outline-secondary btn-sm">
+    <!-- Filtreler Card -->
+    <div class="form-card animate-fade-in">
+        <div class="form-card-header">
+            <div class="header-left-inner">
+                <div class="card-icon">
+                    <i class="fa fa-filter"></i>
+                </div>
+                <div>
+                    <h5>Detaylı Filtreleme</h5>
+                </div>
+            </div>
+            <button type="button" id="filtersToggle" class="btn btn-outline-secondary btn-sm" style="border-radius: 8px;">
                 <i class="fa fa-chevron-down mr-1"></i> Göster
             </button>
         </div>
+
         <div id="filtersCollapse" style="display:none;" class="filters-form">
-        <div class="row">
-            <div class="col-md-3 mb-10">
-                <label class="form-label">Teklif No</label>
-                <input type="text" id="filter_offer_no" class="form-control" placeholder="Teklif numarasını yazınız.">
+            <div class="row">
+                <div class="col-md-3 mb-10">
+                    <label class="form-label">Teklif No</label>
+                    <input type="text" id="filter_offer_no" class="form-control" placeholder="Teklif numarasını yazınız.">
+                </div>
+                <div class="col-md-3 mb-10">
+                    <label class="form-label">Firma</label>
+                    <select id="filter_company" class="form-control select-picker" data-live-search="true" title="Firma seçin veya yazın"></select>
+                </div>
+                <div class="col-md-3 mb-10">
+                    <label class="form-label">Ürün / Konu</label>
+                    <select id="filter_subject" class="form-control select-picker" data-live-search="true" title="Konu seçin veya yazın"></select>
+                </div>
+                <div class="col-md-3 mb-10">
+                    <label class="form-label">Durum</label>
+                    <select id="filter_status" class="form-control select-picker" data-live-search="true" title="Durum seçin veya yazın"></select>
+                </div>
+                <div class="col-md-3 mb-10">
+                    <label class="form-label">Başlangıç Tarihi</label>
+                    <input type="text" id="filter_date_start" class="form-control date-picker" placeholder="01.11.2024">
+                </div>
+                <div class="col-md-3 mb-10">
+                    <label class="form-label">Bitiş Tarihi</label>
+                    <input type="text" id="filter_date_end" class="form-control date-picker" placeholder="01.01.2025">
+                </div>
+                <div class="col-md-3 mb-10">
+                    <label class="form-label">Toplam (min)</label>
+                    <input type="number" step="0.01" id="filter_total_min" class="form-control" placeholder="Başlangıç toplamını yazınız.">
+                </div>
+                <div class="col-md-3 mb-10">
+                    <label class="form-label">Toplam (max)</label>
+                    <input type="number" step="0.01" id="filter_total_max" class="form-control" placeholder="Bitiş toplamını yazınız.">
+                </div>
+                <div class="col-md-3 mb-10">
+                    <label class="form-label">Para Birimi</label>
+                    <select id="filter_currency" class="form-control select-picker" data-live-search="true" title="Para birimi seçin veya yazın">
+                        <option value="">Tümü</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-10">
+                    <label class="form-label">Personel / Temsilci</label>
+                    <select id="filter_creator" class="form-control select-picker" data-live-search="true" title="Personel seçin veya yazın"></select>
+                </div>
+                <div class="col-md-3 mb-10">
+                    <label class="form-label">Ödeme Vadesi</label>
+                    <select id="filter_payment_period" class="form-control select-picker" data-live-search="true" title="Vade seçin veya yazın"></select>
+                </div>
             </div>
-            <div class="col-md-3 mb-10">
-                <label class="form-label">Firma</label>
-                <select id="filter_company" class="form-control select-picker" data-live-search="true" title="Firma seçin veya yazın"></select>
+            <div class="text-right mt-15">
+                <button type="button" id="applyFilters" class="btn btn-success" style="border-radius: 8px; padding: 8px 20px;">ARA</button>
+                <button type="button" id="clearFilters" class="btn btn-outline-secondary ml-1" style="border-radius: 8px; padding: 8px 20px;">Temizle</button>
             </div>
-            <div class="col-md-3 mb-10">
-                <label class="form-label">Ürün / Konu</label>
-                <select id="filter_subject" class="form-control select-picker" data-live-search="true" title="Konu seçin veya yazın"></select>
-            </div>
-            <div class="col-md-3 mb-10">
-                <label class="form-label">Durum</label>
-                <select id="filter_status" class="form-control select-picker" data-live-search="true" title="Durum seçin veya yazın"></select>
-            </div>
-            <div class="col-md-3 mb-10">
-                <label class="form-label">Başlangıç Tarihi</label>
-                <input type="text" id="filter_date_start" class="form-control date-picker" placeholder="01.11.2024">
-            </div>
-            <div class="col-md-3 mb-10">
-                <label class="form-label">Bitiş Tarihi</label>
-                <input type="text" id="filter_date_end" class="form-control date-picker" placeholder="01.01.2025">
-            </div>
-            <div class="col-md-3 mb-10">
-                <label class="form-label">Toplam (min)</label>
-                <input type="number" step="0.01" id="filter_total_min" class="form-control" placeholder="Başlangıç toplamını yazınız.">
-            </div>
-            <div class="col-md-3 mb-10">
-                <label class="form-label">Toplam (max)</label>
-                <input type="number" step="0.01" id="filter_total_max" class="form-control" placeholder="Bitiş toplamını yazınız.">
-            </div>
-            <div class="col-md-3 mb-10">
-                <label class="form-label">Para Birimi</label>
-                <select id="filter_currency" class="form-control select-picker" data-live-search="true" title="Para birimi seçin veya yazın">
-                    <option value="">Tümü</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-10">
-                <label class="form-label">Personel / Temsilci</label>
-                <select id="filter_creator" class="form-control select-picker" data-live-search="true" title="Personel seçin veya yazın"></select>
-            </div>
-            <div class="col-md-3 mb-10">
-                <label class="form-label">Ödeme Vadesi</label>
-                <select id="filter_payment_period" class="form-control select-picker" data-live-search="true" title="Vade seçin veya yazın"></select>
-            </div>
-        </div>
-        <div class="text-right mt-10">
-            <button type="button" id="applyFilters" class="btn btn-success">ARA</button>
-            <button type="button" id="clearFilters" class="btn btn-outline-secondary ml-1">Temizle</button>
-        </div>
         </div>
     </div>
-    <div class="responsive">
 
-        <table id="offerTable" class="data-table table-hover table-bordered">
-            <thead>
-                <tr>
-
-                    <th>Sıra No</th>
-                    <th class="w-10">Oluşturma Tarihi</th>
-                    <th>Teklif No</th>
-                    <th>Müşteri</th>
-                    <th>Toplam Tl Tutar</th>
-                    <th>Durum</th>
-                    <th>Onay Tarihi</th>
-                    <th>Konusu</th>
-                    <th>Ödeme Vadesi</th>
-                    <th>Teklif Veren</th>
-                    <th class="no-export" style="width: 7%;">İşlem</th>
-
-                </tr>
-            </thead>
-            <tbody>
-             
-<tr class="odd data-row text-center">
-    <td colspan="11">Veriler Yükleniyor...</td>
-</tr>
-
-            </tbody>
-           
-        </table>
-
+    <!-- Liste Card -->
+    <div class="form-card animate-fade-in">
+        <div class="form-card-header">
+            <div class="header-left-inner">
+                <div class="card-icon">
+                    <i class="fa fa-list"></i>
+                </div>
+                <div>
+                    <h5>Teklif Listesi</h5>
+                </div>
+            </div>
+        </div>
+        
+        <div class="responsive">
+            <table id="offerTable" class="data-table table-hover table-bordered" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Sıra No</th>
+                        <th class="w-10">Oluşturma Tarihi</th>
+                        <th>Teklif No</th>
+                        <th>Müşteri</th>
+                        <th>Toplam Tl Tutar</th>
+                        <th>Durum</th>
+                        <th>Onay Tarihi</th>
+                        <th>Konusu</th>
+                        <th>Ödeme Vadesi</th>
+                        <th>Teklif Veren</th>
+                        <th class="no-export" style="width: 7%;">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="odd data-row text-center">
+                        <td colspan="11">Veriler Yükleniyor...</td>
+                    </tr>
+                </tbody>
+            </table>
     </div>
+</div>
 </div>
 <style>
     /* DataTables'ın sabit genişliklerini ezmek için */
