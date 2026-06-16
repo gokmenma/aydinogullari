@@ -102,7 +102,7 @@ if (($_GET["st"] ?? "") == "success-mail") {
 <div class="table-responsive">
 
 
-        <table id="reportTable" class="data-table table-hover table-bordered text-nowrap">
+        <table id="reportTable" class="data-table table-hover table-bordered text-nowrap" style="width: 100%;">
             <thead>
                 <tr>
 
@@ -118,130 +118,6 @@ if (($_GET["st"] ?? "") == "success-mail") {
                 </tr>
             </thead>
             <tbody>
-                <?php
-
-                $query = $ac->prepare("SELECT r.id,r.report_number,
-                                                rt.reportName,rt.page_link,
-                                                r.isemrino,r.control_date,
-                                                r.validity_date,
-                                                c.company FROM `reports` r 
-                                                LEFT JOIN report_types rt on rt.id = r.report_type  
-                                                LEFT JOIN customers c on c.id = r.customer_id ORDER BY r.id desc
-                                                ");
-                $query->execute(array());
-
-                $sirano = 1;
-                while ($reports = $query->fetch(PDO::FETCH_ASSOC)) {
-
-                    $newpagelink = "index.php?p=reports/" . $reports["page_link"] . "/report-new-" . $reports["page_link"];
-                    $edit_file = ($reports["page_link"] == "yas") ? "report-new-" : "report-edit-";
-                    $editpagelink = "index.php?p=reports/" . $reports["page_link"] . "/" . $edit_file . $reports["page_link"] . "&id=" . $reports["id"];
-                    $viewpagelink = "index.php?p=reports/" . $reports["page_link"] . "/report-view-" . $reports["page_link"] . "&id=" . $reports["id"];
-                    $send_mail_link = "index.php?p=report-send-as-mail&type=".$reports['page_link']."&id=". $reports["id"];
-                    
-                    ?>
-                    <tr>
-                        <!-- ID No -->
-                        <td class="text-center">
-                            <?php echo $reports["id"]; ?>
-                        </td>
-                        <!-- Sıra No -->
-                        <td class="text-center">
-                            <?php echo $reports["report_number"]; ?>
-                        </td>
-
-                        <td class="table-plus " data-tooltip="<?php echo $reports["company"]; ?>">
-                            <?php echo shorted($reports["company"],40); ?>
-                        </td>
-
-                        <!-- Rapor Türü -->
-                        <td class="table-plus ">
-                            <?php
-                            echo $reports["reportName"];
-
-                            ?>
-                        </td>
-
-                        <!-- is Emri No -->
-                        <td class="table-plus ">
-                            <?php echo $reports["isemrino"]; ?>
-                        </td>
-
-                        <!-- Geçerlilik Tarihi -->
-                        <td class="table-plus ">
-                            <?php echo $reports["control_date"]; ?>
-                        </td>
-
-                        <!-- Firma -->
-                        <td class="table-plus ">
-                            <?php echo $reports["validity_date"]; ?>
-
-                        </td>
-
-                      
-
-                        <td class="text-center app-item-action-3">
-
-                            <?php
-
-
-                            if (permtrue("reportedit")) { ?>
-                                <a type="button" href="<?php echo $editpagelink ?>" class="btn btn-sm btn-outline-primary"
-                                    data-tooltip="Düzenle"><i class="fa fa-pencil"></i></a>
-
-                            <?php }
-                            if (permtrue("reportdel")) { ?>
-                                <button type="button" class="btn btn-sm btn-danger" data-tooltip="Sil"
-                                    onClick="deleteRecord('<?php echo $reports["report_number"] ?> nolu raporu silmek istediğinize emin misiniz?','<?php echo $reports["id"]; ?>','reports/reports','reports')"><i
-                                        class="fa fa-trash"></i></button>
-
-                            <?php } ?>
-                            
-
-                            <div class="dropdown d-inline">
-                                <button class="btn btn-secondary btn-sm" type="button" id="dropdownMenu2"
-                                    data-toggle="dropdown">
-                                    <i class="fa fa-ellipsis-v ml-1 mr-1"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-detail"
-                                    aria-labelledby="dropdownMenu2">
-
-
-                                    <?php if (permtrue("offerview")) { ?>
-                                        <a href="<?php echo $viewpagelink ?>" target="_blank" class="dropdown-item"
-                                            type="button">
-                                            <i class="fa fa-file mr-2"></i>
-                                            Raporu Göster</a>
-                                        <a href="<?php echo $viewpagelink . '&sign=no'?>" target="_blank" class="dropdown-item"
-                                            type="button">
-                                            <i class="fa fa-file mr-2"></i>
-                                            İmzasız Raporu Göster</a>
-
-                                    <?php }
-                                    ?>
-                                       <a href="<?php echo $send_mail_link ?>" target="_blank" class="dropdown-item"
-                                            type="button">
-                                            <i class="fa fa-file mr-2"></i>
-                                             Mail gönder</a>
-                                  
-
-                                    <a class="btn-report-detail btn dropdown-item" data-id="<?php echo $reports["id"]; ?>"
-                                        type="button">
-                                        <i class="fa fa-copy mr-2"></i>
-                                        Detay Bilgisi</a>
-
-                                </div>
-
-                            </div>
-
-
-                        </td>
-
-                    <?php } ?>
-
-                </tr>
-
-
             </tbody>
             <tfoot>
                 <tr>
@@ -266,7 +142,76 @@ if (($_GET["st"] ?? "") == "success-mail") {
 <script src="include/js/report.js"></script>
 <script>
     $(document).ready(function () {
-        $(".btn-report-detail").click(function () {
+        if ($("#reportTable").length) {
+            $("#reportTable").DataTable({
+                processing: true,
+                serverSide: true,
+                stateSave: true,
+                autoWidth: false,
+                ajax: {
+                    url: "api/reports_datatables.php",
+                    type: "GET"
+                },
+                columns: [
+                    { data: 0, className: "text-center" }, // ID
+                    { data: 1, className: "text-center" }, // Rapor No
+                    { data: 2 }, // Firma
+                    { data: 3 }, // Rapor Türü
+                    { data: 4 }, // İş Emri No
+                    { data: 5 }, // Kontrol Tarihi
+                    { data: 6 }, // Geçerlilik Tarihi
+                    { data: 7, orderable: false, className: "text-center" } // İşlem
+                ],
+                pageLength: 25,
+                lengthMenu: [10, 25, 50, 100],
+                language: {
+                    url: "include/js/tr.json",
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Yükleniyor...</span>'
+                },
+                responsive: true,
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                order: [[0, "desc"]],
+                orderCellsTop: true,
+                initComplete: function () {
+                    var api = this.api();
+                    var tableId = api.table().node().id;
+                    $("#" + tableId + " thead").append('<tr class="search-input-row"></tr>');
+
+                    api.columns().every(function (index) {
+                        let column = this;
+                        let header = $(column.header());
+                        let title = header.text();
+
+                        // Sadece arama yapılabilecek alanlar için input oluştur (İşlem hariç)
+                        if (column.visible() && title && title.trim() !== "İşlem" && title.trim() !== "İşlemler") {
+                            let input = $('<input type="text" class="form-control form-control-sm" placeholder="' + title + '" autocomplete="off">')
+                                .appendTo($('<th class="search"></th>').appendTo("#" + tableId + " .search-input-row"))
+                                .on("keyup change clear", function () {
+                                    if (column.search() !== this.value) {
+                                        column.search(this.value).draw();
+                                    }
+                                });
+                        } else {
+                            $("#" + tableId + " .search-input-row").append("<th></th>");
+                        }
+                    });
+
+                    // Restore state if stateSave is enabled
+                    var state = api.state.loaded();
+                    if (state) {
+                        $("#" + tableId + " .search-input-row input").each(function () {
+                            var colIdx = $(this).parent().index();
+                            var searchValue = state.columns[colIdx].search.search;
+                            if (searchValue) {
+                                $(this).val(searchValue);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        $(document).on("click", ".btn-report-detail", function () {
             var id = $(this).data("id");
             $.ajax({
                 method: "POST",
@@ -279,11 +224,8 @@ if (($_GET["st"] ?? "") == "success-mail") {
                     $("#reportdetail").modal("show");
                     $("#creator").text(data.creator);
                     $("#create_time").text(data.create_time);
-
                 }
-            })
-
+            });
         });
-
     });
 </script>

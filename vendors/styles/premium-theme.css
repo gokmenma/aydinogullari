@@ -1240,6 +1240,64 @@ table {
     color: #ffffff !important;
 }
 
+/* Bootstrap Select Dark Mode Overrides */
+.dark-mode .bootstrap-select > .dropdown-toggle,
+.dark-mode .form-field .bootstrap-select .btn {
+    background-color: #1f1f1f !important;
+    border-color: #4b5563 !important;
+    color: #e5e7eb !important;
+}
+
+.dark-mode .bootstrap-select > .dropdown-toggle:hover,
+.dark-mode .bootstrap-select > .dropdown-toggle:focus,
+.dark-mode .bootstrap-select.show > .dropdown-toggle {
+    border-color: #6366f1 !important;
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+
+.dark-mode .bootstrap-select .dropdown-menu,
+.dark-mode .bootstrap-select.bs-container .dropdown-menu {
+    background-color: #1f1f1f !important;
+    border-color: #4b5563 !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark-mode .bootstrap-select .dropdown-menu li a,
+.dark-mode .bootstrap-select.bs-container .dropdown-menu li a {
+    color: #cbd5e1 !important;
+}
+
+.dark-mode .bootstrap-select .dropdown-menu li a:hover,
+.dark-mode .bootstrap-select .dropdown-menu li a:focus,
+.dark-mode .bootstrap-select .dropdown-menu li.active a,
+.dark-mode .bootstrap-select.bs-container .dropdown-menu li a:hover,
+.dark-mode .bootstrap-select.bs-container .dropdown-menu li a:focus,
+.dark-mode .bootstrap-select.bs-container .dropdown-menu li.active a {
+    background-color: #2e2e2f !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .bootstrap-select .dropdown-menu li.selected a,
+.dark-mode .bootstrap-select.bs-container .dropdown-menu li.selected a {
+    background: #6366f1 !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .bootstrap-select .bs-searchbox input,
+.dark-mode .bootstrap-select.bs-container .bs-searchbox input {
+    background-color: #111827 !important;
+    border-color: #4b5563 !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .bootstrap-select .bs-searchbox input:focus,
+.dark-mode .bootstrap-select.bs-container .bs-searchbox input:focus {
+    border-color: #6366f1 !important;
+    background-color: #111827 !important;
+}
+
 
 
 

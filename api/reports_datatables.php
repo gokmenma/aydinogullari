@@ -1,0 +1,230 @@
+<?php
+// API endpoint for DataTables server-side processing for reports
+header('Content-Type: application/json');
+
+// Include bootstrap and functions to ensure consistent setup
+require_once dirname(__DIR__) . '/bootstrap.php';
+require_once __DIR__ . '/../configs/functions.php';
+
+// Permission check
+if (!permtrue("reportview")) {
+    http_response_code(403);
+    echo json_encode([
+        'draw' => intval($_GET['draw'] ?? 0),
+        'recordsTotal' => 0,
+        'recordsFiltered' => 0,
+        'data' => [],
+        'error' => 'Forbidden'
+    ]);
+    exit;
+}
+
+// Check if the request is from DataTables
+if (!isset($_GET['draw'])) {
+    die(json_encode(['error' => 'Invalid request']));
+}
+
+// Get DataTables parameters
+$draw = intval($_GET['draw']);
+$start = intval($_GET['start'] ?? 0);
+$length = intval($_GET['length'] ?? 10);
+$search_value = $_GET['search']['value'] ?? '';
+$order_column = intval($_GET['order'][0]['column'] ?? 0);
+$order_dir = $_GET['order'][0]['dir'] ?? 'desc';
+$requested_columns = $_GET['columns'] ?? [];
+
+// Column names for ordering (DataTables indexes)
+// 0: r.id, 1: r.report_number, 2: c.company, 3: rt.reportName, 4: r.isemrino, 5: r.control_date, 6: r.validity_date
+$columns = ['r.id', 'r.report_number', 'c.company', 'rt.reportName', 'r.isemrino', 'r.control_date', 'r.validity_date'];
+$order_by = $columns[$order_column] ?? 'r.id';
+
+// Base query with JOINs
+$base_query = "
+    FROM reports r 
+    LEFT JOIN report_types rt on rt.id = r.report_type  
+    LEFT JOIN customers c on c.id = r.customer_id
+";
+
+// Count total records
+$count_query = "SELECT COUNT(*) as total FROM reports";
+$count_stmt = $ac->prepare($count_query);
+$count_stmt->execute();
+$total_records = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
+
+// Count filtered records
+$where_conditions = [];
+$params = [];
+
+// Global search
+if ($search_value !== '') {
+    $where_conditions[] = "(
+        r.id LIKE :search OR
+        r.report_number LIKE :search OR
+        c.company LIKE :search OR
+        rt.reportName LIKE :search OR
+        r.isemrino LIKE :search OR
+        r.control_date LIKE :search OR
+        r.validity_date LIKE :search
+    )";
+    $params[':search'] = "%{$search_value}%";
+}
+
+// Column-specific search
+$filter_columns = [
+    0 => 'r.id',
+    1 => 'r.report_number',
+    2 => 'c.company',
+    3 => 'rt.reportName',
+    4 => 'r.isemrino',
+    5 => 'r.control_date',
+    6 => 'r.validity_date',
+];
+
+if (!empty($requested_columns) && is_array($requested_columns)) {
+    foreach ($requested_columns as $idx => $col) {
+        $value = $col['search']['value'] ?? '';
+        $idx = intval($idx);
+        if ($value === '') {
+            continue;
+        }
+        if (isset($filter_columns[$idx])) {
+            $paramKey = ":col_{$idx}";
+            $where_conditions[] = $filter_columns[$idx] . " LIKE " . $paramKey;
+            $params[$paramKey] = "%{$value}%";
+        }
+    }
+}
+
+$where_clause = count($where_conditions) ? (" WHERE " . implode(" AND ", $where_conditions)) : "";
+
+$filtered_count_query = "SELECT COUNT(*) as filtered " . $base_query . $where_clause;
+$filtered_stmt = $ac->prepare($filtered_count_query);
+foreach ($params as $k => $v) {
+    $filtered_stmt->bindValue($k, $v);
+}
+$filtered_stmt->execute();
+$filtered_records = $filtered_stmt->fetch(PDO::FETCH_ASSOC)['filtered'] ?? 0;
+
+// Main data query
+$data_query = "
+    SELECT 
+        r.id,
+        r.report_number,
+        r.isemrino,
+        r.control_date,
+        r.validity_date,
+        rt.reportName,
+        rt.page_link,
+        c.company
+" . $base_query . $where_clause . "
+    ORDER BY {$order_by} {$order_dir}
+    LIMIT :start, :length
+";
+
+$data_stmt = $ac->prepare($data_query);
+foreach ($params as $k => $v) {
+    $data_stmt->bindValue($k, $v);
+}
+$data_stmt->bindParam(':start', $start, PDO::PARAM_INT);
+$data_stmt->bindParam(':length', $length, PDO::PARAM_INT);
+$data_stmt->execute();
+
+$reports_list = $data_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Prepare response
+$response = [
+    'draw' => $draw,
+    'recordsTotal' => $total_records,
+    'recordsFiltered' => $filtered_records,
+    'data' => []
+];
+
+$canEdit = permtrue("reportedit");
+$canDel = permtrue("reportdel");
+$canViewOffer = permtrue("offerview");
+
+foreach ($reports_list as $row_data) {
+    $row = [];
+    $rid = $row_data['id'];
+
+    // 0: ID
+    $row[] = htmlspecialchars($rid);
+
+    // 1: Rapor No
+    $row[] = htmlspecialchars($row_data['report_number'] ?? '');
+
+    // 2: Firma
+    $fullName = htmlspecialchars($row_data['company'] ?? '');
+    $shortName = htmlspecialchars(shorted($row_data['company'] ?? '', 40));
+    $row[] = '<span class="text-nowrap" data-tooltip="' . $fullName . '">' . $shortName . '</span>';
+
+    // 3: Rapor Türü
+    $row[] = htmlspecialchars($row_data['reportName'] ?? '');
+
+    // 4: İş Emri No
+    $row[] = htmlspecialchars($row_data['isemrino'] ?? '');
+
+    // 5: Kontrol Tarihi
+    $row[] = htmlspecialchars($row_data['control_date'] ?? '');
+
+    // 6: Geçerlilik Tarihi
+    $row[] = htmlspecialchars($row_data['validity_date'] ?? '');
+
+    // 7: İşlem (Actions)
+    $newpagelink = "index.php?p=reports/" . $row_data["page_link"] . "/report-new-" . $row_data["page_link"];
+    $edit_file = ($row_data["page_link"] == "yas") ? "report-new-" : "report-edit-";
+    $editpagelink = "index.php?p=reports/" . $row_data["page_link"] . "/" . $edit_file . $row_data["page_link"] . "&id=" . $rid;
+    $viewpagelink = "index.php?p=reports/" . $row_data["page_link"] . "/report-view-" . $row_data["page_link"] . "&id=" . $rid;
+    $send_mail_link = "index.php?p=report-send-as-mail&type=" . $row_data['page_link'] . "&id=" . $rid;
+
+    $actions = '<div class="text-center app-item-action-3" style="display:inline-flex; flex-wrap:nowrap; gap:4px">';
+    if ($canEdit) {
+        $actions .= '<a type="button" href="' . htmlspecialchars($editpagelink) . '" class="btn btn-sm btn-outline-primary" data-tooltip="Düzenle">
+            <i class="fa fa-pencil"></i>
+        </a>';
+    }
+    
+    if ($canDel) {
+        $confirmMsg = htmlspecialchars($row_data["report_number"] . ' nolu raporu silmek istediğinize emin misiniz?', ENT_QUOTES);
+        $actions .= '<button type="button" class="btn btn-sm btn-danger" data-tooltip="Sil" onClick="deleteRecord(\'' . $confirmMsg . '\', \'' . $rid . '\', \'reports/reports\', \'reports\')">
+            <i class="fa fa-trash"></i>
+        </button>';
+    }
+
+    $actions .= ' <div class="dropdown d-inline">
+        <button class="btn btn-secondary btn-sm" type="button" id="dropdownMenu_' . $rid . '" data-toggle="dropdown">
+            <i class="fa fa-ellipsis-v ml-1 mr-1"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right dropdown-menu-detail" aria-labelledby="dropdownMenu_' . $rid . '">';
+
+    if ($canViewOffer) {
+        $actions .= ' <a href="' . htmlspecialchars($viewpagelink) . '" target="_blank" class="dropdown-item" type="button">
+            <i class="fa fa-file mr-2"></i> Raporu Göster
+        </a>
+        <a href="' . htmlspecialchars($viewpagelink . '&sign=no') . '" target="_blank" class="dropdown-item" type="button">
+            <i class="fa fa-file mr-2"></i> İmzasız Raporu Göster
+        </a>';
+    }
+
+    $actions .= ' <a href="' . htmlspecialchars($send_mail_link) . '" target="_blank" class="dropdown-item" type="button">
+        <i class="fa fa-file mr-2"></i> Mail gönder
+    </a>
+    <a class="btn-report-detail btn dropdown-item" data-id="' . $rid . '" type="button">
+        <i class="fa fa-copy mr-2"></i> Detay Bilgisi
+    </a>';
+
+    $actions .= '</div></div></div>';
+
+    $row[] = $actions;
+    $response['data'][] = $row;
+}
+
+// Clear buffers to make sure no stray output breaks JSON
+if (function_exists('ob_get_level')) {
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+}
+
+echo json_encode($response);
+exit;
