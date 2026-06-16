@@ -139,305 +139,456 @@ if (@$_POST["status"] == "success") {
 ?>
 
 
-<!-- Default Basic Forms Start -->
-<div class="pd-20 bg-white border-radius-16 box-shadow mb-30">
-    <div class="clearfix mb-30">
+<style>
+    /* Premium customer form styles */
+    .customer-manage-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
 
-        <div class="pull-left">
-            <div class="d-flex">
-                <h4 class="text-blue ml-2">
-                    <?php echo $pdat["p_title"]; ?>
-                </h4><br>
+    .customer-header-card {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d5986 50%, #3b7dd8 100%);
+        border-radius: 16px;
+        padding: 24px 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 32px rgba(30, 58, 95, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .customer-header-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .customer-header-card .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        z-index: 1;
+    }
+
+    .customer-header-card .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .customer-header-card .header-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: #fff;
+        backdrop-filter: blur(10px);
+    }
+
+    .customer-header-card .header-title h4 {
+        color: #fff;
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .customer-header-card .header-title .customer-id-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 4px 14px;
+        border-radius: 20px;
+        color: #e0ecff;
+        font-size: 13px;
+        margin-top: 6px;
+        backdrop-filter: blur(10px);
+    }
+
+    .customer-header-card .header-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .customer-header-card .btn-header {
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 14px;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+
+    .btn-header-save {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-header-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+        color: #fff;
+    }
+
+    .btn-header-list {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        backdrop-filter: blur(10px);
+    }
+
+    .btn-header-list:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+
+    /* Form styling */
+    .form-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        margin-bottom: 25px;
+        border: 1px solid #f0f0f0;
+    }
+
+    .form-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .form-card-header .card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        background: #eff6ff;
+        color: #3b82f6;
+    }
+
+    .form-card-header h5 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: #1e3a5f;
+    }
+
+    .form-card-header p {
+        margin: 4px 0 0;
+        font-size: 13.5px;
+        color: #64748b;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px 30px;
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .form-grid .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-field label {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #334155;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-field label font[color="red"] {
+        color: #ef4444;
+        margin-right: 4px;
+        font-weight: bold;
+    }
+
+    .form-field .form-control,
+    .form-field .bootstrap-select .btn {
+        border-radius: 10px !important;
+        border: 1.5px solid #e5e7eb !important;
+        padding: 10px 14px;
+        font-size: 14px;
+        transition: all 0.25s ease;
+        background: #fafafa;
+    }
+
+    .form-field .form-control:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
+        background: #fff;
+    }
+
+    .form-field textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* Inline row within form field (e.g. city/district) */
+    .form-field .row-inline {
+        display: flex;
+        gap: 15px;
+    }
+
+    .form-field .row-inline > div {
+        flex: 1;
+    }
+</style>
+
+<div class="customer-manage-wrapper">
+    <!-- Header Card -->
+    <div class="customer-header-card animate-fade-in">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-icon">
+                    <i class="fa <?php echo $id > 0 ? 'fa-pencil-square-o' : 'fa-plus-circle'; ?>"></i>
+                </div>
+                <div class="header-title">
+                    <h4><?php echo $id > 0 ? 'Müşteri Düzenle' : 'Yeni Müşteri Ekle'; ?></h4>
+                    <?php if ($id > 0): ?>
+                        <span class="customer-id-badge">
+                            <i class="fa fa-tag"></i> Firma ID: #<?php echo $id; ?>
+                        </span>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="index.php?p=customers/list" class="btn-header btn-header-list">
+                    <i class="fa fa-list"></i> Listeye Dön
+                </a>
+                <button type="button" id="saveCustomer" class="btn-header btn-header-save">
+                    <i class="fa fa-save"></i> Kaydet
+                </button>
             </div>
         </div>
-
-        <div class="float-right">
-        <a href="index.php?p=customers/list" data-tooltip="Listeye Dön" data-tooltip-location="bottom"
-                class="btn btn-sm btn-secondary text-white mr-3">
-                <i class="fa fa-list mr-1"></i>Listeye Dön</a>
-            <button type="button" id="saveCustomer" class="btn btn-sm btn-primary">
-                <i class="fa fa-save"></i> Kaydet</button>
-
-           
-
-
-        </div>
-
-
-
     </div>
 
-
-    <style>
-        .sum-customer {
-            background: #2e2e2e !important;
-            opacity: 0.8;
-            border-radius: 12px;
-
-        }
-
-        .col-md-6,
-        .col-md-3 {
-            padding-right: 5px !important;
-            padding-left: 5px !important;
-        }
-    </style>
-
-    <!-- Özet bilgiler -->
-    <div class="row">
-        <div class="col-lg-3 col-md-6 col-sm-12 mb-30">
-            <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                <div class="project-info">
-                    <div class="project-info-left">
-                        <div class="icon box-shadow bg-blue text-white">
-                            <i class="fa fa-gears"></i>
-                        </div>
-                    </div>
-                    <div class="project-info-right">
-                        <span class="no text-blue weight-500 font-24">
+    <!-- Özet Bilgiler (Sadece Düzenleme Modunda Gösterilir) -->
+    <?php if ($id > 0): ?>
+    <div class="row mb-4">
+        <!-- Toplam Servis Sayısı -->
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+            <div class="dashboard-card card-blue">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Toplam Servis Sayısı</span>
+                        <span class="no text-blue weight-700 font-30">
                             <?php echo $pjs; ?>
                         </span>
-                        <p>
-                            <a target="_blank" class="weight-400 font-18"
-                                href="index.php?p=services&cid=<?php echo $cid ?>">Toplam Servis
-                                Sayısı</a>
-                        </p>
                     </div>
+                    <div class="icon bg-blue text-white box-shadow">
+                        <i class="fa fa-gears"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <a target="_blank" class="small weight-600 font-14 text-blue" href="index.php?p=services&cid=<?php echo $id ?>">Tümünü Görüntüle <i class="fa fa-arrow-right ml-1"></i></a>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6 col-sm-12 mb-30">
-            <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                <div class="project-info">
-                    <div class="project-info-left">
-                        <div class="icon box-shadow bg-light-green text-white">
-                            <i class="fa fa-handshake-o"></i>
-                        </div>
-                    </div>
-                    <div class="project-info-right">
-                        <span class="no text-blue weight-500 font-24">
+
+        <!-- Toplam Teklif Sayısı -->
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+            <div class="dashboard-card card-green">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Toplam Teklif Sayısı</span>
+                        <span class="no text-success weight-700 font-30">
                             <?php echo $ojs; ?>
                         </span>
-                        <p>
-                            <a target="_blank" class="weight-400 font-18"
-                                href="index.php?p=offers&cid=<?php echo $cid ?>">Toplam Teklif
-                                Sayısı:</a>
-                        </p>
                     </div>
+                    <div class="icon bg-success text-white box-shadow">
+                        <i class="fa fa-handshake-o"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <a target="_blank" class="small weight-600 font-14 text-success" href="index.php?p=offers&cid=<?php echo $id ?>">Tümünü Görüntüle <i class="fa fa-arrow-right ml-1"></i></a>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6 col-sm-12 mb-30">
-            <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                <div class="project-info clearfix">
-                    <div class="project-info-left">
-                        <div class="icon box-shadow bg-danger text-white">
-                            <i class="fa fa-file"></i>
-                        </div>
-                    </div>
-                    <div class="project-info-right">
 
-                        <span class="no text-blue weight-500 font-24">
-                            <?php echo $sonteklif["offerNumber"] ?? ''; ?>
-
+        <!-- Son Oluşturulan Teklif -->
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+            <div class="dashboard-card card-orange">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Son Oluşturulan Teklif</span>
+                        <span class="no text-warning weight-700 font-22">
+                            <?php echo $sonteklif["offerNumber"] ?? '-'; ?>
                         </span>
-                        <p class="weight-400 font-18">
-                            <a target="_blank" href="index.php?p=offers&id=<?php echo $sonteklif["id"]; ?>">
-                                Son Oluşturulan Teklif
-                            </a>
-                        </p>
                     </div>
+                    <div class="icon bg-warning text-white box-shadow">
+                        <i class="fa fa-file"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <?php if (!empty($sonteklif["id"])): ?>
+                        <a target="_blank" class="small weight-600 font-14 text-warning" href="index.php?p=offers&id=<?php echo $sonteklif["id"]; ?>">Teklife Git <i class="fa fa-arrow-right ml-1"></i></a>
+                    <?php else: ?>
+                        <span class="text-muted small">Teklif bulunamadı</span>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6 col-sm-12 mb-30">
-            <div class="sum-customer pd-20 box-shadow border-radius-5 height-100-p">
-                <div class="project-info clearfix">
-                    <div class="project-info-left">
-                        <div class="icon box-shadow bg-light-orange text-white">
-                            <i class="fa fa-gear"></i>
-                        </div>
-                    </div>
-                    <div class="project-info-right">
-                        <span class="no text-blue weight-500 font-24">
-                            <?php echo $servicestype["title"] ?? ''; ?>
+
+        <!-- Son Oluşturulan Servis -->
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+            <div class="dashboard-card card-purple">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block text-muted font-14 weight-500 mb-1">Son Oluşturulan Servis</span>
+                        <span class="no text-purple weight-700 font-22">
+                            <?php echo $servicestype["title"] ?? '-'; ?>
                         </span>
-                        <p class="weight-400 font-18">
-                            <a target="_blank" href="index.php?p=services&id=<?php echo $servicestype["id"] ?? ''; ?>">
-                                Son Oluşturulan Servis
-                            </a>
-                        </p>
                     </div>
+                    <div class="icon bg-purple text-white box-shadow">
+                        <i class="fa fa-gear"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <?php if (!empty($servicestype["id"])): ?>
+                        <a target="_blank" class="small weight-600 font-14 text-purple" href="index.php?p=services&id=<?php echo $servicestype["id"]; ?>">Servise Git <i class="fa fa-arrow-right ml-1"></i></a>
+                    <?php else: ?>
+                        <span class="text-muted small">Servis bulunamadı</span>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
-
-
-
-
-
-
-
-    <form enctype="multipart/form-data" action="" id="customerForm" method="POST">
-        <input type="hidden" name="company_id" id="company_id" value="<?php echo $id ?>">
-        <div class="form-group row">
-
-            <label for="company" class="col-sm-12 col-md-2 col-form-label">
-                <font color="red">(*)</font>Firma Adı:
-            </label>
-
-            <div class="col-sm-12 col-md-4">
-
-                <input required name="company" id="company" type="text" value="<?php echo $customer->company ?? ''; ?>"
-                    class="form-control">
-
+    <!-- Form Card -->
+    <div class="form-card animate-fade-in">
+        <div class="form-card-header">
+            <div class="card-icon">
+                <i class="fa fa-user-plus"></i>
             </div>
-
-            <label for="cemail" class="col-sm-12 col-md-2 col-form-label">
-
-                <font color="red">(*)</font> E-Posta:
-
-            </label>
-
-            <div class="col-sm-12 col-md-4"><input required name="cemail" type="text"
-                    value="<?php echo $customer->email ?? ''; ?>" class="form-control">
-
-            </div>
-
-        </div>
-
-
-        <div class="form-group row">
-
-            <label for="categoryName" class="col-sm-12 col-md-2 col-form-label">
-                <font color="red">(*)</font> Grup:
-            </label>
-
-            <div class="input-group col-md-4">
-                <?php echo customer::getCustomerGroups("categoryName", $customer->grp ?? ''); ?>
-            </div>
-
-            <label class="col-sm-12 col-md-2 col-form-label"> Yetkili Ad-Soyad:</label>
-
-            <div class="col-sm-12 col-md-4">
-
-                <input name="yetkili" type="text" class="form-control" value="<?php echo $customer->yetkili ?? '' ?>">
-
-            </div>
-
-
-        </div>
-
-
-        <div class="form-group row">
-
-            <label class="col-sm-12 col-md-2 col-form-label">
-                <font color="red">(*)</font>İl:
-            </label>
-
-            <div class="col-sm-12 col-md-2">
-                <?php echo Helper::selectCity("il", $customer->city ?? 0); ?>
-
-                <!-- <select name="il" id="il" class="selectpicker form-control" data-live-search="true" data-size="5"
-                    data-style="border bg-white" title="<?php //echo $customer->city ?? 0; ?>">
-
-                </select> -->
-
-            </div>
-            <div class="col-sm-12 col-md-2">
-
-                <select name="ilce" id="ilce" class="form-control selectpicker" data-live-search="true" data-size="5"
-                    data-none-Selected-Text="Seçim Yapılmadı" data-style="border bg-white">
-                    <option value="<?php echo $customer->ilce ?? ''; ?>">
-                        <?php echo $customer->ilce ?? ''; ?>
-                    </option>
-                </select>
-
-            </div>
-
-            <label class="col-sm-12 col-md-2 col-form-label">
-                <font color="red">(*)</font>Satış Temsilcisi:
-            </label>
-
-            <div class="col-sm-12 col-md-4">
-
-                <input placeholder="Temsilci giriniz!" name="represant" id="represant" type="text"
-                    class="form-control" value="<?php echo $customer->represant ?? ''; ?>">
-            </div>
-
-        </div>
-        <div class="form-group row">
-            <!-- Bölge Alanı -->
-            <label for="region" class="col-sm-12 col-md-2 col-form-label">
-                <font color="red">(*)</font>Bölge:
-            </label>
-
-            <div class="col-sm-12 col-md-4">
-                <?php echo Helper::selectRegion("region", $customer->region ?? ''); ?>
-           
-            </div>
-            <!-- Telefon Alanı -->
-
-        </div>
-
-
-        <div class="form-group row">
-            <!-- Telefon Alanı -->
-            <label for="cgsm" class="col-sm-12 col-md-2 col-form-label">
-                <font color="red">(*)</font>Telefon:
-            </label>
-
-            <div class="col-sm-12 col-md-4">
-
-                <input required placeholder="05XXXXXXXXX" maxlength="11" minlength="10" name="cgsm" type="text"
-                    value="<?php echo $customer->gsm ?? ''; ?>" class="form-control">
-            </div>
-            <!-- Telefon Alanı -->
-
-
-            <div class="col-md-2 col-sm-12">
-                <label class="col-form-label"> Ödeme Vadesi:</label>
-            </div>
-
-            <div class="col-sm-12 col-md-4">
-                <input type="text" class="form-control" name="vade" id="vade"
-                    value="<?php echo $customer->OdemeVade ?? '' ?>">
-
-            </div>
-
-        </div>
-        <div class="form-group row">
-            <label for="customer_address" class="col-sm-12 col-md-2 col-form-label">
-                <font color="red">(*)</font>Adres :
-            </label>
-
-            <div class="col-sm-12 col-md-10">
-                <textarea required name="customer_address" placeholder="Firma adresi" class="form-control" rows="3"
-                    style="height:100%;"><?php echo $customer->address ?? '' ?></textarea>
+            <div>
+                <h5>Firma Bilgileri</h5>
+                <p>Lütfen firma detaylarını ve iletişim bilgilerini eksiksiz doldurunuz.</p>
             </div>
         </div>
 
-        <div class="form-group row">
+        <form enctype="multipart/form-data" action="" id="customerForm" method="POST">
+            <input type="hidden" name="company_id" id="company_id" value="<?php echo $id ?>">
+            
+            <div class="form-grid">
+                
+                <!-- Firma Adı -->
+                <div class="form-field">
+                    <label for="company"><font color="red">(*)</font> Firma Adı</label>
+                    <input required name="company" id="company" type="text" value="<?php echo $customer->company ?? ''; ?>" class="form-control">
+                </div>
 
-            <label class="col-sm-12 col-md-2 col-form-label">
+                <!-- E-Posta -->
+                <div class="form-field">
+                    <label for="cemail"><font color="red">(*)</font> E-Posta</label>
+                    <input required name="cemail" id="cemail" type="text" value="<?php echo $customer->email ?? ''; ?>" class="form-control">
+                </div>
 
-                Açıklama:
+                <!-- Grup -->
+                <div class="form-field">
+                    <label for="categoryName"><font color="red">(*)</font> Grup</label>
+                    <div class="input-group">
+                        <?php echo customer::getCustomerGroups("categoryName", $customer->grp ?? ''); ?>
+                    </div>
+                </div>
 
-            </label>
+                <!-- Yetkili Ad-Soyad -->
+                <div class="form-field">
+                    <label for="yetkili">Yetkili Ad-Soyad</label>
+                    <input name="yetkili" id="yetkili" type="text" class="form-control" value="<?php echo $customer->yetkili ?? '' ?>">
+                </div>
 
-            <div class="col-sm-12 col-md-10">
+                <!-- İl / İlçe -->
+                <div class="form-field">
+                    <label><font color="red">(*)</font> İl / İlçe</label>
+                    <div class="row-inline">
+                        <div>
+                            <?php echo Helper::selectCity("il", $customer->city ?? 0); ?>
+                        </div>
+                        <div>
+                            <select name="ilce" id="ilce" class="form-control selectpicker" data-live-search="true" data-size="5" data-none-selected-text="Seçim Yapılmadı" data-style="border bg-white">
+                                <option value="<?php echo $customer->ilce ?? ''; ?>">
+                                    <?php echo $customer->ilce ?? ''; ?>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-                <textarea name="cdesc" placeholder="Firma hakkında yöneticilerin görebileceği bir not ekleyebilirsiniz."
-                    class="form-control" text=""><?php echo $customer->cdesc ?? ''; ?></textarea>
+                <!-- Satış Temsilcisi -->
+                <div class="form-field">
+                    <label for="represant"><font color="red">(*)</font> Satış Temsilcisi</label>
+                    <input placeholder="Temsilci giriniz!" name="represant" id="represant" type="text" class="form-control" value="<?php echo $customer->represant ?? ''; ?>">
+                </div>
+
+                <!-- Bölge -->
+                <div class="form-field">
+                    <label for="region"><font color="red">(*)</font> Bölge</label>
+                    <?php echo Helper::selectRegion("region", $customer->region ?? ''); ?>
+                </div>
+
+                <!-- Telefon -->
+                <div class="form-field">
+                    <label for="cgsm"><font color="red">(*)</font> Telefon</label>
+                    <input required placeholder="05XXXXXXXXX" maxlength="11" minlength="10" name="cgsm" id="cgsm" type="text" value="<?php echo $customer->gsm ?? ''; ?>" class="form-control">
+                </div>
+
+                <!-- Ödeme Vadesi -->
+                <div class="form-field">
+                    <label for="vade">Ödeme Vadesi</label>
+                    <input type="text" class="form-control" name="vade" id="vade" value="<?php echo $customer->OdemeVade ?? '' ?>">
+                </div>
+
+                <!-- Adres -->
+                <div class="form-field full-width">
+                    <label for="customer_address"><font color="red">(*)</font> Adres</label>
+                    <textarea required name="customer_address" id="customer_address" placeholder="Firma adresi" class="form-control" rows="3"><?php echo $customer->address ?? '' ?></textarea>
+                </div>
+
+                <!-- Açıklama -->
+                <div class="form-field full-width">
+                    <label for="cdesc">Açıklama</label>
+                    <textarea name="cdesc" id="cdesc" placeholder="Firma hakkında yöneticilerin görebileceği bir not ekleyebilirsiniz." class="form-control" rows="3"><?php echo $customer->cdesc ?? ''; ?></textarea>
+                </div>
 
             </div>
+        </form>
+    </div>
+</div>
 
-        </div>
-
-    </form>
-
-
-    <script src="pages/1/customers/customer.js"></script>
+<script src="pages/1/customers/customer.js"></script>
 

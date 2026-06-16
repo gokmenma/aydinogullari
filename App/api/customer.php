@@ -12,10 +12,9 @@ use App\Model\CustomerModel;
 $Customer = new CustomerModel();
 
 if ($_POST['action'] == 'create') {
-    $id = $_POST['company_id'];
+    $id = intval($_POST['company_id'] ?? 0);
     try {
         $data = [
-            'id' => $id,
             'company' => $_POST['company'],
             'email' => $_POST['cemail'],
             'address' => $_POST['customer_address'],
@@ -28,8 +27,18 @@ if ($_POST['action'] == 'create') {
             'OdemeVade' => $_POST['vade'],
             'region' => $_POST['region'],
             'represant' => $_POST['represant'],
-            'updater' => $_SESSION['lid']
+            'updater' => $_SESSION['lid'],
+            'updated_at' => date("Y-m-d H:i:s")
         ];
+
+        if ($id > 0) {
+            $data['id'] = $id;
+        } else {
+            $data['creativer'] = $_SESSION['lid'];
+            $data['regdate'] = date("Y-m-d H:i:s");
+            $data['reg_date'] = date("Y-m-d H:i:s");
+        }
+
         $lastInsertId = $Customer->save($data) ?? $id;
         $status = 'success';
         $message = 'Firma işlemi başarı ile tamamlandı!';

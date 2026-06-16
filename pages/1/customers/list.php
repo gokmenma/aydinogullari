@@ -109,116 +109,68 @@ if (@$_GET["id"] && @$_GET["mode"] == "delete" && @$_GET["code"] == "04md177") {
             </tr>
         </thead>
         <tbody>
-
-            <?php
-            // TEK SORGUDA TÜM VERİLERİ ÇEK - N+1 PROBLEMINI ÇÖZE
-            $cq = $ac->prepare("
-                SELECT 
-                    c.id,
-                    c.company,
-                    c.grp,
-                    c.represant,
-                    c.email,
-                    c.gsm,
-                    cg.title as group_title,
-                    COUNT(DISTINCT o.id) as offer_count,
-                    COUNT(DISTINCT p.id) as project_count
-                FROM customers c
-                LEFT JOIN cgroups cg ON cg.id = c.grp
-                LEFT JOIN offers o ON o.cid = c.id
-                LEFT JOIN projects p ON p.pcid = c.id
-                GROUP BY c.id
-                ORDER BY c.id DESC
-            ");
-            $cq->execute();
-            while ($as = $cq->fetch(PDO::FETCH_ASSOC)) {
-                $tps = $as['offer_count'] . " / " . $as['project_count'];
-                ?>
-                <tr>
-                    <td scope="row" class="text-center">
-                        <?php echo $as["id"]; ?>
-                    </td>
-                    <td>
-                        <!-- Eğer Müşteri düzenlemek için yetkisi varsa link çıkar yoksa çıkmaz -->
-                        <?php if (permtrue("customeredit")) {
-                            $link = "index.php?p=customers/manage&id=" . $as["id"];
-                        } else {
-                            $link = "#";
-                        }
-                        ?>
-                        <a href="<?php echo $link ?>" data-toggle="tooltip" data-tooltip="<?php echo $as["company"]; ?>">
-                            <?php echo shorted($as["company"], 40); ?>
-                        </a>
-
-                    </td>
-                    <td>
-                        <?php echo $as["group_title"]; ?>
-                    </td>
-                    <td>
-                    <?php echo $as["represant"]; ?>
-                    <td>
-                        <?php echo $tps; ?>
-                    </td>
-                    <td>
-                        <?php echo $as["email"]; ?>
-                    </td>
-                    <td>
-                        <?php echo $as["gsm"]; ?>
-                    </td>
-
-                    <td>
-                        <?php if (permtrue("customeredit")) { ?>
-                            <a href="index.php?p=customers/manage&id=<?php echo $as["id"]; ?>" data-tooltip="Görüntüle-Düzenle">
-                                <span class="btn btn-sm btn-outline-info">
-                                    <i class="fa fa-pencil"></i>
-                                </span>
-                            </a>
-                        <?php } ?>
-                        <?php if (permtrue("customerdelete")) { ?>
-
-                            <a href="#" data-tooltip="Sil"
-                                onClick="deleteRecord('Devam ettiğiniz takdirde, müşteriye ait tüm bilgiler ve müşterinin adına düzenlenmiş olan teklif & projeler tamamen silinecektir. Devam etmek istiyor musunuz?','<?php echo $as['id']; ?>','customers')">
-                                <span class="btn btn-sm btn-danger">
-                                    <i class="fa fa-trash"></i>
-                                </span>
-                            </a>
-                        <?php } ?>
-
-                        <div class="dropdown d-inline">
-                            <button class="btn btn-secondary btn-sm" type="button" id="dropdownMenu2"
-                                data-toggle="dropdown">
-                                <i class="fa fa-ellipsis-v ml-1 mr-1"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-detail"
-                                aria-labelledby="dropdownMenu2">
-                                <a href="index.php?p=customer-label" target="_blank" class="dropdown-item" type="button">
-                                    <i class="fa fa-print mr-2"></i>
-                                    Etiket Göster</a>
-
-                                <a href="index.php?p=customer-label" target="_blank" class="dropdown-item" type="button">
-                                    <i class="fa fa-send mr-2"></i>
-                                    Sms Gönder</a>
-                                <a href="index.php?p=send-mail&customer=<?php echo encrypt($as["id"]) ; ?>" target="_blank" class="dropdown-item" type="button">
-                                    <i class="fa fa-envelope-o mr-2"></i>
-                                    Email Gönder</a>
-                                <a class="btn-detail btn dropdown-item" data-id="<?php echo $as["id"]; ?>"
-                                    type="button">
-                                    <i class="fa fa-copy mr-2"></i>
-                                    Detay Bilgisi</a>
-                            </div>
-
-                        </div>
-                    </td>
-
-                </tr>
-            <?php } ?>
         </tbody>
     </table>
 </div>
 <script src="include/js/data-table.js"></script>
 <script>
     $(document).ready(function () {
-        $(".btn-detail").click(function () {
+        $('#customerlist').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: 'api/customers_datatables.php',
+                type: 'GET'
+            },
+            columns: [
+                { data: 0, className: 'text-center' },
+                { data: 1 },
+                { data: 2 },
+                { data: 3 },
+                { data: 4, orderable: false },
+                { data: 5 },
+                { data: 6 },
+                { data: 7, orderable: false }
+            ],
+            pageLength: 25,
+            lengthMenu: [10, 25, 50, 100],
+            language: {
+                url: 'include/js/tr.json',
+                processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Yükleniyor...</span>'
+            },
+            responsive: true,
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+            order: [[0, 'desc']],
+            orderCellsTop: true,
+            initComplete: function () {
+                var api = this.api();
+                var tableId = api.table().node().id;
+                // Arama satırını <thead> içine ekle
+                $("#" + tableId + " thead").append('<tr class="search-input-row"></tr>');
+
+                api.columns().every(function (index) {
+                    let column = this;
+                    let header = $(column.header());
+                    let title = header.text();
+
+                    // Sadece arama yapılabilecek alanlar için input oluştur
+                    if (column.visible() && title && title.trim() !== 'İşlem' && title.trim() !== 'İşlemler' && title.trim() !== 'Sıra' && title.trim() !== 'Teklif/Servis Sayısı') {
+                        let input = $('<input type="text" class="form-control form-control-sm" placeholder="' + title + '" autocomplete="off">')
+                            .appendTo($('<th class="search"></th>').appendTo("#" + tableId + " .search-input-row"))
+                            .on('keyup change clear', function () {
+                                if (column.search() !== this.value) {
+                                    column.search(this.value).draw();
+                                }
+                            });
+                    } else {
+                        $("#" + tableId + " .search-input-row").append('<th></th>');
+                    }
+                });
+            }
+        });
+
+        // Detay butonu için event delegation kullan
+        $(document).on("click", ".btn-detail", function () {
             var id = $(this).data("id");
             $.ajax({
                 method: "POST",
@@ -233,12 +185,9 @@ if (@$_GET["id"] && @$_GET["mode"] == "delete" && @$_GET["code"] == "04md177") {
                     $("#create_time").text(response.create_time);
                     $("#updater").text(response.updater);
                     $("#updated_at").text(response.updated_at);
-
                 }
-            })
-
+            });
         });
-
     });
 
     $(".closeModal").click(function () {
