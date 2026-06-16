@@ -106,124 +106,124 @@ if (@$_GET["st"] == "nocustom") {
 if (@$_GET["send"] == "true") {
 	showAlert("success", "Mail başarı ile gönderildi!");
 }
-
-
 ?>
+
 <form method="POST" id="myForm" enctype="multipart/form-data">
-    <div class="pd-20 bg-white border-radius-16 box-shadow mb-30">
-        <div class="clearfix">
-            <div class="pull-left">
-                <h4 class="text-blue">
-                    <?php echo $pdat["p_title"]; ?>
-                </h4>
-                <p class="mb-30 font-14">Sayfadaki <font color="red">(*)</font> yıldız ile belirtilen alanları boş
-                    bırakmayın..<br></p>
-            </div>
-            <button id="submitButton" onclick="validateForm()" id="Gönder" style="float:right"
-                class="btn btn-sm btn-primary mt-3 mb-3">
-                <i class="fa fa-paper-plane"> </i> Mail Gönder
-            </button>
-        </div>
-
-        <!-- GÖNDEREN MAİL ADRESİ -->
-        <div class="form-group row">
-            <label id="labelkategori" class="col-md-2 col-sm-6">
-                <font color="red">(*)</font>Gönderen Mail Adresi:
-            </label>
-
-    
-            <div class="col-md-10 col-sm-12">
-                <select name="mail_address" class="selectpicker form-control" data-style="border bg-white">
-
-                    <?php 
-
-				$sql = $ac->prepare("SELECT * from mail_accounts where mail_user = ? or mail_user = ?");
-				$sql->execute(array(1,sesset("id")));
-				while ($row = $sql->fetch(PDO::FETCH_ASSOC)){
-						echo "<option value=".$row["mail_address"]." > ". $row["mail_address"] . "</option>";
-				}
-				;?>
-
-                </select>
-            </div>
-        </div>
-        <!-- GÖNDEREN MAİL ADRESİ -->
-
-
-        <!-- FİRMA SEÇİMİ -->
-        <div class="form-group row">
-            <label id="labelkategori" class="col-md-2 col-sm-6">
-                <font color="red">(*)</font>Firma Seçimi :
-            </label>
-            <div class="col-md-10 col-sm-12">
-                <select required name="customers[]" class="selectpicker form-control" data-style="border bg-white"
-                    multiple data-actions-box="true" data-selected-text-format="count">
-                    <?php
-					$mcek = $ac->prepare("SELECT * FROM customers");
-					$mcek->execute();
-					while ($mm = $mcek->fetch(PDO::FETCH_ASSOC)) {
-                        $selected = $customer_id == $mm['id'] ? ' selected' : '';
-						?>
-                    <option <?php echo $selected ;?> value="<?php echo $mm["email"]; ?>"><?php echo $mm["company"]; ?></option>
-                    <?php
-					}
-					?>
-                </select>
-            </div>
-
-        </div>
-        <!-- FİRMA SEÇİMİ -->
-
-        <!-- KONU -->
-        <div class="form-group row">
-
-            <label class="col-md-2 col-sm-6">Konu Başlığı :</label>
-            <div class="col-md-10 col-sm-12">
-                <input autocomplete="off" required type="text" class="form-control" name="mailkonu">
-
-            </div>
-        </div>
-        <!-- KONU -->
-
-        <!-- EK -->
-        <div class="form-group row">
-
-            <label class="col-md-2 col-sm-6">Ek :</label>
-            <div class="col-md-10 col-sm-12">
-                <input class="form-control form-control-sm" name="dosya" type="file">
-            </div>
-        </div>
-        <!-- EK -->
-
-
-        <div class="form-group row">
-            <div class="col-md-2 col-sm-6">
-
-                <label>
-                    <font color="red">(*)</font>Mail İçeriği :
-                </label>
-                <p>
-
-                    <button type="button" class="btn btn-sm btn-secondary" data-tooltip="Şablon Olarak Kaydet"
-                        data-tooltip-location="right"><i class="fa fa-save"></i></button>
-                    <button type="button" class="btn btn-sm btn-primary" data-tooltip="Şablondan Aktar"
-                        data-tooltip-location="right"><i class="fa fa-hand-o-right"></i></button>
-                </p>
-            </div>
-            <div class="col-md-10 col-sm-12">
-                <textarea required class="textarea_editor form-control border-radius-0" name="mailicerik" value=""
-                    type="text"></textarea>
+    <div class="send-mail-manage-wrapper">
+        <!-- Header Card -->
+        <div class="premium-header-card animate-fade-in">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i class="fa fa-paper-plane"></i>
+                    </div>
+                    <div class="header-title">
+                        <h4><?php echo $pdat["p_title"] ?? 'Mail Gönder'; ?></h4>
+                        <span class="header-number-badge">
+                            <i class="fa fa-info-circle"></i> Toplu & Bireysel E-Posta Gönderim Paneli
+                        </span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button type="button" id="submitButton" onclick="validateForm()" class="btn-header btn-header-save">
+                        <i class="fa fa-paper-plane"></i> Mail Gönder
+                    </button>
+                </div>
             </div>
         </div>
 
+        <!-- Kart 1: Alıcı & Gönderici Bilgileri -->
+        <div class="form-card mb-4 animate-fade-in">
+            <div class="form-card-header">
+                <div class="card-icon card-icon-blue">
+                    <i class="fa fa-envelope-o"></i>
+                </div>
+                <div>
+                    <h5>E-Posta Konfigürasyonu</h5>
+                    <p>Gönderici hesabı ve alıcı firmaları seçin, e-posta konusunu ve dosya eklerini belirleyin</p>
+                </div>
+            </div>
+            
+            <div class="form-grid">
+                <!-- Gönderen Mail Adresi -->
+                <div class="form-field">
+                    <label for="mail_address"><font color="red">(*)</font> Gönderen Mail Adresi:</label>
+                    <select name="mail_address" id="mail_address" class="selectpicker form-control" data-style="border bg-white">
+                        <?php 
+                        $sql = $ac->prepare("SELECT * from mail_accounts where mail_user = ? or mail_user = ?");
+                        $sql->execute(array(1,sesset("id")));
+                        while ($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                            echo "<option value='".$row["mail_address"]."' > ". $row["mail_address"] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <!-- Firma Seçimi -->
+                <div class="form-field">
+                    <label for="customers"><font color="red">(*)</font> Firma Seçimi :</label>
+                    <select required name="customers[]" id="customers" class="selectpicker form-control" data-style="border bg-white"
+                        multiple data-actions-box="true" data-selected-text-format="count">
+                        <?php
+                        $mcek = $ac->prepare("SELECT * FROM customers");
+                        $mcek->execute();
+                        while ($mm = $mcek->fetch(PDO::FETCH_ASSOC)) {
+                            $selected = $customer_id == $mm['id'] ? ' selected' : '';
+                            ?>
+                            <option <?php echo $selected ;?> value="<?php echo $mm["email"]; ?>"><?php echo $mm["company"]; ?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <!-- Konu Başlığı -->
+                <div class="form-field">
+                    <label for="mailkonu"><font color="red">(*)</font> Konu Başlığı :</label>
+                    <input autocomplete="off" required type="text" class="form-control" name="mailkonu" id="mailkonu" placeholder="E-posta konusunu giriniz">
+                </div>
+
+                <!-- Ek -->
+                <div class="form-field">
+                    <label for="dosya">Dosya Eki (Opsiyonel):</label>
+                    <input class="form-control form-control-sm" name="dosya" id="dosya" type="file" style="height: auto; padding: 8px 14px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Kart 2: Mail İçeriği -->
+        <div class="form-card mb-4 animate-fade-in">
+            <div class="form-card-header" style="justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="card-icon card-icon-purple">
+                        <i class="fa fa-pencil-square-o"></i>
+                    </div>
+                    <div>
+                        <h5>Mail İçeriği</h5>
+                        <p>Gönderilecek e-posta metnini ve detaylarını hazırlayın</p>
+                    </div>
+                </div>
+                <!-- Şablon Yönetimi -->
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-tooltip="Şablon Olarak Kaydet"
+                        data-tooltip-location="bottom" style="border-radius: 8px; padding: 6px 12px; font-size: 13px;">
+                        <i class="fa fa-save"></i> Şablon Kaydet
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-tooltip="Şablondan Aktar"
+                        data-tooltip-location="bottom" style="border-radius: 8px; padding: 6px 12px; font-size: 13px;">
+                        <i class="fa fa-hand-o-right"></i> Şablondan Yükle
+                    </button>
+                </div>
+            </div>
+            <div class="editor-wrapper" style="border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                <textarea required class="textarea_editor form-control border-radius-8" name="mailicerik" placeholder="E-posta içeriğinizi yazınız..."></textarea>
+            </div>
+        </div>
     </div>
-
-
 </form>
+
 <script>
 $(document).ready(function() {
-
-
     $(".selectpicker").selectpicker({
         noneSelectedText: "Listeden Firma Seçiniz!",
         size: 8,
@@ -231,7 +231,6 @@ $(document).ready(function() {
         selectAllText: "Tümünü Seç",
         countSelectedText: "{0} Firma seçildi",
         liveSearch: "true"
-
     })
 });
 </script>

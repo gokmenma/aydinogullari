@@ -303,9 +303,7 @@ $(document).ready(function() {
             { data: 'durum', className: 'text-center' }
         ],
         order: [[2, 'desc']],
-        dom: '<"row justify-content-between"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
-             '<"row"<"col-sm-12"tr>>' +
-             '<"row mt-3"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+
         language: {
             url: "include/js/tr.json",
             search: "_INPUT_",

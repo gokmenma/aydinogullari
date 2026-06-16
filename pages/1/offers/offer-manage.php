@@ -24,7 +24,8 @@ $enc_id = Security::encrypt($oid);
 ?>
 <form enctype="multipart/form-data" id="myForm" method="POST">
     <input type="hidden" class="form-control" name="offer_id" id="offer_id" value="<?php echo $oid; ?>">
-    <input type="hidden" class="form-control" value="<?php echo $offer_number ?? 0; ?>">
+    <input type="hidden" class="form-control" name="offerNumber" id="offerNumber" value="<?php echo $offer_number; ?>">
+    <input type="hidden" class="form-control" name="templateOfferNumber" id="templateOfferNumber" value="<?php echo $template_offer_number; ?>">
     <div class="offer-manage-wrapper">
         <!-- Header Card -->
         <div class="offer-header-card animate-fade-in">

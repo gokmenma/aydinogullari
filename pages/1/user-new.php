@@ -84,143 +84,135 @@ if ($_GET["st"] == "thereuser") {
 
 
 
-<!-- Default Basic Forms Start -->
-<div class="content pd-20 bg-white border-radius-16 box-shadow mb-30">
-	<div class="clearfix">
-		<div class="pull-left">
-			<h4 class="text-blue">
-				<?php echo $pdat["p_title"]; ?>
-			</h4>
-			<p class="mb-30 font-14">Sayfadaki <font color="red">(*)</font> yıldız ile belirtilen alanları boş
-				bırakmayın..<br></p>
-		</div>
-		<div class="float-right">
+<form enctype="multipart/form-data" id="myForm" method="POST">
+    <div class="user-manage-wrapper">
+        <!-- Header Card -->
+        <div class="premium-header-card animate-fade-in">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i class="fa fa-user-plus"></i>
+                    </div>
+                    <div class="header-title">
+                        <h4><?php echo $pdat["p_title"] ?? 'Ekip Üyesi Ekle'; ?></h4>
+                        <span class="header-number-badge">
+                            <i class="fa fa-info-circle"></i> Yeni Ekip Üyesi Tanımlama
+                        </span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <?php if (permtrue("userview")) { ?>
+                        <a href="index.php?p=users" class="btn-header btn-header-list mr-2">
+                            <i class="fa fa-list"></i> Listeye Dön
+                        </a>
+                    <?php } ?>
+                    <button type="button" id="submitButton" onclick="validateForm()" class="btn-header btn-header-save">
+                        <i class="fa fa-save"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
 
-			<button id="submitButton" onclick="validateForm()" data-tooltip="Kaydet"
-				data-placement="bottom" class="btn btn-sm btn-primary"><i class="fa fa-save"></i> Kaydet</button>
+        <!-- Kart 1: Kişisel Bilgiler & Pozisyon -->
+        <div class="form-card mb-4 animate-fade-in">
+            <div class="form-card-header">
+                <div class="card-icon card-icon-blue">
+                    <i class="fa fa-user"></i>
+                </div>
+                <div>
+                    <h5>Kişisel Bilgiler & Yetki Pozisyonu</h5>
+                    <p>Ekip üyesinin adı, iletişim adresleri, giriş parolası ve rol yetkisi</p>
+                </div>
+            </div>
+            
+            <div class="form-grid">
+                <!-- Adı Soyadı -->
+                <div class="form-field">
+                    <label for="uname"><font color="red">(*)</font> Adı Soyadı :</label>
+                    <input required type="text" name="uname" id="uname" value="<?php echo htmlspecialchars($uname ?? '', ENT_QUOTES); ?>" class="form-control" placeholder="Ad Soyad giriniz">
+                </div>
 
-			<?php if (permtrue("userview")) {
-				$link = "index.php?p=users";
-				$disabled = "";
-			} else {
-				$link = "#";
-				$disabled = "disabled";
-			}
-			;
+                <!-- E-Posta -->
+                <div class="form-field">
+                    <label for="uemail"><font color="red">(*)</font> E-Posta:</label>
+                    <input required name="uemail" id="uemail" type="email" value="<?php echo htmlspecialchars($uemail ?? '', ENT_QUOTES); ?>" class="form-control" placeholder="E-Posta adresi giriniz">
+                </div>
 
-			?>
-			<a href="<?php echo $link ?>" data-tooltip="Listeye Dön" data-tooltip-location="bottom"
-				class="btn btn-sm btn-secondary text-white <?php echo $disabled ?>">
-				<i class="fa fa-list mr-1"></i>Listeye Dön</a>
-		</div>
-	</div>
-	<form enctype="multipart/form-data" id="myForm" method="POST">
-		<div class="row">
+                <!-- Parola -->
+                <div class="form-field">
+                    <label for="upassword"><font color="red">(*)</font> Parola:</label>
+                    <input required name="upassword" id="upassword" type="text" class="form-control" placeholder="Giriş parolası giriniz">
+                </div>
 
-			<div class="col-md-6 col-sm-12">
-				<div class="form-group">
-					<label for="uname">
-						<font color="red">(*)</font> Adı Soyadı :
-					</label>
-					<input required type="text" name="uname" value="<?php echo $uname ?>" class="form-control">
-				</div>
-			</div>
-			<div class="col-md-6 col-sm-12">
-				<div class="form-group">
-					<label for="uemail">
-						<font color="red">(*)</font> E-Posta:
-					</label>
-					<input required name="uemail" type="text" value="<?php echo $uemail ?>" class="form-control">
-				</div>
-			</div>
-		</div>
-		
-		<div class="row">
+                <!-- Telefon -->
+                <div class="form-field">
+                    <label for="ugsm">Telefon:</label>
+                    <input name="ugsm" id="ugsm" type="text" value="<?php echo htmlspecialchars($ugsm ?? '', ENT_QUOTES); ?>" class="form-control" placeholder="Telefon numarası giriniz">
+                </div>
 
-			<div class="col-md-3 col-sm-12">
-				<div class="form-group">
-					<label for="upassword">
-						<font color="red">(*)</font> Parola:
-					</label>
-					<input required name="upassword" type="text" class="form-control">
-				</div>
-			</div>
+                <!-- Pozisyon -->
+                <div class="form-field">
+                    <label for="permission"><font color="red">(*)</font> Pozisyon:</label>
+                    <select name="permission" id="permission" class="selectpicker form-control" data-style="border bg-white">
+                        <?php
+                        $pquery = $ac->prepare("SELECT * FROM userroles");
+                        $pquery->execute();
+                        while ($pm = $pquery->fetch(PDO::FETCH_ASSOC)) {
+                            ?>
+                            <option value="<?php echo $pm["id"]; ?>">
+                                <?php echo $pm["roleName"]; ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
 
-			<div class="col-md-3 col-sm-12">
-				<div class="form-group">
-					<label for="ugsm"> Telefon:</label>
-					<input name="ugsm" type="text" value="<?php echo $ugsm ?>" class="form-control">
-				</div>
-			</div>
+                <!-- Unvanı -->
+                <div class="form-field">
+                    <label for="unvan">Unvanı :</label>
+                    <input name="unvan" id="unvan" type="text" class="form-control" placeholder="Mühendis, Tekniker vb.">
+                </div>
 
-			<div class="col-md-6 col-sm-12">
-				<div class="form-group">
-					<label>
-						<font color="red">(*)</font> Pozisyon:
-					</label>
-					<select name="permission" class="selectpicker form-control" data-style="border bg-white">
-						<?php
-						$pquery = $ac->prepare("SELECT * FROM userroles");
-						$pquery->execute();
-						while ($pm = $pquery->fetch(PDO::FETCH_ASSOC)) {
-							?>
+                <!-- Mesleği -->
+                <div class="form-field full-width">
+                    <label for="meslek">Mesleği:</label>
+                    <input name="meslek" id="meslek" type="text" value="<?php echo htmlspecialchars($meslek ?? '', ENT_QUOTES); ?>" class="form-control" placeholder="Meslek dalı giriniz">
+                </div>
+            </div>
+        </div>
 
-							<option value="<?php echo $pm["id"]; ?>">
-								<?php echo $pm["roleName"]; ?>
-							</option>
-						<?php } ?>
+        <!-- Kart 2: Sicil Bilgileri -->
+        <div class="form-card mb-4 animate-fade-in">
+            <div class="form-card-header">
+                <div class="card-icon card-icon-purple">
+                    <i class="fa fa-id-card-o"></i>
+                </div>
+                <div>
+                    <h5>Sicil ve Yetkinlik Bilgileri</h5>
+                    <p>Ekip üyesinin oda kayıtları, ekipnet ve sertifika yetkinlik numaraları</p>
+                </div>
+            </div>
+            
+            <div class="form-grid">
+                <!-- Ekipnet No -->
+                <div class="form-field">
+                    <label for="ekipnetno">Ekipnet No:</label>
+                    <input name="ekipnetno" id="ekipnetno" type="text" value="<?php echo htmlspecialchars($ekipnetno ?? '', ENT_QUOTES); ?>" class="form-control" placeholder="Ekipnet numarasını giriniz">
+                </div>
 
-					</select>
-				</div>
+                <!-- Oda Sicil No -->
+                <div class="form-field">
+                    <label for="odasicilno">Oda Sicil No:</label>
+                    <input name="odasicilno" id="odasicilno" type="text" value="<?php echo htmlspecialchars($odasicilno ?? '', ENT_QUOTES); ?>" class="form-control" placeholder="Oda sicil numarasını giriniz">
+                </div>
 
-
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-6">
-				<div class="form-group">
-					<label for="unvan">Unvanı :</label>
-					<input name="unvan" type="text" class="form-control">
-				</div>
-			</div>
-			
-			<div class="col-md-6 col-sm-12">
-				<div class="form-group">
-					<label for="meslek"> Mesleği:</label>
-					<input name="meslek" type="text" value="<?php echo $meslek ?>" class="form-control">
-				</div>
-			</div>
-		</div>
-		
-		<!-- SİCİL BİLGİLERİ -->
-		<div class="row">
-			
-     		<div class="col-md-3 col-sm-12">
-				<div class="form-group">
-					<label for="ekipnetno"> Ekipnet No:</label>
-					<input name="ekipnetno" type="text" value="<?php echo $ekipnetno ?>" class="form-control">
-				</div>
-			</div>
-
-
-			<div class="col-md-3 col-sm-12">
-				<div class="form-group">
-					<label for="odasicilno"> Oda Sicil No:</label>
-					<input name="odasicilno" type="text" value="<?php echo $odasicilno ?>" class="form-control">
-				</div>
-			</div>
-
-
-			<div class="col-md-3 col-sm-12">
-				<div class="form-group">
-					<label for="yetkinlikno"> Yetkinlik No:</label>
-					<input name="yetkinlikno" type="text" value="<?php echo $yetkinlikno ?>" class="form-control">
-				</div>
-			</div>
-		</div>
-		<!-- SİCİL BİLGİLERİ -->
-</div>
-<br>
+                <!-- Yetkinlik No -->
+                <div class="form-field">
+                    <label for="yetkinlikno">Yetkinlik No:</label>
+                    <input name="yetkinlikno" id="yetkinlikno" type="text" value="<?php echo htmlspecialchars($yetkinlikno ?? '', ENT_QUOTES); ?>" class="form-control" placeholder="Yetkinlik numarasını giriniz">
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 
 

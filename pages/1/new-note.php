@@ -48,87 +48,116 @@ if (@$_GET["st"] == "newsuccess") {
 }
 ?>
 
-<div class="pd-20 bg-white border-radius-4 box-shadow mb-30">
-	<div class="clearfix">
-		<div class="pull-left">
-			<h4 class="text-blue"><?php echo $pdat["p_title"]; ?></h4>
-			<p class="mb-30 font-14">Sayfadaki <font color="red">(*)</font> yıldız ile belirtilen alanları boş bırakmayın..<br></p>
-		</div>
-		<div class="float-right">
-			<input type="submit" id="submitButton" onclick="validateForm()" value="Kaydet" class="float-right btn btn-primary">
+<form enctype="multipart/form-data" method="POST" action="" id="myForm">
+    <div class="new-note-manage-wrapper">
+        <!-- Header Card -->
+        <div class="premium-header-card animate-fade-in">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i class="fa fa-sticky-note"></i>
+                    </div>
+                    <div class="header-title">
+                        <h4><?php echo $pdat["p_title"] ?? 'Yeni Not Oluştur'; ?></h4>
+                        <span class="header-number-badge">
+                            <i class="fa fa-info-circle"></i> Yeni Not Tanımlama
+                        </span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button type="button" id="submitButton" onclick="validateForm()" class="btn-header btn-header-save">
+                        <i class="fa fa-save"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
 
-		</div>
+        <!-- Kart 1: Not Bilgileri -->
+        <div class="form-card mb-4 animate-fade-in">
+            <div class="form-card-header">
+                <div class="card-icon card-icon-blue">
+                    <i class="fa fa-info-circle"></i>
+                </div>
+                <div>
+                    <h5>Not Bilgileri</h5>
+                    <p>Notunuza ait genel başlık, aciliyet derecesi, kategori ve tarih detayları</p>
+                </div>
+            </div>
+            
+            <div class="form-grid">
+                <!-- Başlık (Full Width) -->
+                <div class="form-field full-width">
+                    <label for="title"><font color="red">(*)</font> Başlık</label>
+                    <input name="title" id="title" value="" class="form-control" type="text" placeholder="Not başlığını giriniz" required>
+                </div>
 
-	</div>
-	<form enctype="multipart/form-data" method="POST" action="" id=myForm>
+                <!-- Aciliyet -->
+                <div class="form-field">
+                    <label for="urgency">Aciliyet</label>
+                    <select name="urgency" id="urgency" class="selectpicker form-control" data-style="border bg-white">
+                        <option value="Yüksek">Yüksek</option>
+                        <option value="Orta" selected>Orta</option>
+                        <option value="Düşük">Düşük</option>
+                    </select>
+                </div>
 
-		<div class="row">
-			<div class="col-md-12 col-sm-12">
-				<div class="form-group">
-					<label for="title">
-						<font color="red">(*)</font>Başlık
-					</label>
-					<input name="title" value="" class="form-control" type="text">
+                <!-- Kategori -->
+                <div class="form-field">
+                    <label for="cat">Kategori</label>
+                    <select name="cat" id="cat" class="selectpicker form-control" data-style="border bg-white">
+                        <?php
+                        $nqu = $ac->prepare("SELECT * FROM note_categories");
+                        $nqu->execute();
+                        while ($nn = $nqu->fetch(PDO::FETCH_ASSOC)) {
+                        ?>
+                            <option value="<?php echo $nn["id"]; ?>"><?php echo $nn["title"]; ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
 
-				</div>
-			</div>
-		</div>
+                <!-- Başlangıç Tarihi -->
+                <div class="form-field">
+                    <label for="startdate">Başlangıç Tarihi</label>
+                    <input name="startdate" id="startdate" class="form-control date-picker" autocomplete="off" value="" placeholder="Tarih Seçin" type="text">
+                </div>
 
-		<div class="form-group row">
+                <!-- Son Tarih -->
+                <div class="form-field">
+                    <label for="lastdate">Son Tarih</label>
+                    <input name="lastdate" id="lastdate" class="form-control date-picker" autocomplete="off" value="" placeholder="Tarih Seçin" type="text">
+                </div>
+            </div>
+        </div>
 
-			<label class="col-md-2">Aciliyet</label>
-			<div class="col-md-4">
-				<select name="urgency" class="form-control">
-					<option value="Yüksek">Yüksek</option>
-					<option value="Orta">Orta</option>
-					<option value="Düşük">Düşük</option>
-				</select>
-			</div>
+        <!-- Kart 2: Not İçeriği -->
+        <div class="form-card mb-4 animate-fade-in">
+            <div class="form-card-header">
+                <div class="card-icon card-icon-purple">
+                    <i class="fa fa-pencil-square-o"></i>
+                </div>
+                <div>
+                    <h5>Not İçeriği</h5>
+                    <p>Not içeriğini ve detaylı açıklamalarını giriniz</p>
+                </div>
+            </div>
+            <div class="editor-wrapper" style="border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                <textarea name="desc" class="textarea_editor form-control border-radius-8" placeholder="Bir şeyler yaz ..."></textarea>
+            </div>
+        </div>
+    </div>
+</form>
 
-			<label class="col-md-2">Kategori</label>
-
-			<div class="col-md-4">
-				<select name="cat" class="form-control">
-					<?php
-					$nqu = $ac->prepare("SELECT * FROM note_categories");
-					$nqu->execute();
-					while ($nn = $nqu->fetch(PDO::FETCH_ASSOC)) {
-					?>
-
-						<option value="<?php echo $nn["id"]; ?>"><?php echo $nn["title"]; ?></option>
-					<?php } ?>
-				</select>
-
-
-			</div>
-
-		</div>
-
-		<div class="form-group row">
-
-			<label class="col-md-2">Başlangıç Tarihi</label>
-
-			<div class="col-md-4 col-sm-12">
-				<input name="startdate" class="form-control date-picker" value="" placeholder="Tarih Seçin" type="text">
-			</div>
-
-
-			<label class="col-md-2">Son Tarih</label>
-			<div class="col-sm-12 col-md-4">
-				<input name="lastdate" class="form-control date-picker" value="" placeholder="Tarih Seçin" type="text">
-			</div>
-
-		</div>
-		<div class="form-group">
-
-			<div class="html-editor">
-				<h3 class="weight-500">Not Oluştur</h3>
-				<p></p>
-				<textarea name="desc" class="textarea_editor form-control border-radius-0" placeholder="Bir şeyler yaz ..."></textarea><br>
-			</div>
-
-
-
-	</form>
-
-</div>
+<script>
+	$(document).ready(function () {
+		$(".selectpicker").selectpicker({
+			selectAllText: "Tümünü Seç",
+			deselectAllText: 'Seçimi Temizle',
+			style: "border bg-white",
+			liveSearch: true,
+			liveSearchPlaceholder: "Ara..",
+			noneResultsText: 'Eşleşen kayıt yok {0}',
+			size: 5,
+			noneSelectedText: "Seçim Yapınız!"
+		})
+	})
+</script>

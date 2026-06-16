@@ -40,87 +40,96 @@ if (@$_GET["st"] == "newsuccess") {
 }
 ?>
 
-<form method="POST" id="myForm">
-	<div class="pd-20 bg-white border-radius-16 box-shadow mb-30">
-		<div class="clearfix mb-30">
-			<div class="pull-left">
-				<h4 class="text-blue">
-					<?php echo $pdat["p_title"]; ?>
-				</h4>
-				<p class="mb-30 font-14">Sayfadaki <font color="red">(*)</font> yıldız ile belirtilen alanları boş
-					bırakmayın..<br></p>
-			</div>
-			<div class="float-right">
+<style>
+    .task-manage-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
 
-				<button type="button" id="submitButton" onclick="validateForm()" class="btn btn-sm btn-primary"><i
-						class="fa fa-save"></i>
-					Kaydet</button>
-				<a type="button" href="index.php?p=tasks" class="btn btn-sm btn-secondary text-white"><i class="fa fa-list"></i>
-					listeye Dön</a>
-			</div>
+    /* Form styling overrides if any */
+    .form-field textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+</style>
 
+<div class="task-manage-wrapper">
+	<form method="POST" id="myForm">
+		<!-- Header Card -->
+		<div class="premium-header-card animate-fade-in">
+			<div class="header-content">
+				<div class="header-left">
+					<div class="header-icon">
+						<i class="fa fa-tasks"></i>
+					</div>
+					<div class="header-title">
+						<h4><?php echo $pdat["p_title"]; ?></h4>
+						<span class="header-number-badge">
+							<i class="fa fa-info-circle"></i> Sayfadaki (*) yıldız ile belirtilen alanları boş bırakmayın..
+						</span>
+					</div>
+				</div>
+				<div class="header-actions">
+					<a href="index.php?p=tasks" class="btn-header btn-header-list">
+						<i class="fa fa-list"></i> Listeye Dön
+					</a>
+					<button type="button" id="submitButton" onclick="validateForm()" class="btn-header btn-header-save">
+						<i class="fa fa-save"></i> Kaydet
+					</button>
+				</div>
+			</div>
 		</div>
 
-
-		<div class="form-group row">
-			<label for="title" class="col-md-2 col-sm-12">
-				<font color="red">(*)</font>Başlık
-			</label>
-			<div class="col-md-10">
-				<input name="title" value="" required class="form-control" type="text">
+		<!-- Form Card -->
+		<div class="form-card animate-fade-in">
+			<div class="form-card-header">
+				<div class="card-icon card-icon-blue">
+					<i class="fa fa-calendar-plus-o"></i>
+				</div>
+				<div>
+					<h5>Görev Detayları</h5>
+					<p>Lütfen yapılacak görev bilgilerini ve tarih sınırlarını giriniz.</p>
+				</div>
 			</div>
 
-		</div>
-		<div class="row">
+			<div class="form-grid">
+				<!-- Başlık -->
+				<div class="form-field full-width">
+					<label for="title"><font color="red">(*)</font> Başlık</label>
+					<input name="title" id="title" value="" required class="form-control" type="text" placeholder="Görev başlığını giriniz">
+				</div>
 
-			<div class="col-md-6">
-
-				<div class="form-group row">
-
-					<label class="col-md-4">
-						<font color="red">(*)</font>Durum
-					</label>
-					<div class="col-sm-12 col-md-8">
-						<select name="okey" class="selectpicker form-control" data-style="border bg-white">
+				<!-- Sol Kolon - Parametreler -->
+				<div class="form-field">
+					<!-- Durum -->
+					<div class="form-field mb-3">
+						<label for="okey"><font color="red">(*)</font> Durum</label>
+						<select name="okey" id="okey" class="selectpicker form-control" data-style="border bg-white">
 							<option disabled value="1">Yapıldı</option>
 							<option selected value="0">Yapılmadı</option>
 						</select>
 					</div>
-				</div>
 
-				<div class="form-group row">
-					<label for="startdate" class="col-md-4 col-sm-12">Başlangıç Tarihi</label>
-					<div class="col-md-8 col-sm-12">
-						<input name="startdate" autocomplete="off" class="form-control date-picker"
-							placeholder="Tarih Seçin" type="text">
+					<!-- Başlangıç Tarihi -->
+					<div class="form-field mb-3">
+						<label for="startdate">Başlangıç Tarihi</label>
+						<input name="startdate" id="startdate" autocomplete="off" class="form-control date-picker" placeholder="Tarih Seçin" type="text">
+					</div>
+
+					<!-- Son Tarihi -->
+					<div class="form-field">
+						<label for="lastdate"><font color="red">(*)</font> Son Tarih</label>
+						<input name="lastdate" id="lastdate" class="form-control date-picker" autocomplete="off" required placeholder="Tarih Seçin" type="text">
 					</div>
 				</div>
 
-				<div class="form-group row">
-
-					<label for="lastdate" class="col-md-4">
-						<font color="red">(*)</font>Son Tarih
-					</label>
-					<div class="col-sm-12 col-md-8">
-						<input name="lastdate" class="form-control date-picker" autocomplete="off" required
-							placeholder="Tarih Seçin" type="text">
-					</div>
+				<!-- Sağ Kolon - Açıklama -->
+				<div class="form-field">
+					<label for="desc"><font color="red">(*)</font> Açıklama</label>
+					<textarea required name="desc" id="desc" class="form-control" placeholder="Görev detayları ve yapılacak işler hakkında bir şeyler yazın..."></textarea>
 				</div>
 			</div>
-			<div class="col-md-6">
-
-				<div class="form-group row">
-					<label for="desc" class="col-md-3 weight-500">Açıklama</label>
-
-					<div class="col-md-9 col-sm-12">
-
-						<textarea required name="desc" class=" form-control border-radius-0"
-							placeholder="Bir şeyler yaz ..."></textarea><br>
-
-					</div>
-				</div>
-			</div>
-
-		</div><br>
-	</div>
-</form>
+		</div>
+	</form>
+</div>
+
