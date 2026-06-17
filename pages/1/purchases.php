@@ -17,31 +17,34 @@ use App\Helper\Helper;
 <style>
 
 </style>
-<div class="content pd-20 bg-white border-radius-8 box-shadow mb-30">
-    <div class="clearfix mb-20">
-        <div class="pull-left">
-            <h5 class="text-blue">Satın Alma Talepleri</h5>
+<div class="form-card animate-fade-in">
+    <div class="form-card-header d-flex justify-content-between align-items-center mb-4">
+        <div class="header-left-inner">
+            <div class="card-icon card-icon-blue" style="background: #eff6ff; color: #3b82f6;">
+                <i class="fa fa-shopping-cart"></i>
+            </div>
+            <div>
+                <h5 class="text-blue m-0">Satın Alma Talepleri</h5>
+                <p class="mb-0 text-muted font-12" style="margin-top: 2px;">Satın alma taleplerini ve siparişlerini bu ekrandan yönetebilirsiniz.</p>
+            </div>
         </div>
-        <div class="float-right">
-            <?php
-            if (permtrue('purchase-demand-add')) {
-            ?>
-                <a href="index.php?p=purchase-demand-new"><button type="button" class="btn btn-primary btn-sm"><i
-                            class="fa fa-plus"></i> Yeni Talep</button></a>
-            <?php }
-            if (permtrue('purchaseadd')) { ?>
-
-                <a href="index.php?p=purchases/manage"><button type="button" class="btn btn-success btn-sm"><i
-                            class="fa fa-plus"></i> Yeni Sipariş</button></a>
+        <div>
+            <?php if (permtrue('purchase-demand-add')) { ?>
+                <a href="index.php?p=purchase-demand-new" class="btn btn-sm btn-primary text-white" style="border-radius: 8px; padding: 8px 16px; font-weight: 500; height: 38px;">
+                    <i class="fa fa-plus mr-1"></i> Yeni Talep
+                </a>
+            <?php } ?>
+            <?php if (permtrue('purchaseadd')) { ?>
+                <a href="index.php?p=purchases/manage" class="btn btn-sm btn-success text-white ml-1" style="border-radius: 8px; padding: 8px 16px; font-weight: 500; height: 38px;">
+                    <i class="fa fa-plus mr-1"></i> Yeni Sipariş
+                </a>
             <?php } ?>
         </div>
-
     </div>
 
-    <div class="clearfix mb-20">
-        <button type="button" id="showdemand" class="btn btn-primary btn-sm" data-toggle="button" aria-pressed="false"
-            autocomplete="off">
-            Tamamlanan Talepleri Göster
+    <div class="d-flex mb-4">
+        <button type="button" id="showdemand" class="btn btn-sm btn-outline-primary d-flex align-items-center" data-toggle="button" aria-pressed="false" autocomplete="off" style="border-radius: 8px; padding: 8px 16px; font-weight: 500;">
+            <i class="fa fa-eye mr-2"></i> Tamamlanan Talepleri Göster
         </button>
     </div>
 

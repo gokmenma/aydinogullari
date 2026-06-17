@@ -188,6 +188,47 @@ if (@$_GET["st"] == "success-mail") {
         font-size: 13.5px;
         background: #fafafa;
     }
+
+    /* Dark Mode Overrides */
+    .dark-mode .form-card {
+        background: #282828 !important;
+        border-color: #383838 !important;
+    }
+    .dark-mode .form-card-header {
+        border-bottom: 2px solid #383838 !important;
+    }
+    .dark-mode .form-card-header h5 {
+        color: #60a5fa !important;
+    }
+    .dark-mode .form-card-header .card-icon {
+        background: #1e293b !important;
+        color: #60a5fa !important;
+    }
+    .dark-mode .filters-form .form-label {
+        color: #c4cdd8 !important;
+    }
+    .dark-mode .filters-form .form-control,
+    .dark-mode .filters-form .bootstrap-select .btn {
+        background: #1e1e1e !important;
+        color: #e2e8f0 !important;
+        border-color: #383838 !important;
+    }
+    .dark-mode .filters-form .bootstrap-select .btn .filter-option-inner-inner {
+        color: #e2e8f0 !important;
+    }
+    .dark-mode #clearFilters.btn-outline-secondary {
+        background-color: #383838 !important;
+        color: #e2e8f0 !important;
+        border-color: #4f4f50 !important;
+    }
+    .dark-mode #clearFilters.btn-outline-secondary:hover {
+        background-color: #484848 !important;
+    }
+    .dark-mode .data-table .form-control {
+        background: #1e1e1e !important;
+        color: #e2e8f0 !important;
+        border-color: #383838 !important;
+    }
 </style>
 
 <div class="pd-ltr-20 xs-pd-20-10">

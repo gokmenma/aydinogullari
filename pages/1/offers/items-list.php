@@ -5,54 +5,95 @@ $OfferModel = new OfferModel();
 $sayfa_basligi = "Teklif Satır Listesi";
 ?>
 <style>
-    .responsive { overflow: auto; }
-    .table.dataTable { width: 100% !important; }
-    .dataTables_length { margin-left: 10px; }
-    
-    /* Filter Panel Modernization */
-    .filter-header { 
-        background: #fbfbfb; 
-        border-bottom: 1px solid #efefef; 
-        padding: 12px 20px; 
-        border-radius: 16px 16px 0 0; 
-        cursor: pointer;
-        transition: background 0.2s;
+    /* Premium Page Styles mimicking offers/list */
+    .page-wrapper {
+        width: 100%;
     }
-    .filter-header:hover { background: #f5f5f5; }
-    .filter-container { 
-        border: 1px solid #e8e8e8; 
-        border-radius: 16px; 
+
+    .form-card {
         background: #fff;
-        overflow: hidden;
+        border-radius: 16px;
+        padding: 24px 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        margin-bottom: 25px;
+        border: 1px solid #f0f0f0;
     }
-    
+
+    .form-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .form-card-header .header-left-inner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .form-card-header .card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        background: #eff6ff;
+        color: #3b82f6;
+    }
+
+    .form-card-header h5 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e3a5f;
+    }
+
+    .responsive {
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    /* Custom Input and Label modernizations */
     .form-label {
-        color: #4b5563;
+        color: #475569;
         font-weight: 600;
-        font-size: 0.78rem;
-        margin-bottom: 4px;
+        font-size: 12.5px;
+        margin-bottom: 6px;
         display: block;
     }
-    
-    .custom-filter-input {
-        height: 38px;
-        border-radius: 8px;
-        border: 1px solid #d1d5db;
-        font-size: 0.875rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-    .custom-filter-input:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-    
-    /* Fix Bootstrap Select visual bleed-through & duplicates */
-    .bootstrap-select > .dropdown-toggle {
+
+    .custom-filter-input,
+    .bootstrap-select .btn {
         height: 38px !important;
-        padding: 0.5rem 0.75rem !important;
-        font-size: 0.875rem !important;
+        border-radius: 8px !important;
+        border: 1.5px solid #e5e7eb !important;
+        padding: 8px 12px !important;
+        font-size: 13.5px !important;
+        background: #fafafa !important;
+        transition: all 0.15s ease-in-out;
     }
     
+    .custom-filter-input:focus {
+        border-color: #3b82f6 !important;
+        background: #fff !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        outline: none;
+    }
+
+    /* Table & DataTable spacing and sizing */
+    table.dataTable {
+        width: 100% !important;
+    }
+    
+    .dataTables_length {
+        margin-left: 10px;
+    }
+
     .thead-colored { 
         background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%); 
         border-bottom: 2px solid #e5e7eb;
@@ -90,14 +131,59 @@ $sayfa_basligi = "Teklif Satır Listesi";
     }
     .btn-modern-light:hover { background-color: #e5e7eb; }
 
-    /* Specific fix for spacing between Date Inputs */
     .date-range-separator {
         display: flex;
         align-items: center;
         padding: 0 8px;
         color: #9ca3af;
     }
+
+    /* Dark Mode Overrides */
+    .dark-mode .form-card {
+        background: #282828 !important;
+        border-color: #383838 !important;
+    }
+    .dark-mode .form-card-header {
+        border-bottom: 2px solid #383838 !important;
+    }
+    .dark-mode .form-card-header h5 {
+        color: #60a5fa !important;
+    }
+    .dark-mode .form-card-header .card-icon {
+        background: #1e293b !important;
+        color: #60a5fa !important;
+    }
+    .dark-mode .form-label {
+        color: #c4cdd8 !important;
+    }
+    .dark-mode .custom-filter-input,
+    .dark-mode .bootstrap-select .btn {
+        background: #1e1e1e !important;
+        color: #e2e8f0 !important;
+        border-color: #383838 !important;
+    }
+    .dark-mode .bootstrap-select .btn .filter-option-inner-inner {
+        color: #e2e8f0 !important;
+    }
+    .dark-mode .btn-modern-light {
+        background-color: #383838 !important;
+        color: #e2e8f0 !important;
+        border-color: #4f4f50 !important;
+    }
+    .dark-mode .btn-modern-light:hover {
+        background-color: #484848 !important;
+    }
+    .dark-mode .thead-colored { 
+        background: linear-gradient(180deg, #282828 0%, #1e1e1e 100%) !important; 
+        border-bottom: 2px solid #383838 !important;
+    }
+    .dark-mode .thead-colored th {
+        color: #c4cdd8 !important;
+    }
 </style>
+
+<div class="pd-ltr-20 xs-pd-20-10">
+    <div class="page-wrapper">
 
 <div class="page-header mb-20">
     <div class="row align-items-center">
@@ -117,13 +203,20 @@ $sayfa_basligi = "Teklif Satır Listesi";
 </div>
 
 <!-- Filters Section -->
-<div class="filter-container mb-20 box-shadow">
-    <div class="filter-header d-flex align-items-center justify-content-between" id="filtersToggle">
-        <h6 class="text-dark m-0 font-14 weight-600"><i class="fa fa-sliders mr-2 text-primary"></i> Gelişmiş Filtreler</h6>
-        <span class="text-muted font-12"><i class="fa fa-chevron-up" id="toggleIcon"></i></span>
+<div class="form-card animate-fade-in mb-20">
+    <div class="form-card-header d-flex align-items-center justify-content-between" id="filtersToggle" style="cursor: pointer; border-bottom: none; margin-bottom: 0;">
+        <div class="header-left-inner">
+            <div class="card-icon">
+                <i class="fa fa-sliders"></i>
+            </div>
+            <div>
+                <h5>Gelişmiş Filtreler</h5>
+            </div>
+        </div>
+        <span class="text-muted font-12"><i class="fa fa-chevron-down" id="toggleIcon"></i></span>
     </div>
     
-    <div id="filtersCollapse" class="pd-20">
+    <div id="filtersCollapse" style="display:none; margin-top: 20px; border-top: 1px solid #e5e7eb; padding-top: 20px;" class="filters-form">
         <div class="row">
             <div class="col-md-3 mb-15">
                 <label class="form-label">Teklif No</label>
@@ -190,18 +283,25 @@ $sayfa_basligi = "Teklif Satır Listesi";
 </div>
 
 <!-- Main Data View -->
-<div class="content pd-20 bg-white border-radius-16 box-shadow mb-30">
-    <div class="d-flex justify-content-between align-items-center mb-20">
-        <h5 class="text-dark font-16 font-weight-bold m-0"><i class="fa fa-table text-muted mr-2"></i> Sonuçlar</h5>
+<div class="form-card animate-fade-in mb-30">
+    <div class="form-card-header d-flex justify-content-between align-items-center">
+        <div class="header-left-inner">
+            <div class="card-icon">
+                <i class="fa fa-table"></i>
+            </div>
+            <div>
+                <h5>Sonuçlar</h5>
+            </div>
+        </div>
         <div class="d-flex align-items-center">
-            <button id="exportExcel" class="btn btn-sm btn-outline-success font-12 font-weight-bold px-3" style="border-radius:6px;">
-                <i class="fa fa-file-excel-o mr-1"></i> Excel'e Aktar
+            <button id="exportExcel" class="btn btn-sm btn-outline-success font-12 font-weight-bold px-3" style="border-radius:6px; height: 36px; display: inline-flex; align-items: center; gap: 4px;">
+                <i class="fa fa-file-excel-o"></i> Excel'e Aktar
             </button>
         </div>
     </div>
     
     <div class="responsive">
-        <table id="itemsTable" class="table table-hover data-table table-borderless border-bottom">
+        <table id="itemsTable" class="data-table table-hover table-bordered" style="width: 100%;">
             <thead class="thead-colored">
                 <tr>
                     <th style="width:40px">#</th>
@@ -223,6 +323,9 @@ $sayfa_basligi = "Teklif Satır Listesi";
             <tbody class="font-13">
             </tbody>
         </table>
+    </div>
+</div>
+
     </div>
 </div>
 
