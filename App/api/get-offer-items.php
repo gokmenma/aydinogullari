@@ -194,7 +194,7 @@ foreach ($results as $r) {
         "sira_no" => $sirano++,
         "islemler" => $actions,
         "teklif_no" => htmlspecialchars($r['offerNumber']),
-        "firma" => '<a href="index.php?p=customer-edit&id='.$r['customer_id'].'">'.htmlspecialchars($r['company_name']).'</a>',
+        "firma" => '<a href="index.php?p=customers/manage&id='.$r['customer_id'].'">'.htmlspecialchars($r['company_name']).'</a>',
         "tarih" => (!empty($r["created_at"]) ? (new DateTime($r["created_at"]))->format('d.m.Y') : ''),
         "stok_kodu" => htmlspecialchars($r['stokKodu'] ?? '-'),
         "urun_adi" => htmlspecialchars($r['title']),

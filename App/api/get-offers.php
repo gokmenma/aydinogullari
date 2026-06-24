@@ -269,7 +269,7 @@ foreach ($results as $of) {
         "sira_no"       => $sirano,
         "islem_tarihi"  => (!empty($of["created_at"]) ? (new DateTime($of["created_at"]))->format('d.m.Y H:i') : ''),
         "teklif_no"     => htmlspecialchars($of['offerNumber']),
-        "musteri"       => '<a href="index?p=customer-edit&id=' . $of["customer_id"] . '">' . htmlspecialchars(shorted($of["company_name"], 40)) . '</a>',
+        "musteri"       => '<a href="index.php?p=customers/manage&id=' . $of["customer_id"] . '">' . htmlspecialchars(shorted($of["company_name"], 40)) . '</a>',
 //"toplam_tutar"  => tlFormat($of["total_price"] ?? 0) . " " . ($of["currency"] == "TRY" ? "₺" : ($of["currency"] == "dollar" ? "$" : "€")),
         "toplam_tutar"  => "₺ " . tlFormat($of["tl_toplam_karsilik"] ?? 0) ,
         "durum"         => $durum_badge,
