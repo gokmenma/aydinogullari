@@ -333,7 +333,7 @@ foreach ($projects as $project) {
     $row[] = getSozlesmeStatusBadge($project['contract_statu']);
 
     // Status badge
-    $status_color = $project['status_color'] ?? '#777';
+    $status_color = (!empty($project['status_color'])) ? $project['status_color'] : '#777';
     $status_title = $project['status_title'] ?? '';
     $row[] = "<span class='badge' style='background-color:{$status_color}'>{$status_title}</span>";
 

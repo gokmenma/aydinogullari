@@ -575,14 +575,14 @@ function sozlesmeDurumu($name, $val)
 
 function getSozlesmeStatusBadge($id)
 {
-
+	$badgeClass = 'badge-secondary';
 	if ($id == 1)
 		$badgeClass = 'badge-warning';
 	else if ($id == 2)
 		$badgeClass = 'badge-success';
 	else if ($id == 3 || $id == 4)
 		$badgeClass = 'badge-danger';
-	$statusText = SOZLESMEDURUMU[$id];
+	$statusText = SOZLESMEDURUMU[$id] ?? 'Seçiniz';
 	//<span class="badge badge-primary">Primary</span>
 	return "<span class='badge " . $badgeClass . "'>$statusText</span>";
 }
@@ -590,14 +590,16 @@ function getSozlesmeStatusBadge($id)
 function getStatusBadge($id)
 {
 	global $ac;
-	$badgeClass = '';
-	$statusText = '';
+	$badgeClass = '#777';
+	$statusText = 'Tanımsız';
 	$sql = $ac->prepare('SELECT * FROM units where statu = ? and  id = ? ');
 	$sql->execute(array(4, $id));
 	$result = $sql->fetch(PDO::FETCH_ASSOC);
 
-	$badgeClass = $result['colour'];
-	$statusText = $result['title'];
+	if ($result) {
+		$badgeClass = (!empty($result['colour'])) ? $result['colour'] : '#777';
+		$statusText = $result['title'];
+	}
 	return "<span style='background-color:" . $badgeClass . "' class='badge'>$statusText</span>";
 }
 

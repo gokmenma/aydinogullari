@@ -171,14 +171,14 @@ $projects = $query->fetchAll(PDO::FETCH_ASSOC);
                     </td>
                     <td class="text-center">
                         <?php
-                        $color = $purc['contract_status_color'] ?? '#777';
+                        $color = (!empty($purc['contract_status_color'])) ? $purc['contract_status_color'] : '#777';
                         $title = $purc['contract_status_title'] ?? '';
                         echo "<span class='badge' style='background-color:{$color}'>{$title}</span>";
                         ?>
                     </td>
                     <td class="text-center">
                         <?php
-                        $color = $purc['status_color'] ?? '#777';
+                        $color = (!empty($purc['status_color'])) ? $purc['status_color'] : '#777';
                         $title = $purc['status_title'] ?? '';
                         echo "<span class='badge' style='background-color:{$color}'>{$title}</span>";
                         ?>
