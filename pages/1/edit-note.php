@@ -11,12 +11,12 @@ if ($_POST) {
 	$desc = @$_POST["desc"];
 
 	$sdate = @$_POST["startdate"] ? date_tr($_POST["startdate"]) : TODAY;
-	$lastdate = @$_POST["lastdate"];
+	$lastdate = @$_POST["lastdate"] ? date_tr($_POST["lastdate"]) : '';
 
 	$urg = $_POST["urgency"];
 	$cat = $_POST["cat"];
 	if (empty($title) || empty($desc)) {
-		header("Location: index.php?p=new-note&st=empties");
+		header("Location: index.php?p=edit-note&nid=" . $nid . "&st=empties");
 		exit;
 	}
 	$insq = $ac->prepare("UPDATE notes SET
@@ -31,92 +31,30 @@ if ($_POST) {
 
 	if($result){
 		header("Location: index.php?p=all-notes&st=newsuccess");
+		exit;
 	}
 }
 
 $ckk = $ac->prepare("SELECT * FROM notes WHERE id = ?");
 $ckk->execute(array($nid));
 $ck = $ckk->fetch(PDO::FETCH_ASSOC);
+if (!$ck) {
+	header("Location:index.php?p=all-notes");
+	exit;
+}
 $urgencyFromDatabase = $ck['urgency'];
 
+if (@$_GET["st"] == "empties") {
 ?>
-<style>
-    .urgency-selector-wrapper {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        margin-top: 5px;
-    }
-    .urgency-option-premium {
-        position: relative;
-        cursor: pointer;
-        flex: 1;
-    }
-    .urgency-option-premium input {
-        position: absolute;
-        opacity: 0;
-        cursor: pointer;
-        height: 0;
-        width: 0;
-    }
-    .urgency-custom-radio {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 10px 16px;
-        border-radius: 8px;
-        border: 1.5px solid #e2e8f0;
-        background-color: #f8fafc;
-        font-size: 0.9rem;
-        font-weight: 600;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        color: #4a5568;
-        text-align: center;
-    }
-    .urgency-custom-radio i {
-        font-size: 0.6rem;
-        transition: transform 0.2s;
-    }
-    
-    .urgency-high input:checked ~ .urgency-custom-radio {
-        background-color: #fef2f2;
-        border-color: #ef4444;
-        color: #ef4444;
-        box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.1), 0 2px 4px -1px rgba(239, 68, 68, 0.06);
-    }
-    .urgency-high .urgency-custom-radio i {
-        color: #ef4444;
-    }
-    
-    .urgency-medium input:checked ~ .urgency-custom-radio {
-        background-color: #eff6ff;
-        border-color: #3b82f6;
-        color: #3b82f6;
-        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -1px rgba(59, 130, 246, 0.06);
-    }
-    .urgency-medium .urgency-custom-radio i {
-        color: #3b82f6;
-    }
-    
-    .urgency-low input:checked ~ .urgency-custom-radio {
-        background-color: #f0fdf4;
-        border-color: #22c55e;
-        color: #22c55e;
-        box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.1), 0 2px 4px -1px rgba(34, 197, 94, 0.06);
-    }
-    .urgency-low .urgency-custom-radio i {
-        color: #22c55e;
-    }
-    
-    .urgency-option-premium:hover .urgency-custom-radio {
-        border-color: #cbd5e1;
-        transform: translateY(-1px);
-    }
-</style>
+	<div class="alert alert-danger" role="alert">
+		(*) ile işaretli alanları boş bırakmadan tekrar deneyin.
+	</div>
+<?php
+}
+?>
 
 <form enctype="multipart/form-data" method="POST" action="" id="myForm">
-    <div class="edit-note-manage-wrapper">
+    <div class="new-note-manage-wrapper">
         <!-- Header Card -->
         <div class="premium-header-card animate-fade-in">
             <div class="header-content">
@@ -127,7 +65,7 @@ $urgencyFromDatabase = $ck['urgency'];
                     <div class="header-title">
                         <h4><?php echo $pdat["p_title"] ?? 'Not Düzenle'; ?></h4>
                         <span class="header-number-badge">
-                            <i class="fa fa-tag"></i> Not ID: #<?php echo $nid; ?>
+                            <i class="fa fa-info-circle"></i> Not Düzenleme (#<?php echo $nid; ?>)
                         </span>
                     </div>
                 </div>
@@ -163,21 +101,12 @@ $urgencyFromDatabase = $ck['urgency'];
 
                 <!-- Aciliyet -->
                 <div class="form-field">
-                    <label>Aciliyet</label>
-                    <div class="urgency-selector-wrapper">
-                        <?php
-                        $urgencyValues = ["Yüksek", "Orta", "Düşük"];
-                        foreach ($urgencyValues as $urgency) {
-                            $isChecked = ($urgency == $urgencyFromDatabase) ? "checked" : "";
-                            $classSuffix = ($urgency == "Yüksek") ? "high" : (($urgency == "Orta") ? "medium" : "low");
-                            echo '
-                            <label class="urgency-option-premium urgency-' . $classSuffix . '">
-                                <input type="radio" id="customRadioInline' . ucfirst($urgency) . '" name="urgency" value="' . $urgency . '" ' . $isChecked . '>
-                                <span class="urgency-custom-radio"><i class="fa fa-circle"></i> ' . $urgency . '</span>
-                            </label>';
-                        }
-                        ?>
-                    </div>
+                    <label for="urgency">Aciliyet</label>
+                    <select name="urgency" id="urgency" class="selectpicker form-control" data-style="border bg-white">
+                        <option value="Yüksek" <?php echo $urgencyFromDatabase == "Yüksek" ? "selected" : ""; ?>>Yüksek</option>
+                        <option value="Orta" <?php echo $urgencyFromDatabase == "Orta" ? "selected" : ""; ?>>Orta</option>
+                        <option value="Düşük" <?php echo $urgencyFromDatabase == "Düşük" ? "selected" : ""; ?>>Düşük</option>
+                    </select>
                 </div>
 
                 <!-- Kategori -->
@@ -220,7 +149,7 @@ $urgencyFromDatabase = $ck['urgency'];
                 </div>
             </div>
             <div class="editor-wrapper" style="border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
-                <textarea name="desc" class="textarea_editor form-control border-radius-8" placeholder="Bir şeyler yaz ..."><?php echo $ck["descs"]; ?></textarea>
+                <textarea name="desc" class="textarea_editor form-control border-radius-8" placeholder="Bir şeyler yaz ..."><?php echo htmlspecialchars($ck["descs"] ?? ''); ?></textarea>
             </div>
         </div>
     </div>
@@ -240,13 +169,3 @@ $urgencyFromDatabase = $ck['urgency'];
 		})
 	})
 </script>
-
-
-
-
-
-
-
-
-
-
