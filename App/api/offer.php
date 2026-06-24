@@ -26,6 +26,7 @@ if ($_POST['action'] == 'copyOffer') {
     }
 
     $offer->copyOffer($id);
+    log_info("Teklif Kopyalandı (Kaynak ID: $id)", "database", ['source_offer_id' => $id]);
     $res = [
         'status' => 200,
         'message' => 'Teklif kopyalandı.'
@@ -136,6 +137,13 @@ if ($_POST['action'] == 'saveOffer') {
         }
 
         $lastInsertId = $offer->save($data) ?? $id;
+
+        // Log action
+        $logAction = ($id == 0) ? "Yeni Teklif Oluşturuldu" : "Teklif Güncellendi";
+        log_info("$logAction: $offerNumber", "database", [
+            'offer_id' => $lastInsertId,
+            'customer_id' => $_POST['customers']
+        ]);
 
 
         // Dosya yükleme işlemi
@@ -260,6 +268,7 @@ if ($_POST['action'] == 'deleteOffer') {
     try {
 
         $offer->deleteOffer($id);
+        log_info("Teklif Silindi (ID: $id)", "database", ['offer_id' => $id]);
         $status = 'success';
         $message = 'Teklif başarı ile silindi.';
     } catch (PDOException $ex) {
@@ -284,6 +293,7 @@ if ($_POST['action'] == 'convertToTry') {
 
     try {
         $offer->convertToTry($id);
+        log_info("Teklif Para Birimi TL'ye Çevrildi (ID: $id)", "database", ['offer_id' => $id]);
         $status = "success";
         $message = "Teklif TRY'ye çevrildi.";
 

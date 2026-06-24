@@ -7,6 +7,13 @@ if (!permtrue("serviceView") || !permtrue("data_export_service")) {
     exit;
 }
 
+// Excel export logla
+log_info("Servis Listesini Excel'e Aktardı", "database", [
+    'search' => $_GET['search']['value'] ?? '',
+    'cid' => $_GET['cid'] ?? null,
+    'sid' => $_GET['sid'] ?? null
+]);
+
 use App\Helper\Helper;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;

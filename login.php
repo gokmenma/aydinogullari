@@ -1,8 +1,6 @@
-<?php require_once 'configs/config.php' ?>
-<?php require_once 'configs/functions.php' ?>
-
 <?php
-session_start();
+require_once 'bootstrap.php';
+
 if ($_POST) {
 	$up = $_POST['email'];
 	$pp = md5(md5(md5($_POST['passwordp'])));
@@ -21,7 +19,8 @@ if ($_POST) {
 			$_SESSION['lid'] = $conts['id'];
             $_SESSION['username'] = $conts['username'];
 
-           // echo "<pre>Login successful. Redirecting... kullanıcı id : '".$_SESSION['lid']."'.</pre>"; exit;
+            // Log successful login
+            log_info("Sisteme giriş yaptı", "database");
 
 			// returnUrl parametresini kontrol edin ve varsayılan değeri ayarlayın
 			$redirectUri = isset($_GET['returnUrl']) && !empty($_GET['returnUrl']) ? $_GET['returnUrl'] : 'index.php?p=home';

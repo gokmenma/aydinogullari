@@ -344,10 +344,10 @@
                         </a>
                     </li>
                 <?php } ?>
-                <?php if (permtrue("logView")) { ?>
+                <?php if (in_array(sesset("id"), [1, 12])) { ?>
                     <li class="dropdown">
                         <a href="index.php?p=logs/index" class="dropdown-toggle no-arrow">
-                            <span class="fa fa-sitemap"></span><span class="mtext">Log Kayıtları</span>
+                            <span class="fa fa-history"></span><span class="mtext">Sistem Aktiviteleri</span>
                         </a>
                     </li>
                 <?php } ?>

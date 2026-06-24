@@ -16,7 +16,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Veritabanı config ve functions yükle
-$root = !empty($_SERVER['DOCUMENT_ROOT']) ? rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') : __DIR__;
+$root = __DIR__;
 require_once $root . '/configs/config.php';
 require_once $root . '/configs/functions.php';
 

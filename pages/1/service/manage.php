@@ -174,6 +174,7 @@ if ($_POST) {
         ));
 
         if ($upxsx) {
+            log_info("Servis Güncellendi: $service_number", "database", ['service_id' => $sid, 'company_id' => $company]);
             header("Location: index.php?p=service/manage&id=$sid&st=updatesuccess");
         } else {
             header('Location: index.php?p=service/manage&id=$sid&st=newerror');
@@ -254,6 +255,8 @@ if ($_POST) {
         ));
 
         if ($regxs) {
+            $last_id = $ac->lastInsertId();
+            log_info("Yeni Servis Oluşturuldu: $service_number", "database", ['service_id' => $last_id, 'company_id' => $company]);
             $getNumber += 1;
             $upquery = $ac->prepare("UPDATE define_numbers SET service = ?");
             $upquery->execute(array($getNumber));

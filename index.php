@@ -48,6 +48,12 @@ try {
     $pquery = $ac->prepare("SELECT * FROM pages WHERE p_link = ?");
     $pquery->execute(array($plink));
     $pdat = $pquery->fetch(PDO::FETCH_ASSOC);
+
+    // Sayfa ziyareti logla
+    if (isset($_SESSION['login'])) {
+        $p_title = $pdat['p_title'] ?? $plink;
+        log_info("Sayfa Ziyareti: " . $p_title, "database", ['page' => $plink]);
+    }
 } catch (PDOException $ex) {
     echo "Error: " . $ex->getMessage();
 } 
