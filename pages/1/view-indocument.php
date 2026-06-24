@@ -28,7 +28,7 @@ if (@$_GET["id"] && @$_GET["mode"] == "delete" && @$_GET["code"] == "04md177") {
             </button></a>
         <br><br>
     </div>
-    <table id="tblProducts" class="table-hover table-responsive-sm table-bordered data-table">
+    <table id="tblInDocuments" class="table-hover table-responsive-sm table-bordered data-table">
         <thead>
             <tr>
                 <th>Sıra</th>

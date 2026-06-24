@@ -109,7 +109,7 @@ if (@$_GET["st"] == "newsuccess") {
             <div class="form-grid">
                 <div class="form-field">
                     <label for="firma"><font color="red">(*)</font> Firma</label>
-                    <select name="firma" id="firma" title="Lütfen Firma Seçiniz" class="selectpicker form-control" data-live-search="true" data-style="btn-outline-secondary" data-selected-text-format="count" required>
+                    <select name="firma" id="firma" title="Lütfen Firma Seçiniz" class="selectpicker form-control" data-live-search="true" data-style="btn-outline-secondary" data-selected-text-format="count" data-container="body" required>
 						<?php
 						$selected_company = $cc["firma"];
 						$tt = $ac->prepare("SELECT * FROM customers");
@@ -123,7 +123,7 @@ if (@$_GET["st"] == "newsuccess") {
                 </div>
                 <div class="form-field">
                     <label for="evrakturu"><font color="red">(*)</font> Evrak Türü</label>
-                    <select required name="evrakturu" id="evrakturu" class="selectpicker form-control" data-style="border bg-white">
+                    <select required name="evrakturu" id="evrakturu" class="selectpicker form-control" data-style="border bg-white" data-container="body">
 						<option <?php echo $cc["evrakturu"] == "Gelen" ? "selected" : "";?> value="Gelen">Gelen Evrak</option>
                         <option <?php echo $cc["evrakturu"] == "Giden" ? "selected" : "";?> value="Giden">Giden Evrak</option>
                     </select>
@@ -157,7 +157,7 @@ if (@$_GET["st"] == "newsuccess") {
                 </div>
                 <div class="form-field">
                     <label for="teslimeden"><font color="red">(*)</font> Teslim Eden</label>
-                    <select name="teslimeden" id="teslimeden" title="Seçiniz" class="selectpicker form-control" data-live-search="true" data-style="btn-outline-secondary" required>
+                    <select name="teslimeden" id="teslimeden" title="Seçiniz" class="selectpicker form-control" data-live-search="true" data-style="btn-outline-secondary" data-container="body" required>
 						<?php
 						$selected_user = $cc["teslimeden"];
 						$tt = $ac->prepare("SELECT * FROM users");
@@ -175,7 +175,7 @@ if (@$_GET["st"] == "newsuccess") {
                 </div>
                 <div class="form-field">
                     <label for="estatu">Evrak Durumu</label>
-                    <select name="estatu" id="estatu" class="selectpicker form-control" data-style="btn-outline-secondary">
+                    <select name="estatu" id="estatu" class="selectpicker form-control" data-style="btn-outline-secondary" data-container="body">
                         <option <?php echo $cc["estatu"] == "Bekliyor" ? "selected" : ""; ?> data-content="<span class='badge badge-warning'>Bekliyor</span>" value="Bekliyor">Bekliyor</option>
                         <option <?php echo $cc["estatu"] == "Çalışıyor" ? "selected" : ""; ?> data-content="<span class='badge badge-primary'>Çalışıyor</span>" value="Çalışıyor">Çalışıyor</option>
                         <option <?php echo $cc["estatu"] == "Tamamlandı" ? "selected" : ""; ?> data-content="<span class='badge badge-success'>Tamamlandı</span>" value="Tamamlandı">Tamamlandı</option>

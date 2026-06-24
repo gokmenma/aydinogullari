@@ -171,6 +171,7 @@ if (@$_GET["st"] == "success-mail") {
     .responsive {
         overflow-x: auto;
         width: 100%;
+        min-height: 280px;
     }
 
     .filters-form .form-label {
@@ -396,16 +397,37 @@ table.dataTable {
     margin-left: 10px;
 }
 
-
-
+/* Dropdown menünün tablonun dışına taşabilmesi için */
+table.data-table,
+table.dataTable {
+    overflow: visible !important;
+}
 </style>
 <script src="pages/1/offers/offer.js"></script>
 <script src="src/plugins/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
 <script src="src/plugins/bootstrap-select/dist/js/i18n/defaults-tr_TR.min.js"></script>
 
-<!-- ÖNCEKİ `data-table.js` YERİNE DAHA DETAYLI BİR SCRIPT -->
 <script>
 $(document).ready(function() {
+    // Açılır menünün kesilmesini önlemek için tablonun sarmalayıcısının overflow'unu geçici olarak değiştiriyoruz
+    $(document).on('show.bs.dropdown', '#offerTable .dropdown', function () {
+        var $responsive = $('#offerTable').closest('.responsive');
+        if ($responsive.length) {
+            $responsive[0].style.setProperty('overflow', 'visible', 'important');
+            $responsive[0].style.setProperty('overflow-x', 'visible', 'important');
+            $responsive[0].style.setProperty('overflow-y', 'visible', 'important');
+        }
+    });
+
+    $(document).on('hide.bs.dropdown', '#offerTable .dropdown', function () {
+        var $responsive = $('#offerTable').closest('.responsive');
+        if ($responsive.length) {
+            $responsive[0].style.setProperty('overflow', '', '');
+            $responsive[0].style.setProperty('overflow-x', '', '');
+            $responsive[0].style.setProperty('overflow-y', '', '');
+        }
+    });
+
     $('.selectpicker').selectpicker();
     $.getJSON('App/api/get-offer-filter-options.php?sablon=<?php echo $sablonlari_goster ? 1 : 0; ?>', function(resp){
         function fillSelect(id, arr){

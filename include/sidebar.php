@@ -287,6 +287,22 @@
                     <?php
                 } ?>
 
+                <?php if (permtrue("support-request-view") or permtrue("support-request-add")) { ?>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="fa fa-support"></span><span class="mtext">Destek Sistemi</span>
+                        </a>
+                        <ul class="submenu">
+                            <?php if (permtrue("support-request-add")) { ?>
+                                <li><a href="index.php?p=support-new">Yeni Destek Talebi</a></li>
+                            <?php } ?>
+                            <?php if (permtrue("support-request-view")) { ?>
+                                <li><a href="index.php?p=support-list">Destek Talepleri</a></li>
+                            <?php } ?>
+                        </ul>
+                    </li>
+                <?php } ?>
+
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
                         <span class="fa fa-user"></span><span class="mtext">Ekip</span>

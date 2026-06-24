@@ -94,7 +94,7 @@ if (@$_GET["st"] == "newsuccess") {
             <div class="form-grid">
                 <div class="form-field">
                     <label for="firma"><font color="red">(*)</font> Firma</label>
-                    <select name="firma" id="firma" title="Lütfen Firma Seçiniz" class="selectpicker form-control" data-live-search="true" data-style="btn-outline-secondary" data-selected-text-format="count" required>
+                    <select name="firma" id="firma" title="Lütfen Firma Seçiniz" class="selectpicker form-control" data-live-search="true" data-style="btn-outline-secondary" data-selected-text-format="count" data-container="body" required>
 						<?php
 						$stmt = $ac->prepare("SELECT id, company FROM customers");
 						$stmt->execute();
@@ -107,7 +107,7 @@ if (@$_GET["st"] == "newsuccess") {
                 </div>
                 <div class="form-field">
                     <label for="evrakturu"><font color="red">(*)</font> Evrak Türü</label>
-                    <select required name="evrakturu" id="evrakturu" class="selectpicker form-control" data-style="border bg-white">
+                    <select required name="evrakturu" id="evrakturu" class="selectpicker form-control" data-style="border bg-white" data-container="body">
                         <option disabled selected value="">Seçim Yapınız</option>	
                         <option value="Gelen">Gelen Evrak</option>
                         <option value="Giden">Giden Evrak</option>
@@ -142,7 +142,7 @@ if (@$_GET["st"] == "newsuccess") {
                 </div>
                 <div class="form-field">
                     <label for="teslimeden"><font color="red">(*)</font> Teslim Alan</label>
-                    <select name="teslimeden" id="teslimeden" title="Seçiniz" class="selectpicker form-control" data-style="btn-outline-secondary" data-live-search="true" required>
+                    <select name="teslimeden" id="teslimeden" title="Seçiniz" class="selectpicker form-control" data-style="btn-outline-secondary" data-live-search="true" data-container="body" required>
                         <?php
                         $permx = $ac->prepare("SELECT * FROM users ");
                         $permx->execute();
@@ -157,7 +157,7 @@ if (@$_GET["st"] == "newsuccess") {
                 </div>
                 <div class="form-field">
                     <label for="estatu">Evrak Durumu</label>
-                    <select name="estatu" id="estatu" class="selectpicker form-control" data-style="btn-outline-secondary">
+                    <select name="estatu" id="estatu" class="selectpicker form-control" data-style="btn-outline-secondary" data-container="body">
                         <option data-content="<span class='badge badge-warning'>Bekliyor</span>" value="Bekliyor">Bekliyor</option>
                         <option data-content="<span class='badge badge-primary'>Çalışıyor</span>" value="Çalışıyor">Çalışıyor</option>
                         <option data-content="<span class='badge badge-success'>Tamamlandı</span>" value="Tamamlandı">Tamamlandı</option>

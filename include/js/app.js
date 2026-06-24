@@ -721,5 +721,80 @@ $(document).ready(function() {
             syncMenuIconState();
         }
     });
+
+    // Fix for dropdown clipping inside responsive tables / overflow containers
+    try {
+        document.addEventListener('show.bs.dropdown', function (event) {
+            try {
+                var dropdown = event.target;
+                if (!dropdown) return;
+                if (!dropdown.classList.contains('dropdown') && !dropdown.classList.contains('dropup') && !dropdown.classList.contains('btn-group')) {
+                    dropdown = dropdown.closest('.dropdown, .dropup, .btn-group');
+                }
+                if (!dropdown) return;
+
+                var scrollParents = [];
+                var parent = dropdown.parentElement;
+                while (parent && parent !== document.documentElement && parent !== document.body) {
+                    var style = window.getComputedStyle(parent);
+                    if (style) {
+                        var overflow = (style.overflow || '') + (style.overflowX || '') + (style.overflowY || '');
+                        if (/auto|scroll|hidden/.test(overflow)) {
+                            scrollParents.push(parent);
+                        }
+                    }
+                    parent = parent.parentElement;
+                }
+
+                scrollParents.forEach(function (el) {
+                    if (!el.dataset.originalOverflow) {
+                        el.dataset.originalOverflow = el.style.overflow || '';
+                    }
+                    if (!el.dataset.originalOverflowX) {
+                        el.dataset.originalOverflowX = el.style.overflowX || '';
+                    }
+                    if (!el.dataset.originalOverflowY) {
+                        el.dataset.originalOverflowY = el.style.overflowY || '';
+                    }
+                    el.style.setProperty('overflow', 'visible', 'important');
+                    el.style.setProperty('overflow-x', 'visible', 'important');
+                    el.style.setProperty('overflow-y', 'visible', 'important');
+                });
+
+                dropdown.__scrollParents = scrollParents;
+            } catch (e) {
+                console.error("Dropdown show overflow fix error:", e);
+            }
+        }, true);
+
+        document.addEventListener('hide.bs.dropdown', function (event) {
+            try {
+                var dropdown = event.target;
+                if (!dropdown) return;
+                if (!dropdown.classList.contains('dropdown') && !dropdown.classList.contains('dropup') && !dropdown.classList.contains('btn-group')) {
+                    dropdown = dropdown.closest('.dropdown, .dropup, .btn-group');
+                }
+                if (!dropdown) return;
+
+                var scrollParents = dropdown.__scrollParents;
+                if (scrollParents) {
+                    scrollParents.forEach(function (el) {
+                        el.style.overflow = el.dataset.originalOverflow || '';
+                        el.style.overflowX = el.dataset.originalOverflowX || '';
+                        el.style.overflowY = el.dataset.originalOverflowY || '';
+                        
+                        delete el.dataset.originalOverflow;
+                        delete el.dataset.originalOverflowX;
+                        delete el.dataset.originalOverflowY;
+                    });
+                    delete dropdown.__scrollParents;
+                }
+            } catch (e) {
+                console.error("Dropdown hide overflow fix error:", e);
+            }
+        }, true);
+    } catch (err) {
+        console.error("Failed to bind dropdown overflow listeners:", err);
+    }
 });
 
