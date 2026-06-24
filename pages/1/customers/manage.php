@@ -416,7 +416,7 @@ if (@$_POST["status"] == "success") {
                     </div>
                 </div>
                 <div class="mt-2">
-                    <a target="_blank" class="small weight-600 font-14 text-blue" href="index.php?p=services&cid=<?php echo $id ?>">Tümünü Görüntüle <i class="fa fa-arrow-right ml-1"></i></a>
+                    <a target="_blank" class="small weight-600 font-14 text-blue" href="index.php?p=service/list&cid=<?php echo $id ?>">Tümünü Görüntüle <i class="fa fa-arrow-right ml-1"></i></a>
                 </div>
             </div>
         </div>

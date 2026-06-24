@@ -241,7 +241,7 @@ $ofacs = $ofacs <= 0 ? 1 : $ofacs;
 											<li class="list-item"
 												style="background:<?php echo $service_back_colour->colour . ";" . $border ?>; color: #1e293b;"
 												data-tooltip="SERVİSİ GÖRÜNTÜLE">
-												<a href="index.php?p=services&id=<?php echo $item->id ?>">
+												<a href="index.php?p=service/list&id=<?php echo $item->id ?>">
 													<div class="row m-0" style="font-size: 13px; cursor:pointer">
 														<div class="col-12 p-0">
 															<strong style="color: #0f172a;"><?php echo $item->service_number; ?></strong>
@@ -315,7 +315,7 @@ $ofacs = $ofacs <= 0 ? 1 : $ofacs;
 
 				<div class="main-card col-xl-6 col-lg-12 col-md-12 col-sm-12 mb-5 pt-0">
 					<div class="bg-white premium-section-card box-shadow height-100-p">
-						<h4 class="mb-30 weight-600"><a data-tooltip="Tüm Servisleri Gör" href="index.php?p=services" class="text-blue">Son Eklenen Servisler</a></h4>
+						<h4 class="mb-30 weight-600"><a data-tooltip="Tüm Servisleri Gör" href="index.php?p=service/list" class="text-blue">Son Eklenen Servisler</a></h4>
 						
 						<?php
 						$sql = $ac->prepare('SELECT * FROM projects ORDER BY id DESC LIMIT 4');
@@ -329,7 +329,7 @@ $ofacs = $ofacs <= 0 ? 1 : $ofacs;
 							$st->execute(array($result['servicestype']));
 							$servicetype = $st->fetch(PDO::FETCH_ASSOC);
 							?>
-							<a href="index.php?p=services&sid=<?php echo $result['id'] ?>" class="custom-list-group-item" style="border-left-color: #3b82f6;">
+							<a href="index.php?p=service/list&id=<?php echo $result['id'] ?>" class="custom-list-group-item" style="border-left-color: #3b82f6;">
 								<div class="d-flex justify-content-between align-items-center">
 									<div>
 										<h6 class="mb-1 font-16"><?php echo $ffc['company'] . ' / ' . $servicetype['title'] ?></h6>

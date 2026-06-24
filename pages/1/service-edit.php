@@ -20,7 +20,7 @@ $qct->execute();
 $cscs = $qct->fetch(PDO::FETCH_ASSOC);
 
 if (!$cc) {
-    header('Location: index.php?p=services&err=01735');
+    header('Location: index.php?p=service/list&err=01735');
     exit;
 }
 
