@@ -127,22 +127,6 @@ if (@$_GET["id"] && @$_GET["mode"] == "delete" && @$_GET["code"] == "04md177") {
 				$siraNo = $siraNo + 1;
 			} ?>
         </tbody>
-        <tfoot>
-            <tr>
-                <th>Sıra</th>
-                <th>Firma</th>
-                <th>Evrak Türü</th>
-                <th>Kategori</th>
-                <th>Adet</th>
-                <th>Teslim Alan</th>
-                <th>Teslim Eden</th>
-                <th>Teslim Tarihi</th>
-                <th>Evrak Durumu</th>
-                <th>Açıklama</th>
-                <th>İşlem</th>
-
-            </tr>
-        </tfoot>
     </table>
 </div>
 

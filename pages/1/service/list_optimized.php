@@ -207,22 +207,6 @@ $projects = $query->fetchAll(PDO::FETCH_ASSOC);
                 <?php
                 $sirano += 1;
             } ?>
-        <tfoot>
-            <tr>
-                <th scope="col">Sıra No</th>
-                <th scope="col">Servis No</th>
-                <th>Firma Adı</th>
-                <th>Bölge</th>
-                <th>Servis Konusu </th>
-                <th>İş Emri Oluşturma Tarihi</th>
-                <th>Servis Planlama Tarihi</th>
-                <th>Sözleşme Durum</th>
-                <th>İş Emrini Oluşturan</th>
-                <th>Durum</th>
-                <th class="text-nowrap">İşlem</th>
-
-            </tr>
-        </tfoot>
         </tbody>
     </table>
 </div>

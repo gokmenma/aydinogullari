@@ -355,24 +355,6 @@ if ($cid || $sid) {
                         <?php $sirano++;
                     } ?>
                 <?php endif; ?>
-            <tfoot>
-                <tr>
-                    <th scope="col">Sıra No</th>
-                    <th scope="col">Servis No</th>
-                    <th>Firma Adı</th>
-                    <th>Bölge</th>
-                    <th>Servis Konusu </th>
-                    <th>İş Emri Oluşturma Tarihi</th>
-                    <th>Servis Planlama Tarihi</th>
-                    <th>Sözleşme Durum</th>
-                    <th>Durum</th>
-                    <th>İş Emrini Oluşturan</th>
-                    <th>Son İşlem Yapan</th>
-                    <th>Muhasebe Teslim</th>
-                    <th class="text-nowrap">İşlem</th>
-
-                </tr>
-            </tfoot>
             </tbody>
         </table>
     </div>
@@ -411,16 +393,60 @@ if ($cid || $sid) {
 </div>
 <script>
     $(document).ready(function () {
-        // Server-side processing for large datasets
-        $('#service-table').DataTable({
-            processing: true,
-            serverSide: true,
+        var useServerSide = <?php echo $use_server_side ? 'true' : 'false'; ?>;
+        
+        var dtOptions = {
+            pageLength: 25,
+            lengthMenu: [10, 25, 50, 100],
+            language: {
+                url: 'include/js/tr.json',
+                processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Yükleniyor...</span>'
+            },
+            responsive: true,
+            order: [
+                [0, 'desc']
+            ],
+            orderCellsTop: true,
+            initComplete: function () {
+                var api = this.api();
+                var tableId = api.table().node().id;
+                // Arama satırını <thead> içine ekle
+                $("#" + tableId + " thead").append('<tr class="search-input-row"></tr>');
 
-            ajax: {
+                api.columns().every(function (index) { // Sütun index'ini al
+                    let column = this;
+                    let header = $(column.header());
+                    let title = header.text();
+
+                    // İşlem ve checkbox olmayan sütunlar için input oluştur
+                    if (header.find('input[type="checkbox"]').length === 0 && column.visible() && title && title.trim() !== 'İşlem' && title.trim() !== 'İşlemler') {
+
+                        let input = $('<input type="text" class="form-control form-control-sm" placeholder="' + title + '" autocomplete="off">')
+                            .appendTo($('<th class="search"></th>').appendTo("#" + tableId + " .search-input-row"))
+                            .on('keyup change clear', function () {
+                                // === ANAHTAR DEĞİŞİKLİK BURADA ===
+                                // Eğer sütunun arama değeri bu input'un değeriyle aynı değilse,
+                                // yeni değeri ata ve tabloyu yeniden çiz
+                                if (column.search() !== this.value) {
+                                    column.search(this.value).draw();
+                                }
+                            });
+                    } else {
+                        // Diğer sütunlar için boş bir <th> ekle
+                        $("#" + tableId + " .search-input-row").append('<th></th>');
+                    }
+                });
+            }
+        };
+
+        if (useServerSide) {
+            dtOptions.processing = true;
+            dtOptions.serverSide = true;
+            dtOptions.ajax = {
                 url: '<?php echo $ajax_url; ?>',
                 type: 'GET'
-            },
-            columns: [{
+            };
+            dtOptions.columns = [{
                 data: null,
                 orderable: false,
                 className: 'text-center',
@@ -467,53 +493,10 @@ if ($cid || $sid) {
                 className: 'all text-nowrap',
                 responsivePriority: 1
             } // actions
-            ],
-            pageLength: 25,
-            lengthMenu: [10, 25, 50, 100],
-            language: {
-                url: 'include/js/tr.json',
-                processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Yükleniyor...</span>'
-            },
+            ];
+        }
 
-            responsive: true,
-            order: [
-                [0, 'desc']
-            ],
-            orderCellsTop: true,
-            initComplete: function () {
-                var api = this.api();
-                var tableId = api.table().node().id;
-                // Arama satırını <thead> içine ekle
-                $("#" + tableId + " thead").append('<tr class="search-input-row"></tr>');
-
-                api.columns().every(function (index) { // Sütun index'ini al
-                    let column = this;
-                    let header = $(column.header());
-                    let title = header.text();
-
-                    // İşlem ve checkbox olmayan sütunlar için input oluştur
-                    if (header.find('input[type="checkbox"]').length === 0 && column.visible() && title && title.trim() !== 'İşlem' && title.trim() !== 'İşlemler') {
-
-                        let input = $('<input type="text" class="form-control form-control-sm" placeholder="' + title + '" autocomplete="off">')
-                            .appendTo($('<th class="search"></th>').appendTo("#" + tableId + " .search-input-row"))
-                            .on('keyup change clear', function () {
-                                // === ANAHTAR DEĞİŞİKLİK BURADA ===
-                                // Eğer sütunun arama değeri bu input'un değeriyle aynı değilse,
-                                // yeni değeri ata ve tabloyu yeniden çiz (sunucuya yeni istek gönder)
-                                if (column.search() !== this.value) {
-                                    column.search(this.value).draw();
-                                }
-                            });
-                    } else {
-                        // Diğer sütunlar için boş bir <th> ekle
-                        $("#" + tableId + " .search-input-row").append('<th></th>');
-                    }
-                    // İkinci <thead> satırını sabitlemek için CSS ekleyin
-
-                });
-            }
-        });
-
+        $('#service-table').DataTable(dtOptions);
     });
 </script>
 

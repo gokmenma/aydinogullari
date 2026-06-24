@@ -119,19 +119,6 @@ if (($_GET["st"] ?? "") == "success-mail") {
             </thead>
             <tbody>
             </tbody>
-            <tfoot>
-                <tr>
-                    <th class="w-10 text-nowrap">ID</th>
-                    <th class="w-10 text-nowrap">Rapor No</th>
-                    <th>Firma</th>
-                    <th>Rapor Türü</th>
-                    <th>İş Emri No</th>
-                    <th>Kontrol Tarihi</th>
-                    <th>Geçerlilik Tarihi</th>
-                    <th>İşlem</th>
-
-                </tr>
-            </tfoot>
         </table>
 
         </div>
